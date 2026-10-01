@@ -47,9 +47,7 @@ import { type Limiter, type LimiterOptions } from './types.js';
  * }
  * ```
  */
-export function createLimiter<Config, State>(
-  _options: LimiterOptions<Config, State>,
-): Limiter {
+export function createLimiter<Config, State>(_options: LimiterOptions<Config, State>): Limiter {
   // TODO: implement on Day 2
   throw new Error('Not implemented');
 }

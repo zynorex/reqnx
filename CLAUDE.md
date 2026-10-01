@@ -96,15 +96,23 @@ docker compose down
 type Duration = number | `${number}${'ms' | 's' | 'm' | 'h' | 'd'}`;
 
 interface Decision {
-  allowed: boolean; limit: number; remaining: number;
-  resetAtMs: number; retryAfterMs: number;
+  allowed: boolean;
+  limit: number;
+  remaining: number;
+  resetAtMs: number;
+  retryAfterMs: number;
 }
 
 interface Algorithm<Config, State> {
-  id: AlgorithmId; stateVersion: number;
+  id: AlgorithmId;
+  stateVersion: number;
   parseConfig(input: unknown): Config;
-  step(state: State | undefined, config: Config, nowMs: number, cost: number):
-    { decision: Decision; nextState: State };
+  step(
+    state: State | undefined,
+    config: Config,
+    nowMs: number,
+    cost: number,
+  ): { decision: Decision; nextState: State };
   peek(state: State | undefined, config: Config, nowMs: number): Decision;
   stateTtlMs(config: Config): number;
 }

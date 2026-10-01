@@ -18,8 +18,12 @@ interface Algorithm<Config, State> {
   readonly id: AlgorithmId;
   readonly stateVersion: number;
   parseConfig(input: unknown): Config;
-  step(state: State | undefined, config: Config, nowMs: number, cost: number):
-    { decision: Decision; nextState: State };
+  step(
+    state: State | undefined,
+    config: Config,
+    nowMs: number,
+    cost: number,
+  ): { decision: Decision; nextState: State };
   peek(state: State | undefined, config: Config, nowMs: number): Decision;
   stateTtlMs(config: Config): number;
 }

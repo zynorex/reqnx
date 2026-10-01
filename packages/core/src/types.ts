@@ -295,9 +295,7 @@ export interface StoreErrorContext {
  *   A throwing custom handler is treated as `'fail-open'`.
  */
 export type StoreErrorPolicy =
-  | 'fail-open'
-  | 'fail-closed'
-  | ((error: StoreError, context: StoreErrorContext) => Decision);
+  'fail-open' | 'fail-closed' | ((error: StoreError, context: StoreErrorContext) => Decision);
 
 // ─── Hooks / Observability ────────────────────────────────────────────────────
 
@@ -499,7 +497,7 @@ export interface RateLimitHeaders {
    * Structured field: `limit=100, remaining=42, reset=28`
    * where `reset` is seconds (integer) until the limit resets.
    */
-  'RateLimit'?: string;
+  RateLimit?: string;
 
   /**
    * IETF draft-ietf-httpapi-ratelimit-headers-11.
