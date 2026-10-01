@@ -1,0 +1,42 @@
+{
+  "name": "@reqnx/fastify",
+  "version": "0.0.0",
+  "description": "Fastify plugin adapter for @reqnx/core",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsdown src/index.ts --format esm,cjs --dts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check-package": "publint && attw --pack ."
+  },
+  "dependencies": {
+    "@reqnx/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "fastify": "^4.0.0 || ^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "fastify": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "fastify": "^5.0.0",
+    "typescript": "^5.7.0"
+  }
+}

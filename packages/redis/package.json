@@ -1,0 +1,42 @@
+{
+  "name": "@reqnx/redis",
+  "version": "0.0.0",
+  "description": "Redis store for @reqnx/core — Lua-based atomic rate limiting",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsdown src/index.ts --format esm,cjs --dts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check-package": "publint && attw --pack ."
+  },
+  "dependencies": {
+    "@reqnx/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "ioredis": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ioredis": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "ioredis": "^5.4.0",
+    "typescript": "^5.7.0"
+  }
+}

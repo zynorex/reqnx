@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/redis" },
+    { "path": "packages/express" },
+    { "path": "packages/fastify" },
+    { "path": "packages/testkit" }
+  ]
+}
