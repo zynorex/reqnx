@@ -24,11 +24,11 @@ if (!decision.allowed) {
 
 When a `Store` operation throws, the limiter catches it as a `StoreError` and applies the configured `onStoreError` policy:
 
-| Policy | Behaviour |
-|--------|-----------|
-| `'fail-open'` (default) | Allow the request. Log the error. |
-| `'fail-closed'` | Deny the request with a synthetic Decision. |
-| Custom `(error, context) => Decision` | User-defined logic. |
+| Policy                                | Behaviour                                   |
+| ------------------------------------- | ------------------------------------------- |
+| `'fail-open'` (default)               | Allow the request. Log the error.           |
+| `'fail-closed'`                       | Deny the request with a synthetic Decision. |
+| Custom `(error, context) => Decision` | User-defined logic.                         |
 
 A throwing custom handler is treated as `'fail-open'` (safety net).
 
@@ -41,11 +41,13 @@ The `onError` hook is always called, regardless of policy.
 ### Memory protection
 
 **MemoryStore:**
+
 - `maxKeys` option (default: 100,000). When exceeded, keys are randomly evicted until under the cap.
 - TTL sweep runs on a configurable interval (default: 60s). Expired keys are removed.
 - Random eviction was chosen over LRU for simplicity. Under uniform load distributions, random eviction provides comparable hit rates with significantly less overhead.
 
 **Redis keys:**
+
 - Max key length: 512 bytes. Oversized keys are SHA-256 hashed.
 - `PEXPIRE` set via `stateTtlMs()` ensures automatic cleanup.
 

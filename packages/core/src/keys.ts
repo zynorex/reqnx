@@ -38,11 +38,7 @@ export const MAX_KEY_BYTES: 512 = 512;
  * // → 'reqnx:api:fixed-window:192.168.1.1'
  * ```
  */
-export function buildKey(
-  _prefix: string,
-  _algorithmId: AlgorithmId,
-  _identity: string,
-): string {
+export function buildKey(_prefix: string, _algorithmId: AlgorithmId, _identity: string): string {
   // TODO: implement on Day 2
   throw new Error('Not implemented');
 }

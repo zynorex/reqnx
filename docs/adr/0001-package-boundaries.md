@@ -11,16 +11,17 @@ REQNX needs to support multiple stores (memory, Redis), multiple frameworks (Exp
 
 Monorepo with pnpm workspaces, five published packages plus one private testkit:
 
-| Package | npm name | Runtime deps | Peer deps |
-|---------|----------|--------------|-----------|
-| `packages/core` | `@reqnx/core` | **none** | none |
-| `packages/redis` | `@reqnx/redis` | `@reqnx/core` | `ioredis` |
-| `packages/express` | `@reqnx/express` | `@reqnx/core` | `express` |
-| `packages/fastify` | `@reqnx/fastify` | `@reqnx/core` | `fastify` |
-| `packages/testkit` | `@reqnx/testkit` | `@reqnx/core` | none |
-| `apps/demo-api` | private | core + express | none |
+| Package            | npm name         | Runtime deps   | Peer deps |
+| ------------------ | ---------------- | -------------- | --------- |
+| `packages/core`    | `@reqnx/core`    | **none**       | none      |
+| `packages/redis`   | `@reqnx/redis`   | `@reqnx/core`  | `ioredis` |
+| `packages/express` | `@reqnx/express` | `@reqnx/core`  | `express` |
+| `packages/fastify` | `@reqnx/fastify` | `@reqnx/core`  | `fastify` |
+| `packages/testkit` | `@reqnx/testkit` | `@reqnx/core`  | none      |
+| `apps/demo-api`    | private          | core + express | none      |
 
 **Rules enforced by `scripts/check-deps.ts`:**
+
 1. `@reqnx/core` has zero runtime dependencies and no `node:` imports.
 2. Adapters (`express`, `fastify`) never depend on each other.
 3. No package has a runtime dependency on `@reqnx/testkit`.
