@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "pnpm -r run build",
-    "typecheck": "tsc -b --noEmit",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
