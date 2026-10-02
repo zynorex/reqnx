@@ -73,8 +73,9 @@ docker compose down
 - **Imports:** Use `.js` extension (verbatimModuleSyntax)
 - **Types:** No `any` (ESLint-enforced). Use `unknown` + narrowing.
 - **Clock:** Only `clock.ts` may call `Date.now()`. All other code receives time via `Clock` or function parameter.
-- **Errors:** `ConfigError` for bad config (thrown). `StoreError` for store failures (caught by policy).
-- **Key schema:** `reqnx:{prefix}:{algorithmId}:{identity}` — max 512 bytes, SHA-256 hash if exceeded.
+- **Errors:** `RateLimitError` base class (Symbol.for branding). `ConfigError` for bad config (thrown). `StoreError` for store failures (caught by policy). `InputError` for bad per-call input (thrown, HTTP 400).
+- **Key schema:** `reqnx:{prefix}:{algorithmId}:{identity}` — max 512 bytes; oversized keys rejected with `InputError` (never silently hashed or truncated).
+- **Testing:** Use `FakeClock` only. No real timers (`setTimeout`, `setInterval`) in core/store tests. Run contract suites (`runStoreContractSuite`, `runAlgorithmContractSuite`) for all store and algorithm implementations.
 
 ## Definition of Done: New Algorithm
 
@@ -101,6 +102,7 @@ interface Decision {
   remaining: number;
   resetAtMs: number;
   retryAfterMs: number;
+  degraded: boolean;
 }
 
 interface Algorithm<Config, State> {
@@ -132,7 +134,7 @@ type StoreErrorPolicy = 'fail-open' | 'fail-closed' | ((error, ctx) => Decision)
 ## Progress Tracker
 
 - [x] Day 1: Architecture + scaffold
-- [ ] Day 2: Core infrastructure (Clock, Duration, MemoryStore, createLimiter, testkit)
+- [x] Day 2: Core infrastructure (Clock, Duration, MemoryStore, createLimiter, testkit)
 - [ ] Day 3: Fixed window algorithm
 - [ ] Day 4: Token bucket algorithm
 - [ ] Day 5: Sliding window (log + counter)

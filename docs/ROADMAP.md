@@ -11,16 +11,16 @@
 - CI pipeline, Changesets, CLAUDE.md
 - Smoke tests pass for all packages
 
-## Day 2 — Core Infrastructure
+## Day 2 — Core Infrastructure ✅
 
-- `Clock` (SystemClock already done; wire into MemoryStore)
-- `Duration` parsing with validation
-- Error classes (ConfigError, StoreError) — already scaffolded
-- `buildKey()` with SHA-256 hashing for oversized keys
-- `MemoryStore` — TTL sweep timer + `maxKeys` cap (random eviction)
-- `createLimiter()` factory wiring
-- `@reqnx/testkit` — `FakeClock` (done) + conformance suite runner
-- Full unit tests for all of the above
+- `Clock` (`SystemClock` + `@reqnx/testkit` `FakeClock`)
+- `Duration` parsing (`parseDuration`) with strict validation, fractional whole-ms support, and 366-day cap
+- Error hierarchy (`RateLimitError`, `ConfigError`, `StoreError`, `InputError`) with `Symbol.for` cross-boundary branding
+- `buildKey()` and `validateKey()` rejecting oversized keys with `InputError` (no silent truncation/hashing)
+- `MemoryStore` — synchronous single-threaded atomicity, bounded incremental sweeping, `maxKeys` cap, and O(1) LRU eviction
+- `createLimiter()` factory wiring, static and async dynamic resolvers, failure policies (`fail-open`, `fail-closed`, custom), `degraded: true` marker, hook isolation
+- `@reqnx/testkit` — `FakeClock`, store and algorithm contract suites, test algorithm fixtures, broken doubles, and negative control tests
+- 100% statements coverage on new core files, full property tests (fast-check)
 
 ## Day 3 — Fixed Window Algorithm
 
