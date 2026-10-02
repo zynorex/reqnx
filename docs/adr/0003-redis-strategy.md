@@ -42,7 +42,7 @@ reqnx:{prefix}:{algorithmId}:{identity}
 
 - `prefix`: user-chosen namespace (validated: non-empty ASCII, no colons)
 - `algorithmId`: from `Algorithm.id`
-- `identity`: attacker-influenced; SHA-256 hashed if total key exceeds 512 bytes
+- `identity`: caller-supplied; oversized keys (>512 bytes) are rejected with `InputError` (never silently hashed or truncated). Operators handling long inputs should pre-hash.
 
 ### Valkey compatibility
 
