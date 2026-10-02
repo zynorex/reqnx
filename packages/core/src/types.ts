@@ -80,6 +80,19 @@ export interface Decision {
    * - `> 0` when `allowed` is `false`.
    */
   readonly retryAfterMs: number;
+
+  /**
+   * Whether this decision was produced by the failure policy rather than
+   * an actual algorithm evaluation.
+   *
+   * When `true`, the numeric fields (`limit`, `remaining`, `resetAtMs`,
+   * `retryAfterMs`) are synthetic and should **not** be used to generate
+   * HTTP rate-limit headers or count towards metrics.
+   *
+   * - `false` for all algorithm-produced decisions (the normal path).
+   * - `true` for fail-open, fail-closed, or custom handler fallbacks.
+   */
+  readonly degraded: boolean;
 }
 
 // ─── Algorithm ────────────────────────────────────────────────────────────────
@@ -516,4 +529,4 @@ export interface RateLimitHeaders {
 }
 
 // Re-export error types (defined in errors.ts)
-export type { ConfigError, StoreError } from './errors.js';
+export type { RateLimitError, ConfigError, StoreError, InputError } from './errors.js';

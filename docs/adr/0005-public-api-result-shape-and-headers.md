@@ -55,6 +55,7 @@ interface Decision {
   readonly remaining: number;
   readonly resetAtMs: number;
   readonly retryAfterMs: number;
+  readonly degraded: boolean;
 }
 ```
 
