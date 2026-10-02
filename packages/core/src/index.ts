@@ -23,8 +23,12 @@ export type {
   RateLimitHeaders,
 } from './types.js';
 
+// MemoryStore types & factory
+export type { MemoryStore, MemoryStoreOptions, MemoryStoreStats } from './memory-store.js';
+export { createMemoryStore } from './memory-store.js';
+
 // Error classes
-export { ConfigError, StoreError } from './errors.js';
+export { RateLimitError, ConfigError, StoreError, InputError } from './errors.js';
 
 // Clock
 export { SystemClock } from './clock.js';
@@ -33,7 +37,8 @@ export { SystemClock } from './clock.js';
 export { parseDuration } from './duration.js';
 
 // Key utilities
-export { MAX_KEY_BYTES, buildKey } from './keys.js';
+export type { KeyOptions } from './keys.js';
+export { MAX_KEY_BYTES, buildKey, validateKey, validatePrefix, validateIdentity } from './keys.js';
 
 // Headers
 export { decisionToHeaders } from './headers.js';
