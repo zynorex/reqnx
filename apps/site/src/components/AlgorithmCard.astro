@@ -1,0 +1,27 @@
+---
+/**
+ * Algorithm preview card for the landing page grid.
+ */
+import type { AlgorithmEntry } from '../features';
+import '../styles/landing.css';
+
+interface Props {
+  entry: AlgorithmEntry;
+}
+
+const { entry } = Astro.props;
+const statusClass = entry.status === 'available' ? 'rx-badge-allowed' : 'rx-badge-coming-soon';
+const statusText = entry.status === 'available' ? 'Available' : 'Coming soon';
+---
+
+<a href={`/algorithms/${entry.slug}/`} class="rx-card" style="text-decoration: none; display: block;">
+  <div class="rx-algo-card-name">
+    {entry.name}
+    <span class={`rx-badge ${statusClass}`}>{statusText}</span>
+  </div>
+  <p class="rx-algo-card-desc">{entry.description}</p>
+  <div class="rx-algo-card-meta">
+    <span>Time: {entry.timeComplexity}</span>
+    <span>Space: {entry.spaceComplexity}</span>
+  </div>
+</a>
