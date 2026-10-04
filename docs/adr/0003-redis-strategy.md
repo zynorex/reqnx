@@ -12,6 +12,7 @@ RedisStore must provide atomic rate limiting across multiple application instanc
 ### Lua scripts for atomicity
 
 Each algorithm has a dedicated Lua script that:
+
 1. Reads the current state from a single Redis key
 2. Computes the decision (equivalent to the TS `step()` function)
 3. Writes the new state back
@@ -23,6 +24,7 @@ Scripts are loaded via `EVALSHA` (with `EVAL` fallback) for efficiency.
 ### Single-key state
 
 Per-identity state lives in **one Redis key** (a hash or sorted set depending on the algorithm). This makes scripts single-key, which means:
+
 - They're atomic without `MULTI/EXEC` or `WATCH`
 - They work on Redis Cluster without restrictions (single-key scripts always run on the shard that owns the key)
 
@@ -40,7 +42,7 @@ reqnx:{prefix}:{algorithmId}:{identity}
 
 - `prefix`: user-chosen namespace (validated: non-empty ASCII, no colons)
 - `algorithmId`: from `Algorithm.id`
-- `identity`: attacker-influenced; SHA-256 hashed if total key exceeds 512 bytes
+- `identity`: caller-supplied; oversized keys (>512 bytes) are rejected with `InputError` (never silently hashed or truncated). Operators handling long inputs should pre-hash.
 
 ### Valkey compatibility
 

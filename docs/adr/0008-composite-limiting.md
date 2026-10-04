@@ -32,6 +32,7 @@ function createCompositeLimiter(options: {
 ### Race condition acknowledgment
 
 Between peek and consume, another request could have consumed tokens, causing a consume to fail that the peek said would succeed. This is an **accepted tradeoff**:
+
 - It can only result in an extra denial (conservative), never an extra allow.
 - It's extremely rare in practice (would require two requests for the same key within the peek→consume round-trip).
 - The alternative (multi-key Redis transaction) is far more complex and breaks Cluster compatibility.
@@ -39,12 +40,13 @@ Between peek and consume, another request could have consumed tokens, causing a 
 ### Redis Cluster implications
 
 If child limiters use different algorithm IDs, their Redis keys will naturally land on different shards:
+
 ```
 reqnx:api:fixed-window:user-123    → shard A
 reqnx:api:token-bucket:user-123   → shard B
 ```
 
-To use a multi-key Lua script (future optimisation), all keys would need to hash to the same slot via a hash tag: `{reqnx:api}:fixed-window:user-123`. 
+To use a multi-key Lua script (future optimisation), all keys would need to hash to the same slot via a hash tag: `{reqnx:api}:fixed-window:user-123`.
 
 **For v0.1.0, we use the peek-then-consume approach** (no multi-key scripts). This works on Cluster without hash tags but has the small race window described above.
 
@@ -53,6 +55,7 @@ To use a multi-key Lua script (future optimisation), all keys would need to hash
 ### Return value
 
 The composite `check()` returns the **most restrictive** `Decision`:
+
 - `allowed`: true only if ALL children allow
 - `limit`: minimum of all children's limits
 - `remaining`: minimum of all children's remaining

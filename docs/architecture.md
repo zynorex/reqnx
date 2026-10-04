@@ -78,13 +78,14 @@ sequenceDiagram
         Store--xLim: throws StoreError
         Lim->>Lim: apply onStoreError policy
         alt fail-open (default)
-            Lim->>Lim: synthetic Decision { allowed: true }
+            Lim->>Lim: synthetic Decision { allowed: true, degraded: true }
         else fail-closed
-            Lim->>Lim: synthetic Decision { allowed: false }
+            Lim->>Lim: synthetic Decision { allowed: false, degraded: true }
         else custom handler
-            Lim->>Lim: handler(error, context) → Decision
+            Lim->>Lim: handler(error, context) → Decision { degraded: true }
         end
         Lim->>Hook: onError({ key, error, fallbackDecision })
+        Lim->>Hook: onDecision({ key, decision: fallbackDecision, ... })
         Lim-->>App: fallback Decision
     end
 ```

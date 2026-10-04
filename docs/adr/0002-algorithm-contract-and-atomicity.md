@@ -18,14 +18,20 @@ interface Algorithm<Config, State> {
   readonly id: AlgorithmId;
   readonly stateVersion: number;
   parseConfig(input: unknown): Config;
-  step(state: State | undefined, config: Config, nowMs: number, cost: number):
-    { decision: Decision; nextState: State };
+  step(
+    state: State | undefined,
+    config: Config,
+    nowMs: number,
+    cost: number,
+  ): { decision: Decision; nextState: State };
   peek(state: State | undefined, config: Config, nowMs: number): Decision;
   stateTtlMs(config: Config): number;
 }
 ```
 
 **Purity contract:** `step()` and `peek()` must never perform I/O, call `Date.now()`, use `Math.random()`, or throw. All non-determinism is injected by the Store.
+
+**Backwards clock monotonicity:** Clock adjustments (e.g., NTP corrections) may cause `nowMs` to move backwards. While algorithms are not required to enforce strictly monotonic time, `step()` must **never be more generous** when time moves backwards (i.e. moving backwards in time must never award additional tokens or reset a window early).
 
 ### Atomicity belongs to the Store
 

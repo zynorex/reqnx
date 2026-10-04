@@ -6,6 +6,7 @@
 ## Context
 
 Rate-limit responses need standard HTTP headers. There are three competing conventions:
+
 1. **RFC 9110 `Retry-After`** — well-established standard for 429 responses.
 2. **IETF draft-ietf-httpapi-ratelimit-headers-11** (active Internet-Draft, May 2026) — defines `RateLimit` and `RateLimit-Policy` structured header fields.
 3. **Legacy `X-RateLimit-*`** — de-facto convention used by GitHub, Twitter, etc.
@@ -16,27 +17,31 @@ Rate-limit responses need standard HTTP headers. There are three competing conve
 
 `decisionToHeaders(decision, nowMs, options?)` returns headers based on `HeaderOptions.style`:
 
-| Style | Headers |
-|-------|---------|
+| Style              | Headers                                                            |
+| ------------------ | ------------------------------------------------------------------ |
 | `'both'` (default) | `RateLimit` + `RateLimit-Policy` + `X-RateLimit-*` + `Retry-After` |
-| `'draft'` | `RateLimit` + `RateLimit-Policy` + `Retry-After` |
-| `'legacy'` | `X-RateLimit-*` + `Retry-After` |
+| `'draft'`          | `RateLimit` + `RateLimit-Policy` + `Retry-After`                   |
+| `'legacy'`         | `X-RateLimit-*` + `Retry-After`                                    |
 
 ### Header details
 
 **`Retry-After`** (RFC 9110 §10.2.3):
+
 - Only set when `allowed === false`
 - Value: `ceil(retryAfterMs / 1000)` (seconds, integer)
 
 **`RateLimit`** (draft-11):
+
 - Structured field: `limit=100, remaining=42, reset=28`
 - `reset` is seconds until the limit resets (integer, computed from `resetAtMs - nowMs`)
 
 **`RateLimit-Policy`** (draft-11):
+
 - Policy description: `100;w=60` (100 requests per 60-second window)
 - For bucket algorithms where `w` isn't meaningful, we omit `w` and use just the limit
 
 **Legacy `X-RateLimit-*`**:
+
 - `X-RateLimit-Limit`: same as `limit`
 - `X-RateLimit-Remaining`: same as `remaining`
 - `X-RateLimit-Reset`: epoch seconds (Unix timestamp) when window resets
@@ -50,6 +55,7 @@ interface Decision {
   readonly remaining: number;
   readonly resetAtMs: number;
   readonly retryAfterMs: number;
+  readonly degraded: boolean;
 }
 ```
 

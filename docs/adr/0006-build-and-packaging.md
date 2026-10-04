@@ -39,6 +39,7 @@ Every package uses the three-condition exports pattern:
 ### TypeScript configuration
 
 Shared `tsconfig.base.json` with strict mode plus:
+
 - `noUncheckedIndexedAccess`
 - `exactOptionalPropertyTypes`
 - `verbatimModuleSyntax`
@@ -49,6 +50,7 @@ Per-package `tsconfig.json` extends the base with local `rootDir`/`outDir`.
 ### Verification in CI
 
 After every build, CI runs:
+
 1. `publint` — validates package.json exports, files, and conventions
 2. `@arethetypeswrong/cli` — validates type resolution across all conditions
 

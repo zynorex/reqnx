@@ -15,12 +15,12 @@ Vitest in **projects mode** — one project per package. `v8` coverage provider.
 
 ### Test categories
 
-| Category | Location | What it tests | Speed |
-|----------|----------|---------------|-------|
-| Unit tests | `packages/*/src/**/*.test.ts` | Individual functions in isolation | < 1s per test |
-| Conformance tests | `packages/testkit/` → used by core + redis | TS step() vs Lua produce identical decisions for identical inputs | ~1s per suite |
-| Property tests | `packages/core/src/**/*.test.ts` | Algorithm invariants via fast-check | ~5s per algorithm |
-| Integration tests | `packages/redis/src/**/*.test.ts` | RedisStore + real Redis | Requires Docker |
+| Category          | Location                                   | What it tests                                                     | Speed             |
+| ----------------- | ------------------------------------------ | ----------------------------------------------------------------- | ----------------- |
+| Unit tests        | `packages/*/src/**/*.test.ts`              | Individual functions in isolation                                 | < 1s per test     |
+| Conformance tests | `packages/testkit/` → used by core + redis | TS step() vs Lua produce identical decisions for identical inputs | ~1s per suite     |
+| Property tests    | `packages/core/src/**/*.test.ts`           | Algorithm invariants via fast-check                               | ~5s per algorithm |
+| Integration tests | `packages/redis/src/**/*.test.ts`          | RedisStore + real Redis                                           | Requires Docker   |
 
 ### Conformance suite
 
@@ -41,6 +41,7 @@ This catches drift between TS and Lua implementations.
 ### Property-based tests (fast-check)
 
 For each algorithm, property tests assert:
+
 - `remaining` is always ≥ 0 and ≤ `limit`
 - `retryAfterMs` is 0 when `allowed` is true, > 0 when false
 - `resetAtMs` is always in the future (≥ nowMs)
