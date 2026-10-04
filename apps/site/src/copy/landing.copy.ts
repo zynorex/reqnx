@@ -59,6 +59,12 @@ export const copyDeck = {
     installLabel: 'Install package',
     simulatedCaption:
       'Simulated time. This is the real @reqnx/core library running in your browser.',
+    // Convenience accessors for primary headline and CTAs
+    headline: 'Rate limiting you can reason about.',
+    subhead:
+      'Pure state-transition functions running against your choice of storage. Five classical algorithms, zero runtime dependencies, and deterministic tests that control time.',
+    primaryCta: 'Get started',
+    secondaryCta: 'Try the playground',
   },
 
   proofStrip: {
@@ -182,3 +188,5 @@ export const copyDeck = {
     trackingNotice: 'No cookies. No telemetry. No third-party trackers.',
   },
 } as const;
+
+export const landingCopy = copyDeck;

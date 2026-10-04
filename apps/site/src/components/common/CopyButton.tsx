@@ -25,8 +25,8 @@ export default function CopyButton({ text }: CopyButtonProps) {
     <button
       type="button"
       onClick={handleCopy}
-      aria-label={copied ? 'Copied!' : 'Copy to clipboard'}
-      title={copied ? 'Copied!' : 'Copy to clipboard'}
+      aria-label={copied ? 'Copied' : 'Copy to clipboard'}
+      title={copied ? 'Copied' : 'Copy to clipboard'}
       style={{
         background: 'transparent',
         border: 'none',

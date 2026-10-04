@@ -9,17 +9,21 @@
     "preview": "astro preview",
     "astro": "astro",
     "snippets:run": "tsx src/snippets/generate-output.ts",
-    "facts": "tsx scripts/print-facts.ts"
+    "facts": "tsx scripts/print-facts.ts",
+    "shots": "tsx scripts/take-shots.ts",
+    "a11y": "tsx scripts/run-a11y.ts"
   },
   "dependencies": {
     "@astrojs/preact": "^4.0.0",
     "@astrojs/starlight": "^0.34.0",
+    "@reqnx/core": "workspace:*",
     "astro": "^5.7.0",
-    "preact": "^10.25.0",
-    "@reqnx/core": "workspace:*"
+    "preact": "^10.25.0"
   },
   "devDependencies": {
-    "remark-math": "^6.0.0",
-    "rehype-katex": "^7.0.0"
+    "@axe-core/playwright": "^4.13.0",
+    "playwright": "^1.63.0",
+    "rehype-katex": "^7.0.0",
+    "remark-math": "^6.0.0"
   }
 }

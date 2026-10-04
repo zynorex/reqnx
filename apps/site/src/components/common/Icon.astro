@@ -19,7 +19,9 @@ interface Props {
     | 'sun'
     | 'moon'
     | 'monitor'
-    | 'arrow-right';
+    | 'arrow-right'
+    | 'menu'
+    | 'close';
   size?: number;
   class?: string;
   ariaHidden?: boolean;
@@ -120,6 +122,19 @@ const { name, size = 16, class: className = '', ariaHidden = true } = Astro.prop
     <>
       <line x1="5" y1="12" x2="19" y2="12" />
       <polyline points="12 5 19 12 12 19" />
+    </>
+  )}
+  {name === 'menu' && (
+    <>
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </>
+  )}
+  {name === 'close' && (
+    <>
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </>
   )}
 </svg>

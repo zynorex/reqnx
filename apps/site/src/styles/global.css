@@ -31,9 +31,9 @@
     --rx-text-muted: var(--rx-text-3);
 
     /* ─── Accents ────────────────────────────────────────────────────────── */
-    --rx-accent-indigo: #6366f1;
-    --rx-accent-indigo-dim: #4f46e5;
-    --rx-accent-indigo-glow: rgba(99, 102, 241, 0.25);
+    --rx-accent-indigo: #4f46e5;
+    --rx-accent-indigo-dim: #4338ca;
+    --rx-accent-indigo-glow: rgba(79, 70, 229, 0.25);
     --rx-accent-cyan: #06b6d4;
     --rx-accent-cyan-dim: #0891b2;
     --rx-accent-cyan-glow: rgba(6, 182, 212, 0.25);

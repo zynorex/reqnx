@@ -9,7 +9,7 @@ import { useState, useEffect, useCallback } from 'preact/hooks';
 
 export type ThemeMode = 'system' | 'dark' | 'light';
 
-export default function ThemeToggle() {
+export function ThemeToggle() {
   const [theme, setTheme] = useState<ThemeMode>('system');
 
   useEffect(() => {
@@ -64,3 +64,5 @@ export default function ThemeToggle() {
     </button>
   );
 }
+
+export default ThemeToggle;
