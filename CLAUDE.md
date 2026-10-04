@@ -58,6 +58,11 @@ pnpm build                   # tsdown build (all packages)
 pnpm check-packages          # publint + @arethetypeswrong/cli
 pnpm check-deps              # Dependency graph rules
 
+# Benchmarks
+pnpm bench                   # Full benchmark suite (Vitest + memory footprint)
+pnpm bench:vitest            # Vitest throughput benchmarks
+pnpm bench:memory            # Memory footprint benchmark (--expose-gc)
+
 # Single package
 pnpm --filter @reqnx/core test
 pnpm --filter @reqnx/core build
@@ -135,7 +140,7 @@ type StoreErrorPolicy = 'fail-open' | 'fail-closed' | ((error, ctx) => Decision)
 
 - [x] Day 1: Architecture + scaffold
 - [x] Day 2: Core infrastructure (Clock, Duration, MemoryStore, createLimiter, testkit)
-- [ ] Day 3: Fixed window algorithm
+- [x] Day 3: Fixed window algorithm (pure step, tests, contract suite, docs, benchmark entry; Lua port pending Day 6)
 - [ ] Day 4: Token bucket algorithm
 - [ ] Day 5: Sliding window (log + counter)
 - [ ] Day 6: Leaky bucket + RedisStore + Lua

@@ -7,22 +7,31 @@ REQNX gives you five battle-tested algorithms, atomic in-memory and Redis stores
 ## Quick Start
 
 ```typescript
-import { createLimiter, SystemClock } from '@reqnx/core';
-import { MemoryStore } from '@reqnx/core';
-import { fixedWindow } from '@reqnx/core/algorithms';
-import { rateLimiter } from '@reqnx/express';
+import { createLimiter, createMemoryStore, fixedWindow } from '@reqnx/core';
 
 // Create a limiter: 100 requests per minute
 const limiter = createLimiter({
   algorithm: fixedWindow,
-  store: new MemoryStore({ clock: SystemClock }),
+  store: createMemoryStore(),
   prefix: 'api',
-  config: { max: 100, window: '1m' },
+  config: { limit: 100, window: '1m' },
 });
 
-// Use as Express middleware
-app.use(rateLimiter({ limiter }));
+const decision = await limiter.check('user-123');
+if (!decision.allowed) {
+  console.log(`Rate limited! Retry after ${decision.retryAfterMs}ms`);
+}
 ```
+
+## Algorithms
+
+| Algorithm | Status | In-Memory | Redis (Lua) | Docs |
+|---|---|---|---|---|
+| **Fixed Window Counter** | ✅ Implemented | ✅ Complete | ⏳ Day 6 | [Documentation](docs/algorithms/fixed-window.md) |
+| **Token Bucket** | ⏳ Planned | ⏳ Day 4 | ⏳ Day 6 | — |
+| **Sliding Window Log** | ⏳ Planned | ⏳ Day 5 | ⏳ Day 6 | — |
+| **Sliding Window Counter** | ⏳ Planned | ⏳ Day 5 | ⏳ Day 6 | — |
+| **Leaky Bucket** | ⏳ Planned | ⏳ Day 6 | ⏳ Day 6 | — |
 
 ## Features
 
