@@ -2,7 +2,7 @@
 // @reqnx/core — Fixed Window Counter Algorithm
 //
 // Divides time into non-overlapping, epoch-aligned windows of `windowMs`
-// milliseconds. Each window allows up to `max` requests. When the window
+// milliseconds. Each window allows up to `limit` requests. When the window
 // expires, a fresh window begins with a full quota.
 //
 // Design decisions documented in ADR-0010.
@@ -21,12 +21,12 @@ import { parseDuration } from '../duration.js';
  *
  * @example
  * ```ts
- * const config: FixedWindowInput = { max: 100, window: '1m' };
+ * const config: FixedWindowInput = { limit: 100, window: '1m' };
  * ```
  */
 export interface FixedWindowInput {
-  /** Maximum number of requests allowed per window. Must be a positive integer. */
-  readonly max: number;
+  /** Maximum number of requests allowed per window. Safe integer in [1, 2^31 - 1]. */
+  readonly limit: number;
   /** Window duration. Accepts milliseconds or a human-readable string (e.g. `'30s'`, `'1m'`). */
   readonly window: Duration;
 }
@@ -38,8 +38,8 @@ export interface FixedWindowInput {
  * this directly.
  */
 export interface FixedWindowConfig {
-  /** Maximum requests per window. Positive integer. */
-  readonly max: number;
+  /** Maximum requests per window. Safe integer in [1, 2^31 - 1]. */
+  readonly limit: number;
   /** Window duration in milliseconds. Positive integer. */
   readonly windowMs: number;
 }
@@ -64,10 +64,13 @@ export interface FixedWindowState {
 /**
  * Compute the epoch-aligned window start for a given timestamp.
  *
+ * Windows are aligned to epoch: `windowStart = floor(nowMs / windowMs) * windowMs`.
+ * A request at exactly `windowStart + windowMs` belongs to the next window.
+ *
  * @internal
  */
 function alignedWindowStart(nowMs: number, windowMs: number): number {
-  return nowMs - (nowMs % windowMs);
+  return Math.floor(nowMs / windowMs) * windowMs;
 }
 
 /**
@@ -97,7 +100,7 @@ function resolveWindow(
 
   if (currentWindowStart < state.windowStart) {
     // Clock moved backwards — clamp to stored window to avoid being more generous.
-    // Per ADR-0002: never reset early on backwards clock.
+    // Per ADR-0002 / ADR-0010: never reset early on backwards clock.
     return { windowStart: state.windowStart, count: state.count };
   }
 
@@ -105,36 +108,37 @@ function resolveWindow(
   return { windowStart: currentWindowStart, count: 0 };
 }
 
+const MAX_SAFE_LIMIT = 2_147_483_647; // 2^31 - 1
+
 // ─── Algorithm ────────────────────────────────────────────────────────────────
 
 /**
  * Fixed Window Counter rate-limiting algorithm.
  *
  * ### Semantics
- * - Windows are **epoch-aligned**: `windowStart = nowMs - (nowMs % windowMs)`.
+ * - Windows are **epoch-aligned**: `windowStart = floor(nowMs / windowMs) * windowMs`.
  *   All clients sharing the same key see identical window boundaries.
- * - The counter **always increments**, even on denied requests, preventing
- *   probing attacks from observing remaining count without cost.
+ * - Denied requests **do not increment** the count (no consumption on rejection).
  * - When the clock moves backwards (NTP corrections), the algorithm clamps
  *   to the stored window and never resets early (ADR-0002 monotonicity).
  *
  * ### Decision field semantics
  * | Field          | Meaning                                       |
  * |----------------|-----------------------------------------------|
- * | `remaining`    | Tokens left in the current window              |
- * | `resetAtMs`    | Epoch ms when the current window closes        |
- * | `retryAfterMs` | 0 if allowed; ms until window resets if denied |
+ * | `limit`        | Configured limit for the window               |
+ * | `remaining`    | Admitted capacity remaining in current window |
+ * | `resetAtMs`    | Epoch ms when the current window closes       |
+ * | `retryAfterMs` | 0 if allowed; ms until window resets if denied (≥ 1) |
  *
  * @example
  * ```ts
- * import { createLimiter, createMemoryStore } from '@reqnx/core';
- * import { fixedWindow } from '@reqnx/core/algorithms';
+ * import { createLimiter, createMemoryStore, fixedWindow } from '@reqnx/core';
  *
  * const limiter = createLimiter({
  *   algorithm: fixedWindow,
  *   store: createMemoryStore(),
  *   prefix: 'api',
- *   config: { max: 100, window: '1m' },
+ *   config: { limit: 100, window: '1m' },
  * });
  *
  * const decision = await limiter.check('user-123');
@@ -148,29 +152,43 @@ export const fixedWindow: Algorithm<FixedWindowConfig, FixedWindowState> = {
   stateVersion: 1,
 
   parseConfig(input: unknown): FixedWindowConfig {
-    if (!input || typeof input !== 'object') {
-      throw new ConfigError('Fixed window config must be an object.');
+    if (!input || typeof input !== 'object' || Array.isArray(input)) {
+      throw new ConfigError('Fixed window config must be a plain object.');
     }
 
     const raw = input as Record<string, unknown>;
-
-    // Validate max
-    const max = raw['max'];
-    if (typeof max !== 'number' || !Number.isFinite(max) || !Number.isInteger(max) || max <= 0) {
+    const allowedKeys = ['limit', 'window'];
+    const extraKeys = Object.keys(raw).filter((k) => !allowedKeys.includes(k));
+    if (extraKeys.length > 0) {
       throw new ConfigError(
-        `Fixed window \`max\` must be a positive integer, got ${String(max)}.`,
+        `Unknown config key(s): ${extraKeys.join(', ')}. Allowed keys are: ${allowedKeys.join(', ')}.`,
       );
     }
 
-    // Validate window
-    const window = raw['window'];
-    if (window === undefined || window === null) {
+    if (!('limit' in raw)) {
+      throw new ConfigError('Fixed window `limit` is required.');
+    }
+
+    const limit = raw['limit'];
+    if (
+      typeof limit !== 'number' ||
+      !Number.isSafeInteger(limit) ||
+      limit < 1 ||
+      limit > MAX_SAFE_LIMIT
+    ) {
+      throw new ConfigError(
+        `Fixed window \`limit\` must be a safe integer between 1 and ${MAX_SAFE_LIMIT}, got ${String(limit)}.`,
+      );
+    }
+
+    if (!('window' in raw)) {
       throw new ConfigError('Fixed window `window` is required.');
     }
 
+    const window = raw['window'];
     const windowMs = parseDuration(window as Duration);
 
-    return { max, windowMs };
+    return { limit, windowMs };
   },
 
   step(
@@ -181,16 +199,16 @@ export const fixedWindow: Algorithm<FixedWindowConfig, FixedWindowState> = {
   ): { readonly decision: Decision; readonly nextState: FixedWindowState } {
     const { windowStart, count } = resolveWindow(state, nowMs, config.windowMs);
 
-    const newCount = count + cost;
-    const allowed = newCount <= config.max;
-    const remaining = Math.max(0, config.max - newCount);
+    const allowed = count + cost <= config.limit;
+    const nextCount = allowed ? count + cost : count;
+    const remaining = config.limit - nextCount;
     const windowEnd = windowStart + config.windowMs;
-    const retryAfterMs = allowed ? 0 : Math.max(0, windowEnd - nowMs);
+    const retryAfterMs = allowed ? 0 : Math.max(1, windowEnd - nowMs);
 
     return {
       decision: {
         allowed,
-        limit: config.max,
+        limit: config.limit,
         remaining,
         resetAtMs: windowEnd,
         retryAfterMs,
@@ -198,7 +216,7 @@ export const fixedWindow: Algorithm<FixedWindowConfig, FixedWindowState> = {
       },
       nextState: {
         windowStart,
-        count: newCount,
+        count: nextCount,
       },
     };
   },
@@ -210,14 +228,15 @@ export const fixedWindow: Algorithm<FixedWindowConfig, FixedWindowState> = {
   ): Decision {
     const { windowStart, count } = resolveWindow(state, nowMs, config.windowMs);
 
-    const allowed = count < config.max;
-    const remaining = Math.max(0, config.max - count);
+    // allowed means a cost-1 request would succeed now
+    const allowed = count + 1 <= config.limit;
+    const remaining = config.limit - count;
     const windowEnd = windowStart + config.windowMs;
-    const retryAfterMs = allowed ? 0 : Math.max(0, windowEnd - nowMs);
+    const retryAfterMs = allowed ? 0 : Math.max(1, windowEnd - nowMs);
 
     return {
       allowed,
-      limit: config.max,
+      limit: config.limit,
       remaining,
       resetAtMs: windowEnd,
       retryAfterMs,
