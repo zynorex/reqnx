@@ -1,0 +1,114 @@
+---
+title: 'Getting Started'
+description: 'Install REQNX, create a limiter, and protect your first endpoint in under two minutes.'
+---
+
+REQNX is a pluggable, distributed-ready rate limiter library for Node.js. The core package (`@reqnx/core`) has **zero runtime dependencies** and runs seamlessly in Node.js, Bun, Deno, and modern edge environments.
+
+---
+
+## Installation
+
+Install `@reqnx/core` using your preferred package manager:
+
+```bash
+# pnpm
+pnpm add @reqnx/core
+
+# npm
+npm install @reqnx/core
+
+# yarn
+yarn add @reqnx/core
+```
+
+---
+
+## Quick Start
+
+Setting up rate limiting requires three steps: choosing an algorithm, choosing a store, and creating the limiter instance.
+
+```typescript
+import { createLimiter, createMemoryStore, fixedWindow } from '@reqnx/core';
+
+// 1. Initialise the in-memory store
+const store = createMemoryStore();
+
+// 2. Instantiate the limiter
+const limiter = createLimiter({
+  algorithm: fixedWindow,
+  store,
+  prefix: 'api',
+  config: {
+    limit: 10, // Max 10 requests
+    window: '1m', // Per 1-minute window
+  },
+});
+
+// 3. Check a request
+const decision = await limiter.check('user:1042');
+
+if (!decision.allowed) {
+  console.log(`Rate limit exceeded. Retry after ${decision.retryAfterMs}ms`);
+} else {
+  console.log(`Allowed! Quota remaining: ${decision.remaining}`);
+}
+```
+
+---
+
+## Understanding the Decision Object
+
+Every check returns an immutable `Decision` object:
+
+```typescript
+interface Decision {
+  /** Whether the request was admitted (true) or denied (false). */
+  readonly allowed: boolean;
+  /** Maximum capacity configured for this window. */
+  readonly limit: number;
+  /** Remaining admitted capacity in the current window. */
+  readonly remaining: number;
+  /** Unix epoch timestamp (ms) when the current window expires. */
+  readonly resetAtMs: number;
+  /** Milliseconds until the caller should retry (0 if admitted). */
+  readonly retryAfterMs: number;
+  /** True if store failed and fallback policy admitted the request. */
+  readonly degraded: boolean;
+}
+```
+
+### Setting Standard Rate Limit Headers
+
+Using the decision object to set IETF-standard rate limit response headers:
+
+```typescript
+response.setHeader('RateLimit-Limit', decision.limit);
+response.setHeader('RateLimit-Remaining', decision.remaining);
+response.setHeader('RateLimit-Reset', Math.ceil(decision.resetAtMs / 1000));
+
+if (!decision.allowed) {
+  response.setHeader('Retry-After', Math.ceil(decision.retryAfterMs / 1000));
+  response.status(429).send('Too Many Requests');
+}
+```
+
+---
+
+## Custom Costs
+
+By default, every request costs `1` token. You can pass a custom cost for heavier operations (e.g. bulk endpoints, search, LLM generation):
+
+```typescript
+const decision = await limiter.check('tenant:enterprise', { cost: 5 });
+```
+
+If the remaining quota is less than the requested cost, the request is denied and **no tokens are deducted**.
+
+---
+
+## Next Steps
+
+- Explore the [Algorithm Comparison](/algorithms/) to choose the right algorithm.
+- Read deep-dive documentation on the [Fixed Window Counter](/algorithms/fixed-window/).
+- Try the interactive [Playground](/playground/) running in your browser.

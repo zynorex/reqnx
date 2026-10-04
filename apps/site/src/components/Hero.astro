@@ -1,0 +1,30 @@
+---
+/**
+ * Hero section for the REQNX landing page.
+ *
+ * Displays the project name, tagline, version badge, install snippet,
+ * and call-to-action buttons over a blueprint grid background.
+ */
+import { siteConfig } from '../site.config';
+import InstallSnippet from './InstallSnippet.astro';
+import '../styles/landing.css';
+---
+
+<section class="rx-hero rx-blueprint-bg">
+  <div class="rx-hero-content">
+    <span class="rx-hero-version">{siteConfig.version}</span>
+    <h1 class="rx-hero-logo">{siteConfig.name}</h1>
+    <p class="rx-hero-tagline">{siteConfig.tagline}</p>
+
+    <div class="rx-install">
+      <InstallSnippet />
+    </div>
+
+    <div class="rx-hero-actions">
+      <a href="/getting-started/" class="rx-btn rx-btn-primary">Get Started</a>
+      <a href={siteConfig.repo} class="rx-btn rx-btn-outline" target="_blank" rel="noopener">
+        View on GitHub
+      </a>
+    </div>
+  </div>
+</section>

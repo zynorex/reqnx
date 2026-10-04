@@ -1,0 +1,36 @@
+---
+/**
+ * Feature cards grid for the landing page.
+ *
+ * Displays three key selling points as glassmorphic cards.
+ */
+import '../styles/landing.css';
+
+const features = [
+  {
+    icon: '⊞',
+    title: 'Five Algorithms',
+    description: 'Fixed window, sliding window log, sliding window counter, token bucket, and leaky bucket. Pick the right trade-off for your use case.',
+  },
+  {
+    icon: '◇',
+    title: 'Zero Dependencies',
+    description: '@reqnx/core has no runtime dependencies. Runs on Node.js, Bun, Deno, and edge runtimes without pulling in anything else.',
+  },
+  {
+    icon: '⬡',
+    title: 'Type-Safe Contracts',
+    description: 'Pure state-transition functions with full TypeScript types. Algorithms are deterministic and testable with a simulated clock.',
+  },
+] as const;
+---
+
+<section class="rx-features">
+  {features.map((f) => (
+    <div class="rx-card rx-feature-card">
+      <span class="rx-feature-icon">{f.icon}</span>
+      <h3 class="rx-feature-title">{f.title}</h3>
+      <p class="rx-feature-desc">{f.description}</p>
+    </div>
+  ))}
+</section>
