@@ -17,6 +17,9 @@
     "test:coverage": "vitest run --coverage",
     "check-deps": "tsx scripts/check-deps.ts",
     "check-packages": "pnpm -r --parallel run check-package",
+    "bench": "vitest bench --run && node --expose-gc --import tsx scripts/bench-memory.ts",
+    "bench:vitest": "vitest bench --run",
+    "bench:memory": "node --expose-gc --import tsx scripts/bench-memory.ts",
     "verify": "pnpm install && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check-packages"
   },
   "devDependencies": {
