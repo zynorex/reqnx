@@ -8,6 +8,7 @@ export default defineConfig({
       'packages/express',
       'packages/fastify',
       'packages/testkit',
+      'apps/site',
     ],
     coverage: {
       provider: 'v8',

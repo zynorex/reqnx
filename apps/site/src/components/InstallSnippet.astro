@@ -1,0 +1,21 @@
+---
+/**
+ * Terminal-style install snippet with copy button.
+ */
+import { siteConfig } from '../site.config';
+import CopyButton from './common/CopyButton';
+---
+
+<div class="rx-terminal">
+  <div class="rx-terminal-header">
+    <span class="rx-terminal-dot rx-terminal-dot--red"></span>
+    <span class="rx-terminal-dot rx-terminal-dot--yellow"></span>
+    <span class="rx-terminal-dot rx-terminal-dot--green"></span>
+  </div>
+  <div class="rx-terminal-body">
+    <span class="rx-terminal-prompt">$ </span>
+    <span class="rx-terminal-cmd">npm install </span>
+    <span class="rx-terminal-arg">{siteConfig.packageName}</span>
+    <CopyButton text={siteConfig.installCmd} client:idle />
+  </div>
+</div>

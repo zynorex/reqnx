@@ -22,7 +22,7 @@
 - `@reqnx/testkit` — `FakeClock`, store and algorithm contract suites, test algorithm fixtures, broken doubles, and negative control tests
 - 100% statements coverage on new core files, full property tests (fast-check)
 
-## Day 3 — Fixed Window Algorithm ✅
+## Day 3A — Fixed Window Algorithm ✅
 
 - Pure TS `step()` implementation with epoch-aligned windows and monotonicity on backwards clock
 - Strict `parseConfig()` validation (`limit` in $[1, 2^{31}-1]$, `window` via `parseDuration`, unknown keys rejected)
@@ -35,6 +35,17 @@
 - Full mutation pass (8 mutations, zero survivors)
 - Benchmark baseline: pure step throughput (>12M ops/s), MemoryStore throughput (>330k ops/s), and memory footprint (~273 B/key at 100k keys)
 - Docs: user-facing guide (`docs/algorithms/fixed-window.md`), Redis port spec (`docs/algorithms/fixed-window.redis-port.md`), and ADR-0010
+
+## Day 3B — Website Foundation ✅
+
+- Astro + Starlight static documentation engine with Preact interactive islands (`apps/site`)
+- Engineering blueprint visual direction with dark theme, indigo/cyan accents, and custom tokens
+- In-browser simulated demo runner using real `@reqnx/core` and deterministic `BrowserFakeClock`
+- Interactive playground (`/playground/`) with parameter adjustments, presets, and request timeline
+- Fixed Window algorithm page (`/algorithms/fixed-window/`) with embedded interactive simulator
+- Getting started guide (`/getting-started/`) and algorithm comparison matrix (`/algorithms/`)
+- ADR-0011 (Website Technology Stack), ADR-0012 (Browser Demo Architecture), ADR-0013 (Base-Path & SEO Guardrails)
+- Multi-project Vitest integration and build pipeline validation
 
 ## Day 4 — Token Bucket Algorithm
 

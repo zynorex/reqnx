@@ -34,6 +34,7 @@ packages/express   @reqnx/express   Express middleware (peer dep: express)
 packages/fastify   @reqnx/fastify   Fastify plugin (peer dep: fastify)
 packages/testkit   @reqnx/testkit   FakeClock + conformance suites (private)
 apps/demo-api      private          Demo server
+apps/site          private          Astro + Starlight docs & interactive browser playground
 docs/              architecture.md, adr/, ROADMAP.md
 scripts/           check-deps.ts (dependency graph linter)
 ```
@@ -140,7 +141,8 @@ type StoreErrorPolicy = 'fail-open' | 'fail-closed' | ((error, ctx) => Decision)
 
 - [x] Day 1: Architecture + scaffold
 - [x] Day 2: Core infrastructure (Clock, Duration, MemoryStore, createLimiter, testkit)
-- [x] Day 3: Fixed window algorithm (pure step, tests, contract suite, docs, benchmark entry; Lua port pending Day 6)
+- [x] Day 3A: Fixed window algorithm (pure step, tests, contract suite, docs, benchmark entry; Lua port pending Day 6)
+- [x] Day 3B: Website foundation (Astro + Starlight docs, Preact interactive playground, browser FakeClock, ADRs 0011-0013)
 - [ ] Day 4: Token bucket algorithm
 - [ ] Day 5: Sliding window (log + counter)
 - [ ] Day 6: Leaky bucket + RedisStore + Lua
