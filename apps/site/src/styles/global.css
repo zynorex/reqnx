@@ -1,0 +1,311 @@
+/* ──────────────────────────────────────────────────────────────────────────────
+ * REQNX Site — Global Design System
+ *
+ * Visual direction: "Engineering Blueprint"
+ * Base: dark navy-charcoal (#0f1117)
+ * Accents: electric indigo (#6366f1), cool cyan (#06b6d4)
+ * Typography: JetBrains Mono (headers/code) + Inter (body)
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+/* ─── Custom Properties ──────────────────────────────────────────────────── */
+
+:root {
+  /* Palette */
+  --rx-bg-primary: #0f1117;
+  --rx-bg-secondary: #161922;
+  --rx-bg-card: rgba(22, 25, 34, 0.7);
+  --rx-bg-card-hover: rgba(30, 34, 48, 0.8);
+
+  --rx-accent-indigo: #6366f1;
+  --rx-accent-indigo-dim: #4f46e5;
+  --rx-accent-indigo-glow: rgba(99, 102, 241, 0.25);
+  --rx-accent-cyan: #06b6d4;
+  --rx-accent-cyan-dim: #0891b2;
+
+  --rx-text-primary: #e2e8f0;
+  --rx-text-secondary: #94a3b8;
+  --rx-text-muted: #64748b;
+
+  --rx-allowed: #22c55e;
+  --rx-allowed-bg: rgba(34, 197, 94, 0.1);
+  --rx-denied: #ef4444;
+  --rx-denied-bg: rgba(239, 68, 68, 0.1);
+  --rx-degraded: #f59e0b;
+
+  --rx-border: rgba(99, 102, 241, 0.15);
+  --rx-border-hover: rgba(99, 102, 241, 0.35);
+
+  /* Typography */
+  --rx-font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+  --rx-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Spacing */
+  --rx-radius-sm: 6px;
+  --rx-radius-md: 10px;
+  --rx-radius-lg: 16px;
+
+  /* Transitions */
+  --rx-transition-fast: 150ms ease;
+  --rx-transition-base: 250ms ease;
+}
+
+/* ─── Starlight Theme Overrides ──────────────────────────────────────────── */
+
+:root {
+  --sl-color-accent-low: #1e1b4b;
+  --sl-color-accent: #6366f1;
+  --sl-color-accent-high: #a5b4fc;
+
+  --sl-color-white: #e2e8f0;
+  --sl-color-gray-1: #cbd5e1;
+  --sl-color-gray-2: #94a3b8;
+  --sl-color-gray-3: #64748b;
+  --sl-color-gray-4: #334155;
+  --sl-color-gray-5: #1e293b;
+  --sl-color-gray-6: #161922;
+  --sl-color-black: #0f1117;
+
+  --sl-font: var(--rx-font-sans);
+  --sl-font-mono: var(--rx-font-mono);
+}
+
+/* ─── Base Styles ────────────────────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--rx-font-sans);
+  background: var(--rx-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Blueprint Grid Background ─────────────────────────────────────────── */
+
+.rx-blueprint-bg {
+  position: relative;
+}
+
+.rx-blueprint-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--rx-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rx-border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Glassmorphic Card ──────────────────────────────────────────────────── */
+
+.rx-card {
+  background: var(--rx-bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--rx-border);
+  border-radius: var(--rx-radius-lg);
+  padding: 1.5rem;
+  transition:
+    border-color var(--rx-transition-base),
+    box-shadow var(--rx-transition-base);
+}
+
+.rx-card:hover {
+  border-color: var(--rx-border-hover);
+  box-shadow: 0 0 24px var(--rx-accent-indigo-glow);
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+
+.rx-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--rx-radius-sm);
+  font-family: var(--rx-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--rx-transition-fast);
+  border: 1px solid transparent;
+}
+
+.rx-btn-primary {
+  background: var(--rx-accent-indigo);
+  color: #fff;
+  border-color: var(--rx-accent-indigo);
+}
+
+.rx-btn-primary:hover {
+  background: var(--rx-accent-indigo-dim);
+  box-shadow: 0 0 16px var(--rx-accent-indigo-glow);
+}
+
+.rx-btn-outline {
+  background: transparent;
+  color: var(--rx-text-primary);
+  border-color: var(--rx-border-hover);
+}
+
+.rx-btn-outline:hover {
+  border-color: var(--rx-accent-indigo);
+  color: var(--rx-accent-indigo);
+}
+
+/* ─── Decision Badges ────────────────────────────────────────────────────── */
+
+.rx-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-family: var(--rx-font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.rx-badge-allowed {
+  color: var(--rx-allowed);
+  background: var(--rx-allowed-bg);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.rx-badge-denied {
+  color: var(--rx-denied);
+  background: var(--rx-denied-bg);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.rx-badge-coming-soon {
+  color: var(--rx-text-muted);
+  background: rgba(100, 116, 139, 0.1);
+  border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+/* ─── Terminal Block ─────────────────────────────────────────────────────── */
+
+.rx-terminal {
+  background: #1a1d2e;
+  border: 1px solid var(--rx-border);
+  border-radius: var(--rx-radius-md);
+  overflow: hidden;
+}
+
+.rx-terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.625rem 1rem;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.rx-terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.rx-terminal-dot--red {
+  background: #ff5f57;
+}
+.rx-terminal-dot--yellow {
+  background: #febc2e;
+}
+.rx-terminal-dot--green {
+  background: #28c840;
+}
+
+.rx-terminal-body {
+  padding: 1rem 1.25rem;
+  font-family: var(--rx-font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--rx-text-primary);
+}
+
+.rx-terminal-prompt {
+  color: var(--rx-accent-cyan);
+  user-select: none;
+}
+
+.rx-terminal-cmd {
+  color: var(--rx-accent-indigo);
+  font-weight: 500;
+}
+
+.rx-terminal-arg {
+  color: var(--rx-text-primary);
+}
+
+/* ─── Gauge Bar ──────────────────────────────────────────────────────────── */
+
+.rx-gauge {
+  width: 100%;
+  height: 8px;
+  background: var(--rx-bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rx-gauge-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition:
+    width var(--rx-transition-base),
+    background-color var(--rx-transition-base);
+}
+
+.rx-gauge-fill--ok {
+  background: linear-gradient(90deg, var(--rx-accent-indigo), var(--rx-accent-cyan));
+}
+
+.rx-gauge-fill--warn {
+  background: var(--rx-degraded);
+}
+
+.rx-gauge-fill--critical {
+  background: var(--rx-denied);
+}
+
+/* ─── Prefers Reduced Motion ─────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--rx-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rx-text-muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rx-text-secondary);
+}

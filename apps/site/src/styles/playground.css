@@ -1,0 +1,163 @@
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Playground component styles
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+.rx-playground {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ─── Config Panel ───────────────────────────────────────────────────────── */
+
+.rx-config-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.rx-config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.rx-config-label {
+  font-family: var(--rx-font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--rx-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rx-config-input {
+  background: var(--rx-bg-secondary);
+  border: 1px solid var(--rx-border);
+  border-radius: var(--rx-radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-family: var(--rx-font-mono);
+  font-size: 0.875rem;
+  color: var(--rx-text-primary);
+  outline: none;
+  transition: border-color var(--rx-transition-fast);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rx-config-input:focus {
+  border-color: var(--rx-accent-indigo);
+  box-shadow: 0 0 0 2px var(--rx-accent-indigo-glow);
+}
+
+/* ─── Controls ───────────────────────────────────────────────────────────── */
+
+.rx-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.rx-controls-info {
+  margin-left: auto;
+  font-family: var(--rx-font-mono);
+  font-size: 0.75rem;
+  color: var(--rx-text-muted);
+}
+
+/* ─── Timeline ───────────────────────────────────────────────────────────── */
+
+.rx-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.rx-timeline-entry {
+  display: grid;
+  grid-template-columns: 80px 80px 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--rx-radius-sm);
+  font-family: var(--rx-font-mono);
+  font-size: 0.8rem;
+  transition: background var(--rx-transition-fast);
+}
+
+.rx-timeline-entry:hover {
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.rx-timeline-entry--new {
+  animation: rx-timeline-flash 600ms ease-out;
+}
+
+@keyframes rx-timeline-flash {
+  0% {
+    background: var(--rx-accent-indigo-glow);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+.rx-timeline-time {
+  color: var(--rx-text-muted);
+}
+
+.rx-timeline-key {
+  color: var(--rx-accent-cyan);
+}
+
+.rx-timeline-remaining {
+  color: var(--rx-text-secondary);
+  font-size: 0.75rem;
+}
+
+/* ─── Summary ────────────────────────────────────────────────────────────── */
+
+.rx-summary {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.rx-summary-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.rx-summary-value {
+  font-family: var(--rx-font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--rx-text-primary);
+}
+
+.rx-summary-label {
+  font-size: 0.7rem;
+  color: var(--rx-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─── Simulated label ────────────────────────────────────────────────────── */
+
+.rx-simulated-label {
+  font-family: var(--rx-font-mono);
+  font-size: 0.65rem;
+  color: var(--rx-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 0.375rem;
+  border-top: 1px solid var(--rx-border);
+  margin-top: 0.5rem;
+}

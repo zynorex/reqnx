@@ -1,0 +1,23 @@
+{
+  "name": "@reqnx/site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/preact": "^4.0.0",
+    "@astrojs/starlight": "^0.34.0",
+    "astro": "^5.7.0",
+    "preact": "^10.25.0",
+    "@reqnx/core": "workspace:*"
+  },
+  "devDependencies": {
+    "remark-math": "^6.0.0",
+    "rehype-katex": "^7.0.0"
+  }
+}
