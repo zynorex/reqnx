@@ -45,3 +45,11 @@ export { decisionToHeaders } from './headers.js';
 
 // Limiter factory
 export { createLimiter } from './limiter.js';
+
+// Algorithms
+export type {
+  FixedWindowInput,
+  FixedWindowConfig,
+  FixedWindowState,
+} from './algorithms/fixed-window.js';
+export { fixedWindow } from './algorithms/fixed-window.js';
