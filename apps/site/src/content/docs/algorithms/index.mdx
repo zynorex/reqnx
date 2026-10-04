@@ -1,0 +1,51 @@
+---
+title: 'Algorithm Comparison'
+description: "Compare REQNX's five rate limiting algorithms across time complexity, memory footprint, and burst behavior."
+---
+
+REQNX implements five classical rate limiting algorithms as pure, deterministic state machines. Each algorithm makes different trade-offs between computational overhead, memory usage, and burst tolerance.
+
+---
+
+## Algorithms at a Glance
+
+| Algorithm                                     | Status         | Time             | Space / Key               | Burst Behavior               | Best For                               |
+| --------------------------------------------- | -------------- | ---------------- | ------------------------- | ---------------------------- | -------------------------------------- |
+| **[Fixed Window](/algorithms/fixed-window/)** | ✅ Available   | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ (~270 B) | Up to $2\times$ at boundary  | Highest throughput, standard API tiers |
+| **Token Bucket**                              | ⏳ Coming Soon | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ (~320 B) | Controlled burst to capacity | APIs with natural spikiness            |
+| **Sliding Window Log**                        | ⏳ Coming Soon | $\mathcal{O}(n)$ | $\mathcal{O}(n)$          | No boundary burst            | Exact enforcement, strict security     |
+| **Sliding Window Counter**                    | ⏳ Coming Soon | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ (~350 B) | Smoothed approximation       | Balanced production workloads          |
+| **Leaky Bucket**                              | ⏳ Coming Soon | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ (~320 B) | Zero burst (fixed rate)      | Downstream queue protection            |
+
+---
+
+## Choosing the Right Algorithm
+
+### 1. Fixed Window Counter
+
+Choose Fixed Window when raw performance and simplicity are primary requirements. It provides the highest operations per second (>20M ops/s pure in-memory) and minimal memory overhead. However, be aware of the [boundary burst phenomenon](/algorithms/fixed-window/#the-boundary-burst-double-capacity-phenomenon), where an attacker can consume $2\times$ the limit across a window boundary.
+
+### 2. Token Bucket
+
+Choose Token Bucket when your services need to accommodate legitimate bursts (such as page loads triggering several concurrent API calls) while enforcing a strict steady-state refill rate over time.
+
+### 3. Sliding Window Log
+
+Choose Sliding Window Log when absolute mathematical precision is necessary and memory constraints are secondary. Because it stores the timestamp of every request within the active window, it guarantees zero burst over any rolling window.
+
+### 4. Sliding Window Counter
+
+Choose Sliding Window Counter for an optimal balance: it interpolates counts between the previous and current fixed windows, providing near-perfect smoothing with fixed $\mathcal{O}(1)$ memory.
+
+### 5. Leaky Bucket
+
+Choose Leaky Bucket when you need a smooth, continuous output stream. Requests are drained at a strictly constant rate, making it ideal for protecting rate-sensitive third-party downstream APIs.
+
+---
+
+## Interactive Demos
+
+Experience these algorithms live in your browser:
+
+- [Fixed Window Interactive Demo](/algorithms/fixed-window/)
+- [Full Playground](/playground/)

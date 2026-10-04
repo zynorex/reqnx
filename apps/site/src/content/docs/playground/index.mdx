@@ -1,0 +1,33 @@
+---
+title: 'Interactive Playground'
+description: 'Simulate and test rate-limiting algorithms with custom parameters and deterministic scenarios in real-time.'
+---
+
+import ScenarioPlayer from '../../../components/playground/ScenarioPlayer';
+
+This playground runs the real `@reqnx/core` library directly in your browser using a deterministic simulated clock. No server calls or mock algorithms are involved.
+
+---
+
+## Live Simulator
+
+Adjust the configuration below, send manual requests, or run one of the pre-programmed scenario presets to observe the state transitions, capacity gauges, and rate-limiting decisions in real time.
+
+<div style="margin: 2rem 0;">
+  <ScenarioPlayer
+    client:load
+    algorithmId="fixed-window"
+    defaultLimit={5}
+    defaultWindow="10s"
+    showConfig={true}
+  />
+</div>
+
+---
+
+## Scenario Presets Explained
+
+- **Basic Burst**: Fires 7 rapid requests against a limit of 5. The first 5 are admitted (`allowed: true`); the 6th and 7th are denied (`allowed: false`, HTTP 429).
+- **Window Rollover**: Sends 5 requests to exhaust the window, advances the simulated clock past the 10-second boundary, then fires 3 more. Demonstrates clean window expiration and quota recovery.
+- **Boundary Burst**: Sends 5 requests at the end of window 1 ($t = 9.9\text{s}$), then 5 requests immediately at the beginning of window 2 ($t = 10.1\text{s}$). All 10 are admitted across a 200ms interval, demonstrating the $2\times$ boundary burst.
+- **Multi-Key Isolation**: Alternates requests between two keys (`alice` and `bob`). Shows that rate limits and window state are strictly isolated per key.
