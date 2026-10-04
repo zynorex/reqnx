@@ -1,0 +1,24 @@
+{
+  "environment": {
+    "date": "2026-10-04T05:12:07.775Z",
+    "nodeVersion": "v24.12.0",
+    "platform": "win32",
+    "arch": "x64",
+    "os": "Windows_NT 10.0.26200",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12500H",
+    "cpuCores": 16,
+    "totalRamMb": 16069
+  },
+  "benchmark": {
+    "algorithm": "fixed-window",
+    "store": "MemoryStore",
+    "keyCount": 100000,
+    "storeKeys": 100000,
+    "durationMs": 190,
+    "opsPerSec": 525920,
+    "baselineHeapBytes": 8090408,
+    "finalHeapBytes": 35420544,
+    "heapDeltaBytes": 27330136,
+    "bytesPerKey": 273.3
+  }
+}

@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import * as fc from 'fast-check';
 import { runAlgorithmContractSuite } from '../conformance.js';
 import { allowAllAlgorithm, counterAlgorithm } from '../fixtures.js';
+import { fixedWindow } from '@reqnx/core';
 
 runAlgorithmContractSuite(counterAlgorithm, { limit: 10, windowMs: 1000 });
 runAlgorithmContractSuite(allowAllAlgorithm, {});
+runAlgorithmContractSuite(fixedWindow, { limit: 10, windowMs: 1000 });
 
 describe('Algorithm Contract Properties (fast-check)', () => {
   it('counterAlgorithm preserves 0 <= remaining <= limit for arbitrary positive costs', () => {
