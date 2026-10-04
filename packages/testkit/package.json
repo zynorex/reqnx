@@ -30,6 +30,14 @@
   "dependencies": {
     "@reqnx/core": "workspace:*"
   },
+  "peerDependencies": {
+    "vitest": ">=2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "typescript": "^5.7.0"
   }
