@@ -7,17 +7,19 @@ This specification details the Redis Lua script port of the `@reqnx/core` `token
 ## 1. Storage Encoding
 
 ### Redis Data Structure
+
 - Single Redis `Hash` per rate limiter key.
 - Key format: `reqnx:{prefix}:token-bucket:{identity}`
 
 ### Hash Fields
-| Field Name | Type | Value Description |
-|---|---|---|
-| `v` | string (integer) | State schema version. Must be `"1"`. |
-| `l` | string (integer) | `level`: Current token level in internal units ($0 \le \text{level} \le \text{capacityUnits}$). |
-| `at` | string (integer) | Epoch millisecond timestamp when `level` was last updated / admitted. |
-| `a` | string (integer) | Normalised rate numerator under which this state was written. |
-| `b` | string (integer) | Normalised rate denominator under which this state was written. |
+
+| Field Name | Type             | Value Description                                                                               |
+| ---------- | ---------------- | ----------------------------------------------------------------------------------------------- |
+| `v`        | string (integer) | State schema version. Must be `"1"`.                                                            |
+| `l`        | string (integer) | `level`: Current token level in internal units ($0 \le \text{level} \le \text{capacityUnits}$). |
+| `at`       | string (integer) | Epoch millisecond timestamp when `level` was last updated / admitted.                           |
+| `a`        | string (integer) | Normalised rate numerator under which this state was written.                                   |
+| `b`        | string (integer) | Normalised rate denominator under which this state was written.                                 |
 
 ---
 
@@ -26,17 +28,19 @@ This specification details the Redis Lua script port of the `@reqnx/core` `token
 Pre-normalisation is performed in TypeScript by `parseConfig()`. All rate reduction ($g = \gcd(\text{refillTokens}, \text{intervalMs})$), `capacityUnits`, and `fullRefillMs` arrive as pre-computed safe integers, keeping the Lua script minimal and arithmetic-only.
 
 ### `KEYS`
+
 - `KEYS[1]`: The full storage key (`reqnx:{prefix}:token-bucket:{identity}`).
 
 ### `ARGV`
-| Argument | Type | Description |
-|---|---|---|
-| `ARGV[1]` | integer | `capacity`: Configured maximum burst capacity ($\le 2^{31}-1$). |
-| `ARGV[2]` | integer | `a`: Normalised rate numerator ($\le 2^{31}-1$). |
-| `ARGV[3]` | integer | `b`: Normalised rate denominator ($1 \text{ token} = b \text{ units}$). |
-| `ARGV[4]` | integer | `capacityUnits`: Pre-computed $\text{capacity} \times b$ ($\le 2^{51}$). |
-| `ARGV[5]` | integer | `fullRefillMs`: Pre-computed $\lceil \frac{\text{capacityUnits}}{a} \rceil$. |
-| `ARGV[6]` | integer | `cost`: Requested consumption cost ($\ge 1$). |
+
+| Argument  | Type    | Description                                                                                                                           |
+| --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `ARGV[1]` | integer | `capacity`: Configured maximum burst capacity ($\le 2^{31}-1$).                                                                       |
+| `ARGV[2]` | integer | `a`: Normalised rate numerator ($\le 2^{31}-1$).                                                                                      |
+| `ARGV[3]` | integer | `b`: Normalised rate denominator ($1 \text{ token} = b \text{ units}$).                                                               |
+| `ARGV[4]` | integer | `capacityUnits`: Pre-computed $\text{capacity} \times b$ ($\le 2^{51}$).                                                              |
+| `ARGV[5]` | integer | `fullRefillMs`: Pre-computed $\lceil \frac{\text{capacityUnits}}{a} \rceil$.                                                          |
+| `ARGV[6]` | integer | `cost`: Requested consumption cost ($\ge 1$).                                                                                         |
 | `ARGV[7]` | integer | `nowMsOverride` (optional): If $> 0$, use this timestamp instead of `redis.call('TIME')`. Enables deterministic differential testing. |
 
 ---
@@ -44,6 +48,7 @@ Pre-normalisation is performed in TypeScript by `parseConfig()`. All rate reduct
 ## 3. Time Source & Integer Arithmetic
 
 1. **Timestamp Resolution**:
+
    ```lua
    local nowMs = tonumber(ARGV[7])
    if not nowMs or nowMs <= 0 then
@@ -161,10 +166,10 @@ return {
 
 During Day 6 implementation, differential testing will feed identical sequences to TypeScript `tokenBucket.step()` and the Redis Lua script:
 
-| Test Seed | Parameters | Expected Sequence |
-|---|---|---|
-| **Golden Config A** | cap 5, 1 tok / 1000ms | t=0: five cost 1 allowed (rem: 4, 3, 2, 1, 0, resetAt: 1000..5000); t=0: 6th denied (rem 0, retryAfter 1000); t=500: denied (retryAfter 500); t=1000: allowed (rem 0); t=11000: allowed (rem 4) |
-| **Golden Config B** | cap 3, 3 tok / 1000ms | t=0: cost 3 allowed; t=0: cost 1 denied (retryAfter 334); t=333: denied (retryAfter 1); t=334: allowed (rem 0, resetAt 1334); t=667: allowed; t=1000: allowed |
-| **Golden Config C** | cap 10, 10 tok / 1000ms | t=0: cost 4 allowed (rem 6, resetAt 400); t=0: cost 7 denied (retryAfter 100); t=100: cost 7 allowed (rem 0, resetAt 1100) |
-| **Backwards Clock** | stored at=10000, level=2000 | t=9000 cost 1 allowed (rem 1, resetAt 14000); t=9000 cost 3 denied (rem 2, retryAfter 2000) |
-| **Extreme Cost** | cap 5, cost MAX_SAFE_INT | t=0: denied (limit 5, rem 5, retryAfter 5000, zero state change) |
+| Test Seed           | Parameters                  | Expected Sequence                                                                                                                                                                               |
+| ------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Golden Config A** | cap 5, 1 tok / 1000ms       | t=0: five cost 1 allowed (rem: 4, 3, 2, 1, 0, resetAt: 1000..5000); t=0: 6th denied (rem 0, retryAfter 1000); t=500: denied (retryAfter 500); t=1000: allowed (rem 0); t=11000: allowed (rem 4) |
+| **Golden Config B** | cap 3, 3 tok / 1000ms       | t=0: cost 3 allowed; t=0: cost 1 denied (retryAfter 334); t=333: denied (retryAfter 1); t=334: allowed (rem 0, resetAt 1334); t=667: allowed; t=1000: allowed                                   |
+| **Golden Config C** | cap 10, 10 tok / 1000ms     | t=0: cost 4 allowed (rem 6, resetAt 400); t=0: cost 7 denied (retryAfter 100); t=100: cost 7 allowed (rem 0, resetAt 1100)                                                                      |
+| **Backwards Clock** | stored at=10000, level=2000 | t=9000 cost 1 allowed (rem 1, resetAt 14000); t=9000 cost 3 denied (rem 2, retryAfter 2000)                                                                                                     |
+| **Extreme Cost**    | cap 5, cost MAX_SAFE_INT    | t=0: denied (limit 5, rem 5, retryAfter 5000, zero state change)                                                                                                                                |

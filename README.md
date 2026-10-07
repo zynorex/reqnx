@@ -25,13 +25,13 @@ if (!decision.allowed) {
 
 ## Algorithms
 
-| Algorithm | Status | In-Memory | Redis (Lua) | Docs |
-|---|---|---|---|---|
-| **Fixed Window Counter** | ✅ Implemented | ✅ Complete | ⏳ Day 6 | [Documentation](docs/algorithms/fixed-window.md) |
-| **Token Bucket** | ✅ Implemented | ✅ Complete | ⏳ Day 6 | [Documentation](docs/algorithms/token-bucket.md) |
-| **Sliding Window Log** | ⏳ Planned | ⏳ Day 5 | ⏳ Day 6 | — |
-| **Sliding Window Counter** | ⏳ Planned | ⏳ Day 5 | ⏳ Day 6 | — |
-| **Leaky Bucket** | ⏳ Planned | ⏳ Day 6 | ⏳ Day 6 | — |
+| Algorithm                  | Status         | In-Memory   | Redis (Lua) | Docs                                             |
+| -------------------------- | -------------- | ----------- | ----------- | ------------------------------------------------ |
+| **Fixed Window Counter**   | ✅ Implemented | ✅ Complete | ⏳ Day 6    | [Documentation](docs/algorithms/fixed-window.md) |
+| **Token Bucket**           | ✅ Implemented | ✅ Complete | ⏳ Day 6    | [Documentation](docs/algorithms/token-bucket.md) |
+| **Sliding Window Log**     | ⏳ Planned     | ⏳ Day 5    | ⏳ Day 6    | —                                                |
+| **Sliding Window Counter** | ⏳ Planned     | ⏳ Day 5    | ⏳ Day 6    | —                                                |
+| **Leaky Bucket**           | ⏳ Planned     | ⏳ Day 6    | ⏳ Day 6    | —                                                |
 
 ## Features
 

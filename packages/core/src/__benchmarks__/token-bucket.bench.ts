@@ -1,8 +1,5 @@
 import { bench, describe } from 'vitest';
-import {
-  tokenBucket,
-  type TokenBucketState,
-} from '../algorithms/token-bucket.js';
+import { tokenBucket, type TokenBucketState } from '../algorithms/token-bucket.js';
 import { createMemoryStore } from '../memory-store.js';
 import { createLimiter } from '../limiter.js';
 

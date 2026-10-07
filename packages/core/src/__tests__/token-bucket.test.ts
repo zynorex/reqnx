@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  tokenBucket,
-  type TokenBucketConfig,
-  type TokenBucketState,
-} from '../algorithms/token-bucket.js';
+import { tokenBucket, type TokenBucketState } from '../algorithms/token-bucket.js';
 import {
   gcd,
   normaliseRate,
@@ -14,7 +10,6 @@ import {
   MAX_CAPACITY_UNITS,
 } from '../algorithms/token-bucket.js';
 import { ConfigError } from '../errors.js';
-import { MAX_DURATION_MS } from '../duration.js';
 
 describe('tokenBucket — Pure Arithmetic Helpers', () => {
   it('gcd computes greatest common divisor correctly', () => {
@@ -71,6 +66,11 @@ describe('tokenBucket — Pure Arithmetic Helpers', () => {
     const capacityUnits = 10000;
     const refilled = clampSafeRefill(0, 10_000_000_000_000_000, fullRefillMs, a, capacityUnits);
     expect(refilled).toBe(capacityUnits);
+
+    // If an intermediate somehow exceeds safe integer bounds, RangeError is thrown
+    expect(() =>
+      clampSafeRefill(Number.MAX_SAFE_INTEGER, 10, 10, 100, Number.MAX_SAFE_INTEGER),
+    ).toThrow(RangeError);
   });
 
   it('ceilTimeToLevel returns exact ceiling milliseconds', () => {
@@ -104,9 +104,9 @@ describe('tokenBucket — Config Validation Matrix', () => {
 
   it('validates capacity', () => {
     // Missing
-    expect(() =>
-      tokenBucket.parseConfig({ refillTokens: 1, refillInterval: '1s' }),
-    ).toThrow(ConfigError);
+    expect(() => tokenBucket.parseConfig({ refillTokens: 1, refillInterval: '1s' })).toThrow(
+      ConfigError,
+    );
 
     // Non-integers / non-numbers / out of range
     const invalidCapacities = [0, -1, 1.5, NaN, Infinity, -Infinity, '10', MAX_SAFE_CAPACITY + 1];
@@ -123,9 +123,9 @@ describe('tokenBucket — Config Validation Matrix', () => {
 
   it('validates refillTokens', () => {
     // Missing
-    expect(() =>
-      tokenBucket.parseConfig({ capacity: 10, refillInterval: '1s' }),
-    ).toThrow(ConfigError);
+    expect(() => tokenBucket.parseConfig({ capacity: 10, refillInterval: '1s' })).toThrow(
+      ConfigError,
+    );
 
     // Non-integers / non-numbers / out of range
     const invalidTokens = [0, -1, 2.5, NaN, Infinity, -Infinity, '1', MAX_SAFE_CAPACITY + 1];
@@ -142,9 +142,7 @@ describe('tokenBucket — Config Validation Matrix', () => {
 
   it('validates refillInterval', () => {
     // Missing
-    expect(() =>
-      tokenBucket.parseConfig({ capacity: 10, refillTokens: 1 }),
-    ).toThrow(ConfigError);
+    expect(() => tokenBucket.parseConfig({ capacity: 10, refillTokens: 1 })).toThrow(ConfigError);
 
     // Invalid formats
     const invalidIntervals = [0, -100, 'invalid', '100', '100s ', ' 100s', '1yr'];
@@ -153,7 +151,7 @@ describe('tokenBucket — Config Validation Matrix', () => {
         tokenBucket.parseConfig({
           capacity: 10,
           refillTokens: 1,
-          refillInterval: inv as any,
+          refillInterval: inv as unknown as string,
         }),
       ).toThrow(ConfigError);
     }

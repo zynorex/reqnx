@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import * as fc from 'fast-check';
-import {
-  tokenBucket,
-  type TokenBucketConfig,
-  type TokenBucketState,
-} from '../algorithms/token-bucket.js';
+import { tokenBucket, type TokenBucketState } from '../algorithms/token-bucket.js';
 
 describe('tokenBucket — Fast-Check Property Tests', () => {
   it('Rate envelope: total admitted units over [s, e] <= capacityUnits + (e - s) * a', () => {

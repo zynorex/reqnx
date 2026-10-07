@@ -1,7 +1,7 @@
 ---
-title: "Token Bucket Rate-Limiting Algorithm"
-summary: "Continuous token replenishment algorithm supporting burst capacity with exact rational refill rates and zero float drift."
-status: "implemented"
+title: 'Token Bucket Rate-Limiting Algorithm'
+summary: 'Continuous token replenishment algorithm supporting burst capacity with exact rational refill rates and zero float drift.'
+status: 'implemented'
 ---
 
 # Token Bucket Algorithm
@@ -42,14 +42,15 @@ const limiter = createLimiter({
   store: createMemoryStore(),
   prefix: 'api',
   config: {
-    capacity: 20,              // Maximum burst capacity (1 to 2^31 - 1)
-    refillTokens: 5,           // Tokens refilled per interval
-    refillInterval: '1s',      // Refill interval duration (e.g. '1s', '100ms')
+    capacity: 20, // Maximum burst capacity (1 to 2^31 - 1)
+    refillTokens: 5, // Tokens refilled per interval
+    refillInterval: '1s', // Refill interval duration (e.g. '1s', '100ms')
   },
 });
 ```
 
 ### Config Validation Rules
+
 - `capacity`: Safe positive integer in $[1, 2^{31} - 1]$. Represents maximum bucket depth and maximum single-request burst.
 - `refillTokens`: Safe positive integer in $[1, 2^{31} - 1]$.
 - `refillInterval`: Valid `Duration` string (e.g. `'100ms'`, `'1s'`, `'1m'`) or positive integer milliseconds ($\le 366$ days).
@@ -58,11 +59,11 @@ const limiter = createLimiter({
 
 ### Sizing Worked Examples
 
-| Use Case | Recommended Config | Behaviour |
-|---|---|---|
-| **Standard REST API** | `{ capacity: 50, refillTokens: 10, refillInterval: '1s' }` | Allows bursts up to 50 requests; refills steadily at 10 requests/sec. |
-| **High-Frequency Microservice** | `{ capacity: 500, refillTokens: 100, refillInterval: '100ms' }` | Sustains 1,000 req/sec with instantaneous headroom for 500-request spikes. |
-| **Strict Webhook Dispatcher** | `{ capacity: 5, refillTokens: 1, refillInterval: '5s' }` | Emits at most 1 event every 5 seconds, allowing small queues of 5 to clear. |
+| Use Case                        | Recommended Config                                              | Behaviour                                                                   |
+| ------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **Standard REST API**           | `{ capacity: 50, refillTokens: 10, refillInterval: '1s' }`      | Allows bursts up to 50 requests; refills steadily at 10 requests/sec.       |
+| **High-Frequency Microservice** | `{ capacity: 500, refillTokens: 100, refillInterval: '100ms' }` | Sustains 1,000 req/sec with instantaneous headroom for 500-request spikes.  |
+| **Strict Webhook Dispatcher**   | `{ capacity: 5, refillTokens: 1, refillInterval: '5s' }`        | Emits at most 1 event every 5 seconds, allowing small queues of 5 to clear. |
 
 ---
 
@@ -70,17 +71,19 @@ const limiter = createLimiter({
 
 When `limiter.check()` executes, the returned `Decision` conveys exact semantics for Token Bucket:
 
-| Field | Type | Meaning in Token Bucket |
-|---|---|---|
-| `allowed` | `boolean` | `true` if $\text{refilled} \ge \text{cost} \times b$; `false` otherwise. |
-| `limit` | `number` | Configured maximum burst capacity (`capacity`). |
-| `remaining` | `number` | Whole tokens available now after check: $\lfloor \frac{\text{levelAfter}}{b} \rfloor$. |
-| `resetAtMs` | `number` | Epoch millisecond when the bucket will be completely full ($\text{effectiveNow} + \lceil \frac{\text{capacityUnits} - \text{levelAfter}}{a} \rceil$). |
-| `retryAfterMs` | `number` | `0` when `allowed: true`. When denied, exact milliseconds until required tokens refill: $(\text{effectiveNow} + \lceil \frac{\text{need} - \text{refilled}}{a} \rceil) - \text{nowMs}$. |
-| `degraded` | `boolean` | `true` only if backing store failed and fallback policy applied; `false` in normal operation. |
+| Field          | Type      | Meaning in Token Bucket                                                                                                                                                                 |
+| -------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allowed`      | `boolean` | `true` if $\text{refilled} \ge \text{cost} \times b$; `false` otherwise.                                                                                                                |
+| `limit`        | `number`  | Configured maximum burst capacity (`capacity`).                                                                                                                                         |
+| `remaining`    | `number`  | Whole tokens available now after check: $\lfloor \frac{\text{levelAfter}}{b} \rfloor$.                                                                                                  |
+| `resetAtMs`    | `number`  | Epoch millisecond when the bucket will be completely full ($\text{effectiveNow} + \lceil \frac{\text{capacityUnits} - \text{levelAfter}}{a} \rceil$).                                   |
+| `retryAfterMs` | `number`  | `0` when `allowed: true`. When denied, exact milliseconds until required tokens refill: $(\text{effectiveNow} + \lceil \frac{\text{need} - \text{refilled}}{a} \rceil) - \text{nowMs}$. |
+| `degraded`     | `boolean` | `true` only if backing store failed and fallback policy applied; `false` in normal operation.                                                                                           |
 
 ### Retry-After Exactness
+
 The `retryAfterMs` value is **exact to the millisecond**:
+
 - Retrying at `nowMs + retryAfterMs` is mathematically guaranteed to succeed (assuming no intervening traffic).
 - Retrying at `nowMs + retryAfterMs - 1` is guaranteed to fail.
 
@@ -89,24 +92,26 @@ The `retryAfterMs` value is **exact to the millisecond**:
 ## Burst Dynamics & Comparison with Fixed Window
 
 ### Worst-Case Burst
+
 In any continuous time window of duration $T$, the maximum number of admissions admitted is bounded by:
 $$\text{Max Admissions}(T) = \text{capacity} + \lfloor \frac{T \times a}{b} \rfloor$$
 
 ### Token Bucket vs Fixed Window
 
-| Aspect | Fixed Window Counter | Token Bucket |
-|---|---|---|
-| **Boundary Bursting** | Vulnerable to $2 \times \text{limit}$ burst across window boundaries | **Immune**: burst is strictly capped at `capacity` over any interval |
-| **Post-Idle Burst** | Adits up to `limit` immediately | Admits up to `capacity` immediately |
-| **Pacing / Smoothing** | Traffic can bunch at start of every window | Refills steadily; paces continuous traffic smoothly |
-| **State Footprint** | 2 numbers (`windowStart`, `count`) | 4 numbers (`level`, `at`, `a`, `b`) |
-| **Complexity** | 1 modulo division | GCD normalisation + fixed-point multiplication |
+| Aspect                 | Fixed Window Counter                                                 | Token Bucket                                                         |
+| ---------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Boundary Bursting**  | Vulnerable to $2 \times \text{limit}$ burst across window boundaries | **Immune**: burst is strictly capped at `capacity` over any interval |
+| **Post-Idle Burst**    | Adits up to `limit` immediately                                      | Admits up to `capacity` immediately                                  |
+| **Pacing / Smoothing** | Traffic can bunch at start of every window                           | Refills steadily; paces continuous traffic smoothly                  |
+| **State Footprint**    | 2 numbers (`windowStart`, `count`)                                   | 4 numbers (`level`, `at`, `a`, `b`)                                  |
+| **Complexity**         | 1 modulo division                                                    | GCD normalisation + fixed-point multiplication                       |
 
 ---
 
 ## Dynamic Configuration Changes
 
 When limits change dynamically via `ConfigResolver`:
+
 - **Capacity Decrease**: If existing token level exceeds the new capacity, `level` clamps immediately to `newCapacity`.
 - **Capacity Increase**: Does **not** grant immediate free tokens. Existing tokens are retained; additional tokens must replenish at the configured rate.
 - **Rate Change**: Tokens written under an old rate $(a_{\text{old}}, b_{\text{old}})$ are converted conservatively using whole tokens only:
@@ -118,11 +123,13 @@ When limits change dynamically via `ConfigResolver`:
 ## When to Use Token Bucket
 
 ### Recommended For:
+
 - Public-facing APIs requiring protection against traffic spikes while permitting legitimate short bursts.
 - Microservice RPC endpoints where downstream systems can handle short queues.
 - Webhooks and third-party rate limits defined in terms of rate and burst depth.
 
 ### Not Recommended For:
+
 - Hard monthly or daily quotas tied strictly to calendar boundaries (use [Fixed Window](file:///d:/zynorex%20Github/reqnx/docs/algorithms/fixed-window.md) or Sliding Window Counter).
 - Strictly uniform inter-arrival spacing without any burst allowance (use Leaky Bucket / GCRA).
 

@@ -1,12 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { createLimiter } from '../limiter.js';
 import { createMemoryStore } from '../memory-store.js';
-import { tokenBucket, type TokenBucketInput } from '../algorithms/token-bucket.js';
-import { FakeClock } from '../../../testkit/src/fake-clock.js';
+import { type ConfigResolver } from '../types.js';
+import {
+  tokenBucket,
+  type TokenBucketConfig,
+  type TokenBucketInput,
+} from '../algorithms/token-bucket.js';
+import { createTestClock } from './test-helpers.js';
 
 describe('tokenBucket — End-to-End Integration with createLimiter & MemoryStore', () => {
   it('admits exactly 20 out of 1,000 simultaneous check() calls at one instant on capacity-20 bucket', async () => {
-    const clock = new FakeClock(1000);
+    const clock = createTestClock(1000);
     const store = createMemoryStore({ clock });
     const limiter = createLimiter({
       algorithm: tokenBucket,
@@ -35,7 +40,7 @@ describe('tokenBucket — End-to-End Integration with createLimiter & MemoryStor
   });
 
   it('sustained load at twice the rate over 10 simulated seconds admits exactly predicted tokens', async () => {
-    const clock = new FakeClock(0);
+    const clock = createTestClock(0);
     const store = createMemoryStore({ clock });
     // Capacity 10, refill rate 5 tokens per 1000ms (1 token every 200ms)
     const limiter = createLimiter({
@@ -71,7 +76,7 @@ describe('tokenBucket — End-to-End Integration with createLimiter & MemoryStor
   });
 
   it('entry expiry behaves identically to an absent key / full bucket', async () => {
-    const clock = new FakeClock(1000);
+    const clock = createTestClock(1000);
     const store = createMemoryStore({ clock });
     const limiter = createLimiter({
       algorithm: tokenBucket,
@@ -107,7 +112,7 @@ describe('tokenBucket — End-to-End Integration with createLimiter & MemoryStor
   });
 
   it('guarantees per-key isolation', async () => {
-    const clock = new FakeClock(1000);
+    const clock = createTestClock(1000);
     const store = createMemoryStore({ clock });
     const limiter = createLimiter({
       algorithm: tokenBucket,
@@ -136,7 +141,7 @@ describe('tokenBucket — End-to-End Integration with createLimiter & MemoryStor
   });
 
   it('async config resolver dynamic changes follow config-change policy', async () => {
-    const clock = new FakeClock(1000);
+    const clock = createTestClock(1000);
     const store = createMemoryStore({ clock });
 
     let tier: 'standard' | 'pro' = 'standard';
@@ -144,7 +149,7 @@ describe('tokenBucket — End-to-End Integration with createLimiter & MemoryStor
       algorithm: tokenBucket,
       store,
       prefix: 'test-resolver',
-      resolver: async (_key): Promise<TokenBucketInput> => {
+      resolver: (async (_key: string): Promise<TokenBucketInput> => {
         if (tier === 'pro') {
           return {
             capacity: 20,
@@ -157,7 +162,7 @@ describe('tokenBucket — End-to-End Integration with createLimiter & MemoryStor
           refillTokens: 1,
           refillInterval: '1s',
         };
-      },
+      }) as unknown as ConfigResolver<TokenBucketConfig>,
     });
 
     // Standard tier: drain 4 tokens from 5

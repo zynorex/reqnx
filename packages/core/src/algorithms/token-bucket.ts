@@ -364,9 +364,10 @@ export const tokenBucket: Algorithm<TokenBucketConfig, TokenBucketState> = {
       const levelAfter = refilled;
       const remaining = Math.floor(levelAfter / config.b);
       const unitsToFull = config.capacityUnits - levelAfter;
-      const msToFull = unitsToFull > 0 ? ceilTimeToLevel(unitsToFull, config.a) : config.fullRefillMs;
+      const msToFull =
+        unitsToFull > 0 ? ceilTimeToLevel(unitsToFull, config.a) : config.fullRefillMs;
       const resetAtMs = effectiveNow + ceilTimeToLevel(unitsToFull, config.a);
-      const retryAfterMs = (effectiveNow + msToFull) - nowMs;
+      const retryAfterMs = effectiveNow + msToFull - nowMs;
 
       return {
         decision: {
@@ -393,7 +394,7 @@ export const tokenBucket: Algorithm<TokenBucketConfig, TokenBucketState> = {
     const resetAtMs = effectiveNow + ceilTimeToLevel(config.capacityUnits - levelAfter, config.a);
     const retryAfterMs = allowed
       ? 0
-      : (effectiveNow + ceilTimeToLevel(need - refilled, config.a)) - nowMs;
+      : effectiveNow + ceilTimeToLevel(need - refilled, config.a) - nowMs;
 
     return {
       decision: {
@@ -415,11 +416,7 @@ export const tokenBucket: Algorithm<TokenBucketConfig, TokenBucketState> = {
     };
   },
 
-  peek(
-    state: TokenBucketState | undefined,
-    config: TokenBucketConfig,
-    nowMs: number,
-  ): Decision {
+  peek(state: TokenBucketState | undefined, config: TokenBucketConfig, nowMs: number): Decision {
     const { effectiveNow, refilled } = resolveStartingLevel(state, config, nowMs);
 
     const need = config.b; // 1 token
@@ -429,7 +426,7 @@ export const tokenBucket: Algorithm<TokenBucketConfig, TokenBucketState> = {
     const resetAtMs = effectiveNow + ceilTimeToLevel(config.capacityUnits - levelAfter, config.a);
     const retryAfterMs = allowed
       ? 0
-      : (effectiveNow + ceilTimeToLevel(need - refilled, config.a)) - nowMs;
+      : effectiveNow + ceilTimeToLevel(need - refilled, config.a) - nowMs;
 
     return {
       allowed,

@@ -10,13 +10,20 @@
 import * as os from 'node:os';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fixedWindow, tokenBucket, createMemoryStore, createLimiter } from '../packages/core/src/index.js';
+import {
+  fixedWindow,
+  tokenBucket,
+  createMemoryStore,
+  createLimiter,
+} from '../packages/core/src/index.js';
 
 declare const gc: (() => void) | undefined;
 
 async function measureAlgorithm(
   name: string,
-  createLimiterInstance: (store: ReturnType<typeof createMemoryStore>) => ReturnType<typeof createLimiter>,
+  createLimiterInstance: (
+    store: ReturnType<typeof createMemoryStore>,
+  ) => ReturnType<typeof createLimiter>,
   keyCount: number,
 ) {
   if (typeof gc !== 'function') {
@@ -61,7 +68,9 @@ async function measureAlgorithm(
 async function main() {
   if (typeof gc !== 'function') {
     // eslint-disable-next-line no-console
-    console.error('Error: GC must be exposed. Run with: node --expose-gc --import tsx scripts/bench-memory.ts');
+    console.error(
+      'Error: GC must be exposed. Run with: node --expose-gc --import tsx scripts/bench-memory.ts',
+    );
     process.exit(1);
   }
 
@@ -86,7 +95,9 @@ async function main() {
     KEY_COUNT,
   );
   // eslint-disable-next-line no-console
-  console.log(`Fixed Window: ${fixedWindowResult.bytesPerKey.toFixed(1)} B/key, ${fixedWindowResult.opsPerSec.toLocaleString()} ops/sec`);
+  console.log(
+    `Fixed Window: ${fixedWindowResult.bytesPerKey.toFixed(1)} B/key, ${fixedWindowResult.opsPerSec.toLocaleString()} ops/sec`,
+  );
 
   // 2. Measure Token Bucket
   // eslint-disable-next-line no-console
@@ -104,7 +115,9 @@ async function main() {
     KEY_COUNT,
   );
   // eslint-disable-next-line no-console
-  console.log(`Token Bucket: ${tokenBucketResult.bytesPerKey.toFixed(1)} B/key, ${tokenBucketResult.opsPerSec.toLocaleString()} ops/sec`);
+  console.log(
+    `Token Bucket: ${tokenBucketResult.bytesPerKey.toFixed(1)} B/key, ${tokenBucketResult.opsPerSec.toLocaleString()} ops/sec`,
+  );
 
   const envInfo = {
     date: new Date().toISOString(),
@@ -123,8 +136,10 @@ async function main() {
       fixedWindow: fixedWindowResult,
       tokenBucket: tokenBucketResult,
       delta: {
-        bytesPerKeyDelta: Math.round((tokenBucketResult.bytesPerKey - fixedWindowResult.bytesPerKey) * 10) / 10,
-        opsPerSecRatio: Math.round((tokenBucketResult.opsPerSec / fixedWindowResult.opsPerSec) * 100) / 100,
+        bytesPerKeyDelta:
+          Math.round((tokenBucketResult.bytesPerKey - fixedWindowResult.bytesPerKey) * 10) / 10,
+        opsPerSecRatio:
+          Math.round((tokenBucketResult.opsPerSec / fixedWindowResult.opsPerSec) * 100) / 100,
       },
     },
   };
