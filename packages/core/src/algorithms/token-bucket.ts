@@ -323,9 +323,10 @@ export const tokenBucket: Algorithm<TokenBucketConfig, TokenBucketState> = {
     if (cost > config.capacity) {
       const levelAfter = refilled;
       const remaining = Math.floor(levelAfter / config.b);
-      const resetAtMs = effectiveNow + Math.ceil((config.capacityUnits - levelAfter) / config.a);
-      const timeToFull = resetAtMs - nowMs;
-      const retryAfterMs = timeToFull > 0 ? timeToFull : config.fullRefillMs;
+      const unitsToFull = config.capacityUnits - levelAfter;
+      const msToFull = unitsToFull > 0 ? Math.ceil(unitsToFull / config.a) : config.fullRefillMs;
+      const resetAtMs = effectiveNow + Math.ceil(unitsToFull / config.a);
+      const retryAfterMs = (effectiveNow + msToFull) - nowMs;
 
       return {
         decision: {
