@@ -2,11 +2,15 @@ import { describe, expect, it } from 'vitest';
 import * as fc from 'fast-check';
 import { runAlgorithmContractSuite } from '../conformance.js';
 import { allowAllAlgorithm, counterAlgorithm } from '../fixtures.js';
-import { fixedWindow } from '@reqnx/core';
+import { fixedWindow, tokenBucket } from '@reqnx/core';
 
 runAlgorithmContractSuite(counterAlgorithm, { limit: 10, windowMs: 1000 });
 runAlgorithmContractSuite(allowAllAlgorithm, {});
 runAlgorithmContractSuite(fixedWindow, { limit: 10, windowMs: 1000 });
+runAlgorithmContractSuite(
+  tokenBucket,
+  tokenBucket.parseConfig({ capacity: 10, refillTokens: 1, refillInterval: '1s' }),
+);
 
 describe('Algorithm Contract Properties (fast-check)', () => {
   it('counterAlgorithm preserves 0 <= remaining <= limit for arbitrary positive costs', () => {
@@ -20,6 +24,31 @@ describe('Algorithm Contract Properties (fast-check)', () => {
           const res = counterAlgorithm.step(undefined, config, nowMs, cost);
           expect(res.decision.remaining).toBeGreaterThanOrEqual(0);
           expect(res.decision.remaining).toBeLessThanOrEqual(limit);
+          if (res.decision.allowed) {
+            expect(res.decision.retryAfterMs).toBe(0);
+          } else {
+            expect(res.decision.retryAfterMs).toBeGreaterThan(0);
+          }
+        },
+      ),
+    );
+  });
+
+  it('tokenBucket preserves 0 <= remaining <= limit for arbitrary positive costs', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 1000 }), // capacity
+        fc.integer({ min: 1, max: 100 }), // cost
+        fc.integer({ min: 0, max: 100_000 }), // nowMs
+        (capacity, cost, nowMs) => {
+          const config = tokenBucket.parseConfig({
+            capacity,
+            refillTokens: 1,
+            refillInterval: 10_000,
+          });
+          const res = tokenBucket.step(undefined, config, nowMs, cost);
+          expect(res.decision.remaining).toBeGreaterThanOrEqual(0);
+          expect(res.decision.remaining).toBeLessThanOrEqual(capacity);
           if (res.decision.allowed) {
             expect(res.decision.retryAfterMs).toBe(0);
           } else {
