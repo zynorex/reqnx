@@ -1,0 +1,560 @@
+---
+import { siteConfig, withBase } from '../../site.config';
+import Icon from '../common/Icon.astro';
+import { ThemeToggle } from '../common/ThemeToggle';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+
+const navItems = [
+  { label: 'Docs', href: withBase('/getting-started/') },
+  { label: 'Algorithms', href: withBase('/algorithms/') },
+  { label: 'Playground', href: withBase('/playground/') },
+  { label: 'Status', href: '#status' },
+];
+---
+
+<a href="#main-content" class="rx-skip-link">
+  Skip to main content
+</a>
+
+<div id="rx-header-sentinel" aria-hidden="true" class="rx-sentinel"></div>
+
+<header class="rx-header" id="rx-site-header">
+  <div class="rx-header__inner">
+    <div class="rx-header__brand">
+      <a href={withBase('/')} class="rx-header__logo" aria-label={`${siteConfig.name} Home`}>
+        <span class="rx-header__wordmark">{siteConfig.name}</span>
+      </a>
+      <span class="rx-header__version" aria-label={`Version ${siteConfig.version}`}>
+        {siteConfig.version}
+      </span>
+    </div>
+
+    <nav class="rx-header__nav" aria-label="Main Navigation">
+      <ul class="rx-header__nav-list" role="list">
+        {navItems.map((item) => {
+          const isActive = currentPath === item.href || (item.href !== withBase('/') && !item.href.startsWith('#') && currentPath.startsWith(item.href));
+          return (
+            <li>
+              <a
+                href={item.href}
+                class:list={['rx-header__nav-link', { 'is-active': isActive }]}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
+        <li>
+          <a
+            href={siteConfig.repo}
+            class="rx-header__nav-link rx-header__nav-link--github"
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label="GitHub Repository (opens in a new tab)"
+          >
+            <Icon name="github" size={18} ariaHidden={true} />
+            <span class="rx-header__nav-label">GitHub</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="rx-header__actions">
+      <ThemeToggle client:load />
+
+      <a href={withBase('/getting-started/')} class="rx-header__cta">
+        <span>Get started</span>
+      </a>
+
+      <button
+        type="button"
+        id="rx-menu-toggle"
+        class="rx-header__menu-btn"
+        aria-expanded="false"
+        aria-controls="rx-mobile-menu"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="rx-header__menu-icon-open">
+          <Icon name="menu" size={22} ariaHidden={true} />
+        </span>
+        <span class="rx-header__menu-icon-close">
+          <Icon name="close" size={22} ariaHidden={true} />
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Sheet Drawer -->
+  <div id="rx-mobile-menu" class="rx-mobile-sheet" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <div class="rx-mobile-sheet__backdrop" id="rx-sheet-backdrop"></div>
+    <div class="rx-mobile-sheet__panel">
+      <nav class="rx-mobile-sheet__nav" aria-label="Mobile Navigation Links">
+        <ul class="rx-mobile-sheet__list" role="list">
+          {navItems.map((item) => (
+            <li>
+              <a href={item.href} class="rx-mobile-sheet__link">
+                {item.label}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a
+              href={siteConfig.repo}
+              class="rx-mobile-sheet__link rx-mobile-sheet__link--github"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              <Icon name="github" size={18} ariaHidden={true} />
+              <span>GitHub</span>
+              <span class="rx-sr-only">(opens in a new tab)</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="rx-mobile-sheet__actions">
+        <a href={withBase('/getting-started/')} class="rx-mobile-sheet__cta">
+          Get started
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  @layer components {
+    .rx-skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: var(--rx-accent-indigo);
+      color: #ffffff;
+      padding: 0.5rem 1rem;
+      border-radius: var(--rx-radius-sm);
+      font-size: var(--rx-font-small);
+      font-weight: 600;
+      z-index: 1000;
+      text-decoration: none;
+      transition: top var(--rx-transition-fast);
+    }
+
+    .rx-skip-link:focus-visible {
+      top: 1rem;
+      outline: var(--rx-focus-ring);
+    }
+
+    .rx-sentinel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 1px;
+      width: 1px;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .rx-header {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      z-index: 100;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: background-color var(--rx-transition-base),
+                  border-color var(--rx-transition-base),
+                  backdrop-filter var(--rx-transition-base);
+    }
+
+    .rx-header.is-scrolled {
+      background-color: color-mix(in srgb, var(--rx-surface-1) 85%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom-color: var(--rx-border);
+    }
+
+    .rx-header__inner {
+      max-width: 1280px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 4vw, 2.5rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .rx-header__brand {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      flex-shrink: 0;
+    }
+
+    .rx-header__logo {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--rx-text-1);
+    }
+
+    .rx-header__logo:focus-visible {
+      outline: var(--rx-focus-ring);
+      border-radius: var(--rx-radius-xs);
+    }
+
+    .rx-header__wordmark {
+      font-family: var(--rx-font-mono);
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--rx-text-1);
+    }
+
+    .rx-header__version {
+      font-family: var(--rx-font-mono);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 0.125rem 0.375rem;
+      border-radius: var(--rx-radius-xs);
+      background: var(--rx-surface-3);
+      color: var(--rx-text-2);
+      border: 1px solid var(--rx-border-subtle);
+    }
+
+    @media (max-width: 480px) {
+      .rx-header {
+        height: 56px;
+      }
+      .rx-header__version {
+        display: none;
+      }
+    }
+
+    .rx-header__nav {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .rx-header__nav {
+        display: block;
+      }
+    }
+
+    .rx-header__nav-list {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .rx-header__nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--rx-radius-sm);
+      font-size: var(--rx-font-small);
+      font-weight: 500;
+      color: var(--rx-text-2);
+      text-decoration: none;
+      transition: color var(--rx-transition-fast), background-color var(--rx-transition-fast);
+    }
+
+    .rx-header__nav-link:hover {
+      color: var(--rx-text-1);
+      background-color: var(--rx-surface-2);
+    }
+
+    .rx-header__nav-link.is-active {
+      color: var(--rx-text-1);
+      font-weight: 600;
+    }
+
+    .rx-header__nav-link:focus-visible {
+      outline: var(--rx-focus-ring);
+    }
+
+    .rx-header__actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .rx-header__cta {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0.375rem 0.875rem;
+      font-size: var(--rx-font-small);
+      font-weight: 600;
+      color: #ffffff;
+      background: var(--rx-accent-indigo);
+      border-radius: var(--rx-radius-sm);
+      text-decoration: none;
+      transition: background-color var(--rx-transition-fast), transform var(--rx-transition-fast);
+    }
+
+    .rx-header__cta:hover {
+      background: var(--rx-accent-indigo-dim);
+    }
+
+    .rx-header__cta:focus-visible {
+      outline: var(--rx-focus-ring);
+    }
+
+    @media (min-width: 640px) {
+      .rx-header__cta {
+        display: inline-flex;
+      }
+    }
+
+    .rx-header__menu-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 1px solid var(--rx-border-subtle);
+      border-radius: var(--rx-radius-sm);
+      background: var(--rx-surface-2);
+      color: var(--rx-text-1);
+      cursor: pointer;
+      transition: background-color var(--rx-transition-fast), border-color var(--rx-transition-fast);
+    }
+
+    .rx-header__menu-btn:hover {
+      background: var(--rx-surface-3);
+      border-color: var(--rx-border);
+    }
+
+    .rx-header__menu-btn:focus-visible {
+      outline: var(--rx-focus-ring);
+    }
+
+    .rx-header__menu-icon-close {
+      display: none;
+    }
+
+    .rx-header.menu-open .rx-header__menu-icon-open {
+      display: none;
+    }
+
+    .rx-header.menu-open .rx-header__menu-icon-close {
+      display: inline-block;
+    }
+
+    @media (min-width: 768px) {
+      .rx-header__menu-btn {
+        display: none;
+      }
+    }
+
+    /* Mobile Sheet Drawer */
+    .rx-mobile-sheet {
+      display: none;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 99;
+    }
+
+    .rx-mobile-sheet.is-open {
+      display: block;
+    }
+
+    .rx-mobile-sheet__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+    }
+
+    .rx-mobile-sheet__panel {
+      position: relative;
+      background: var(--rx-surface-1);
+      border-bottom: 1px solid var(--rx-border);
+      padding: 1.5rem clamp(1rem, 4vw, 2rem) 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .rx-mobile-sheet__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .rx-mobile-sheet__link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      min-height: 44px;
+      border-radius: var(--rx-radius-sm);
+      font-size: 1.0625rem;
+      font-weight: 500;
+      color: var(--rx-text-1);
+      text-decoration: none;
+      background: var(--rx-surface-2);
+      border: 1px solid var(--rx-border-subtle);
+      transition: background-color var(--rx-transition-fast), border-color var(--rx-transition-fast);
+    }
+
+    .rx-mobile-sheet__link:hover {
+      background: var(--rx-surface-3);
+      border-color: var(--rx-border);
+    }
+
+    .rx-mobile-sheet__link:focus-visible {
+      outline: var(--rx-focus-ring);
+    }
+
+    .rx-mobile-sheet__actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .rx-mobile-sheet__cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: var(--rx-accent-indigo);
+      border-radius: var(--rx-radius-sm);
+      text-decoration: none;
+    }
+
+    .rx-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+  }
+</style>
+
+<script>
+  // Header scroll sentinel observation
+  const sentinel = document.getElementById('rx-header-sentinel');
+  const header = document.getElementById('rx-site-header');
+
+  if (sentinel && header && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          header.classList.add('is-scrolled');
+        } else {
+          header.classList.remove('is-scrolled');
+        }
+      },
+      { rootMargin: '0px', threshold: 0 }
+    );
+    observer.observe(sentinel);
+  }
+
+  // Mobile sheet drawer state management & focus trap
+  const menuToggle = document.getElementById('rx-menu-toggle');
+  const mobileSheet = document.getElementById('rx-mobile-menu');
+  const backdrop = document.getElementById('rx-sheet-backdrop');
+
+  if (menuToggle && mobileSheet && header) {
+    let isOpen = false;
+
+    function openMenu() {
+      isOpen = true;
+      header?.classList.add('menu-open');
+      mobileSheet?.classList.add('is-open');
+      mobileSheet?.setAttribute('aria-hidden', 'false');
+      menuToggle?.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+
+      // Focus first link in drawer
+      const firstLink = mobileSheet?.querySelector<HTMLAnchorElement>('a');
+      firstLink?.focus();
+    }
+
+    function closeMenu() {
+      isOpen = false;
+      header?.classList.remove('menu-open');
+      mobileSheet?.classList.remove('is-open');
+      mobileSheet?.setAttribute('aria-hidden', 'true');
+      menuToggle?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      menuToggle?.focus();
+    }
+
+    menuToggle.addEventListener('click', () => {
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    backdrop?.addEventListener('click', closeMenu);
+
+    // Close on any nav link click inside the sheet
+    const sheetLinks = mobileSheet.querySelectorAll('a');
+    sheetLinks.forEach((link) => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Close on ESC key and focus trap
+    window.addEventListener('keydown', (e) => {
+      if (!isOpen) return;
+
+      if (e.key === 'Escape') {
+        closeMenu();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const focusable = mobileSheet.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled])'
+        );
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+</script>

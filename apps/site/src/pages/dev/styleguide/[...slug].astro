@@ -1,0 +1,167 @@
+---
+/**
+ * Dev-only design system styleguide.
+ *
+ * CRITICAL REQUIREMENT:
+ * Must produce NO output in production builds. In production, getStaticPaths
+ * returns an empty array ([]), resulting in 0 built pages and no inclusion in sitemaps.
+ */
+import Icon from '../../../components/common/Icon.astro';
+import StatusChip from '../../../components/common/StatusChip.astro';
+import ThemeToggle from '../../../components/common/ThemeToggle';
+import '../../../styles/global.css';
+
+export function getStaticPaths() {
+  if (import.meta.env.PROD) {
+    return [];
+  }
+  return [{ params: { slug: undefined } }];
+}
+
+const surfaces = [
+  { name: 'Surface 1 (Canvas)', var: 'var(--rx-surface-1)' },
+  { name: 'Surface 2 (Panel / Card)', var: 'var(--rx-surface-2)' },
+  { name: 'Surface 3 (Raised / Input)', var: 'var(--rx-surface-3)' },
+  { name: 'Surface 4 (Hover / Active)', var: 'var(--rx-surface-4)' },
+];
+
+const icons = [
+  'check',
+  'cross',
+  'diamond',
+  'half-circle',
+  'dashed-circle',
+  'terminal',
+  'github',
+  'copy',
+  'external',
+  'play',
+  'pause',
+  'sun',
+  'moon',
+  'monitor',
+  'arrow-right',
+] as const;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REQNX — Dev Styleguide</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body style="padding: 2rem 0; min-height: 100vh;">
+    <main class="rx-container">
+      <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; border-bottom: 1px solid var(--rx-border); padding-bottom: 1.5rem;">
+        <div>
+          <span class="rx-eyebrow">Internal Specimen</span>
+          <h1 style="font-size: var(--rx-font-h2); margin: 0;">REQNX Design System Styleguide</h1>
+          <p style="color: var(--rx-text-3); font-size: var(--rx-font-small); margin: 0.25rem 0 0;">
+            Dev-only specimen verifying all components and states across both Dark and Light themes.
+          </p>
+        </div>
+        <div>
+          <ThemeToggle client:load />
+        </div>
+      </header>
+
+      <!-- 1. Surfaces & Contrast -->
+      <section style="margin-bottom: 3.5rem;">
+        <h2 style="font-size: var(--rx-font-h3); margin-bottom: 1rem;">1. Surface Hierarchy & Depth</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+          {surfaces.map((s) => (
+            <div style={`background: ${s.var}; border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); padding: 1.5rem;`}>
+              <div style="font-family: var(--rx-font-mono); font-size: 0.8rem; font-weight: 600; color: var(--rx-text-1);">
+                {s.name}
+              </div>
+              <div style="font-family: var(--rx-font-mono); font-size: 0.75rem; color: var(--rx-text-3); margin-top: 0.5rem;">
+                {s.var}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 2. Typography Scale -->
+      <section style="margin-bottom: 3.5rem;">
+        <h2 style="font-size: var(--rx-font-h3); margin-bottom: 1rem;">2. Fluid Typography Scale</h2>
+        <div style="display: flex; flex-direction: column; gap: 1rem; background: var(--rx-surface-2); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); padding: 2rem;">
+          <div>
+            <span style="font-size: 0.75rem; color: var(--rx-text-3); font-family: var(--rx-font-mono);">Display (--rx-font-display)</span>
+            <div style="font-size: var(--rx-font-display); font-family: var(--rx-font-mono); font-weight: 700; line-height: 1.1;">
+              12,450,910 ops/s
+            </div>
+          </div>
+          <div>
+            <span style="font-size: 0.75rem; color: var(--rx-text-3); font-family: var(--rx-font-mono);">Heading 2 (--rx-font-h2)</span>
+            <div style="font-size: var(--rx-font-h2); font-weight: 700;">Rate limiting you can reason about.</div>
+          </div>
+          <div>
+            <span style="font-size: 0.75rem; color: var(--rx-text-3); font-family: var(--rx-font-mono);">Heading 3 (--rx-font-h3)</span>
+            <div style="font-size: var(--rx-font-h3); font-weight: 600;">Fixed Window Counter Algorithm</div>
+          </div>
+          <div>
+            <span style="font-size: 0.75rem; color: var(--rx-text-3); font-family: var(--rx-font-mono);">Lede Prose (--rx-font-lede)</span>
+            <div style="font-size: var(--rx-font-lede); color: var(--rx-text-2); max-width: 60ch;">
+              Pure state-transition functions running against your choice of storage. Five classical algorithms with zero runtime dependencies.
+            </div>
+          </div>
+          <div>
+            <span style="font-size: 0.75rem; color: var(--rx-text-3); font-family: var(--rx-font-mono);">Tabular Monospace (--rx-font-mono-data)</span>
+            <div style="font-family: var(--rx-font-mono); font-size: var(--rx-font-mono-data); color: var(--rx-accent-cyan);" class="rx-tabular">
+              t=00:09.999 | count=005/005 | resetAt=1728043200000 | retryAfter=0001ms
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Status Chips -->
+      <section style="margin-bottom: 3.5rem;">
+        <h2 style="font-size: var(--rx-font-h3); margin-bottom: 1rem;">3. Status Chips (Dual-Coded: Icon + Text)</h2>
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; background: var(--rx-surface-2); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); padding: 1.5rem;">
+          <StatusChip status="available" />
+          <StatusChip status="in-progress" />
+          <StatusChip status="planned" />
+          <StatusChip status="available" label="MemoryStore Verified" />
+          <StatusChip status="planned" label="Redis Lua Planned" />
+        </div>
+      </section>
+
+      <!-- 4. Buttons & Interactions -->
+      <section style="margin-bottom: 3.5rem;">
+        <h2 style="font-size: var(--rx-font-h3); margin-bottom: 1rem;">4. Button Variants & States</h2>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; background: var(--rx-surface-2); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); padding: 1.5rem;">
+          <button type="button" class="rx-btn rx-btn-primary">Primary Action</button>
+          <button type="button" class="rx-btn rx-btn-secondary">Secondary Action</button>
+          <button type="button" class="rx-btn rx-btn-outline">Outline Action</button>
+          <button type="button" class="rx-btn rx-btn-primary" disabled>Disabled State</button>
+        </div>
+      </section>
+
+      <!-- 5. Icon Matrix -->
+      <section style="margin-bottom: 3.5rem;">
+        <h2 style="font-size: var(--rx-font-h3); margin-bottom: 1rem;">5. Custom Inline SVG Icon Matrix (24px grid)</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem;">
+          {icons.map((name) => (
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--rx-surface-2); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); padding: 1rem; gap: 0.5rem;">
+              <Icon name={name} size={22} />
+              <span style="font-family: var(--rx-font-mono); font-size: 0.7rem; color: var(--rx-text-3);">{name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 6. Window-Tick Motif Preview -->
+      <section style="margin-bottom: 3.5rem;">
+        <h2 style="font-size: var(--rx-font-h3); margin-bottom: 1rem;">6. Signature Window-Tick Motif</h2>
+        <div class="rx-window-tick-bg" style="height: 180px; border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); display: flex; align-items: center; justify-content: center;">
+          <span style="font-family: var(--rx-font-mono); font-size: 0.85rem; color: var(--rx-text-2); background: var(--rx-surface-2); border: 1px solid var(--rx-border); padding: 0.5rem 1rem; border-radius: var(--rx-radius-sm);">
+            Aligned Epoch Window Ticks (40px minor, 200px major)
+          </span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

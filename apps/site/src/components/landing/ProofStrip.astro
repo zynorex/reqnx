@@ -1,0 +1,34 @@
+---
+import { computeFacts } from '../../facts';
+
+const facts = await computeFacts();
+const shouldRender = facts.length >= 3;
+---
+
+{shouldRender && (
+  <section class="rx-proof-strip" aria-label="Verified Project Facts">
+    {facts.map((fact) => (
+      <div class="rx-proof-card" tabindex="0">
+        <span class="rx-proof-card__metric">{fact.value}</span>
+        <span class="rx-proof-card__label">{fact.label}</span>
+        <span class="rx-proof-card__source" title={`Verified at build time from ${fact.source}`}>
+          Source: {fact.source}
+        </span>
+      </div>
+    ))}
+
+    <details class="rx-proof-disclosure">
+      <summary>
+        <span>How these facts are computed</span>
+      </summary>
+      <div class="rx-proof-disclosure__content">
+        <p>
+          Every metric in this strip is inspected and computed directly from the repository
+          during the static site build by <code>src/facts.ts</code>. No marketing claims,
+          no hardcoded placeholders, and no third-party badges. If a source file is missing
+          or cannot be verified, the corresponding metric is omitted entirely.
+        </p>
+      </div>
+    </details>
+  </section>
+)}

@@ -1,0 +1,48 @@
+---
+import { siteConfig, withBase } from '../site.config';
+import Header from '../components/landing/Header.astro';
+import Hero from '../components/landing/Hero.astro';
+import '../styles/global.css';
+import '../styles/landing.css';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{siteConfig.name} — Rate limiting you can reason about</title>
+    <meta name="description" content={siteConfig.description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+
+    <!-- Typography: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    />
+
+    <!-- Theme Initialization Script (prevents theme flash) -->
+    <script is:inline>
+      (function () {
+        try {
+          const stored = localStorage.getItem('rx-theme') || 'system';
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const isDark = stored === 'dark' || (stored === 'system' && prefersDark);
+          document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <Header currentPath={withBase('/')} />
+
+    <main id="main-content">
+      <Hero />
+    </main>
+  </body>
+</html>

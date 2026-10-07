@@ -1,0 +1,58 @@
+---
+import { siteConfig, withBase } from '../../site.config';
+import { landingCopy } from '../../copy/landing.copy';
+import { getPrecomputedHeroState } from '../../engine/hero-precompute';
+import { LiveConsole } from './LiveConsole';
+import ProofStrip from './ProofStrip.astro';
+import CopyButton from '../common/CopyButton';
+import Icon from '../common/Icon.astro';
+
+const initialState = await getPrecomputedHeroState();
+const commandText = siteConfig.published ? siteConfig.installCmd : siteConfig.fromSourceCmd;
+const commandLabel = siteConfig.published ? 'Install' : 'Run from source';
+---
+
+<section class="rx-hero-section" id="hero">
+  <div class="rx-hero-container">
+    <!-- Eyebrow Chip -->
+    <div class="rx-eyebrow-chip">
+      <span class="rx-eyebrow-chip__dot" aria-hidden="true"></span>
+      <span>{landingCopy.hero.eyebrow}</span>
+    </div>
+
+    <!-- Main Headline (LCP element, server-rendered, no animation delay) -->
+    <h1 class="rx-hero-title">
+      {landingCopy.hero.headline}
+    </h1>
+
+    <!-- Subhead Prose -->
+    <p class="rx-hero-subhead">
+      {landingCopy.hero.subhead}
+    </p>
+
+    <!-- CTAs and Command Line -->
+    <div class="rx-hero-actions">
+      <div class="rx-hero-ctas">
+        <a href={withBase('/getting-started/')} class="rx-btn rx-btn--primary">
+          <span>{landingCopy.hero.primaryCta}</span>
+          <Icon name="arrow-right" size={16} ariaHidden={true} />
+        </a>
+        <a href={withBase('/playground/')} class="rx-btn rx-btn--secondary">
+          <span>{landingCopy.hero.secondaryCta}</span>
+        </a>
+      </div>
+
+      <div class="rx-cmd-box">
+        <span class="rx-cmd-box__label">{commandLabel}</span>
+        <code class="rx-cmd-box__code">{commandText}</code>
+        <CopyButton client:load text={commandText} />
+      </div>
+    </div>
+
+    <!-- The Instrument: Live Browser Console -->
+    <LiveConsole client:idle initialState={initialState} />
+
+    <!-- Verified Facts Proof Strip -->
+    <ProofStrip />
+  </div>
+</section>
