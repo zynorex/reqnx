@@ -150,6 +150,42 @@ export function normaliseRate(
 }
 
 /**
+ * Clamp-safe token refill arithmetic.
+ *
+ * Guarantees that intermediate addition and multiplication strictly remain
+ * within IEEE 754 safe integer limits (<= 2^53 - 1) even after astronomical idle periods.
+ *
+ * @internal
+ */
+export function clampSafeRefill(
+  level: number,
+  elapsed: number,
+  fullRefillMs: number,
+  a: number,
+  capacityUnits: number,
+): number {
+  const clampedElapsed = Math.min(elapsed, fullRefillMs);
+  const refillUnits = clampedElapsed * a;
+  const total = level + refillUnits;
+  if (!Number.isSafeInteger(total)) {
+    throw new RangeError('Refill intermediate exceeds safe integer bounds');
+  }
+  return Math.min(capacityUnits, total);
+}
+
+/**
+ * Exact ceil division for time-to-level calculations.
+ *
+ * Computes exact integer milliseconds needed to refill `deltaUnits` at rate `a` units/ms.
+ *
+ * @internal
+ */
+export function ceilTimeToLevel(deltaUnits: number, a: number): number {
+  if (deltaUnits <= 0) return 0;
+  return Math.ceil(deltaUnits / a);
+}
+
+/**
  * Resolve starting level and effective timestamp, handling:
  * - Fresh state (`undefined`): start full at `nowMs`
  * - Same rate: keep existing level units
@@ -185,9 +221,13 @@ export function resolveStartingLevel(
     level = wholeTokens * config.b;
   }
 
-  // Clamp elapsed before multiplying to guarantee safe integer bounds
-  const clampedElapsed = Math.min(elapsed, config.fullRefillMs);
-  const refilled = Math.min(config.capacityUnits, level + clampedElapsed * config.a);
+  const refilled = clampSafeRefill(
+    level,
+    elapsed,
+    config.fullRefillMs,
+    config.a,
+    config.capacityUnits,
+  );
 
   return { effectiveNow, refilled };
 }
@@ -324,8 +364,8 @@ export const tokenBucket: Algorithm<TokenBucketConfig, TokenBucketState> = {
       const levelAfter = refilled;
       const remaining = Math.floor(levelAfter / config.b);
       const unitsToFull = config.capacityUnits - levelAfter;
-      const msToFull = unitsToFull > 0 ? Math.ceil(unitsToFull / config.a) : config.fullRefillMs;
-      const resetAtMs = effectiveNow + Math.ceil(unitsToFull / config.a);
+      const msToFull = unitsToFull > 0 ? ceilTimeToLevel(unitsToFull, config.a) : config.fullRefillMs;
+      const resetAtMs = effectiveNow + ceilTimeToLevel(unitsToFull, config.a);
       const retryAfterMs = (effectiveNow + msToFull) - nowMs;
 
       return {
@@ -350,10 +390,10 @@ export const tokenBucket: Algorithm<TokenBucketConfig, TokenBucketState> = {
     const allowed = refilled >= need;
     const levelAfter = allowed ? refilled - need : refilled;
     const remaining = Math.floor(levelAfter / config.b);
-    const resetAtMs = effectiveNow + Math.ceil((config.capacityUnits - levelAfter) / config.a);
+    const resetAtMs = effectiveNow + ceilTimeToLevel(config.capacityUnits - levelAfter, config.a);
     const retryAfterMs = allowed
       ? 0
-      : (effectiveNow + Math.ceil((need - refilled) / config.a)) - nowMs;
+      : (effectiveNow + ceilTimeToLevel(need - refilled, config.a)) - nowMs;
 
     return {
       decision: {
@@ -386,10 +426,10 @@ export const tokenBucket: Algorithm<TokenBucketConfig, TokenBucketState> = {
     const allowed = refilled >= need;
     const levelAfter = refilled;
     const remaining = Math.floor(levelAfter / config.b);
-    const resetAtMs = effectiveNow + Math.ceil((config.capacityUnits - levelAfter) / config.a);
+    const resetAtMs = effectiveNow + ceilTimeToLevel(config.capacityUnits - levelAfter, config.a);
     const retryAfterMs = allowed
       ? 0
-      : (effectiveNow + Math.ceil((need - refilled) / config.a)) - nowMs;
+      : (effectiveNow + ceilTimeToLevel(need - refilled, config.a)) - nowMs;
 
     return {
       allowed,

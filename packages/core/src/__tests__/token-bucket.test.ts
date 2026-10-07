@@ -7,6 +7,8 @@ import {
 import {
   gcd,
   normaliseRate,
+  clampSafeRefill,
+  ceilTimeToLevel,
   resolveStartingLevel,
   MAX_SAFE_CAPACITY,
   MAX_CAPACITY_UNITS,
@@ -55,10 +57,28 @@ describe('tokenBucket — Pure Arithmetic Helpers', () => {
       a: config.a,
       b: config.b,
     };
-    // Huge elapsed time: 10^12 ms
-    const res = resolveStartingLevel(state, config, 1000 + 1_000_000_000_000);
-    expect(res.effectiveNow).toBe(1000 + 1_000_000_000_000);
+    // Huge elapsed time: 10^16 ms
+    const res = resolveStartingLevel(state, config, 1000 + 10_000_000_000_000_000);
+    expect(res.effectiveNow).toBe(1000 + 10_000_000_000_000_000);
     expect(res.refilled).toBe(config.capacityUnits);
+  });
+
+  it('clampSafeRefill guarantees safe integer bounds and clamps elapsed', () => {
+    // If elapsed (1e16) is not clamped to fullRefillMs before multiplying by a (2),
+    // 1e16 * 2 = 2e16 exceeds MAX_SAFE_INTEGER and throws RangeError.
+    const fullRefillMs = 5000;
+    const a = 2;
+    const capacityUnits = 10000;
+    const refilled = clampSafeRefill(0, 10_000_000_000_000_000, fullRefillMs, a, capacityUnits);
+    expect(refilled).toBe(capacityUnits);
+  });
+
+  it('ceilTimeToLevel returns exact ceiling milliseconds', () => {
+    expect(ceilTimeToLevel(0, 5)).toBe(0);
+    expect(ceilTimeToLevel(-10, 5)).toBe(0);
+    expect(ceilTimeToLevel(1, 3)).toBe(1);
+    expect(ceilTimeToLevel(1000, 3)).toBe(334);
+    expect(ceilTimeToLevel(1000, 1)).toBe(1000);
   });
 });
 
