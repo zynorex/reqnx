@@ -82,6 +82,7 @@ docker compose down
 - **Errors:** `RateLimitError` base class (Symbol.for branding). `ConfigError` for bad config (thrown). `StoreError` for store failures (caught by policy). `InputError` for bad per-call input (thrown, HTTP 400).
 - **Key schema:** `reqnx:{prefix}:{algorithmId}:{identity}` — max 512 bytes; oversized keys rejected with `InputError` (never silently hashed or truncated).
 - **Testing:** Use `FakeClock` only. No real timers (`setTimeout`, `setInterval`) in core/store tests. Run contract suites (`runStoreContractSuite`, `runAlgorithmContractSuite`) for all store and algorithm implementations.
+- **Numerics & Exact Arithmetic:** Rates across all algorithms must use exact integer fixed-point arithmetic (e.g. Euclidean GCD coprime `(a, b)` reduction). Floating-point rate representation and accumulation are strictly prohibited. All intermediate calculations must remain bounded within safe integer limits (`2^53 - 1`, `capacityUnits <= 2^51`) to guarantee identical results across V8, edge runtimes, and Redis Lua 5.1 doubles.
 
 ## Definition of Done: New Algorithm
 
@@ -143,7 +144,7 @@ type StoreErrorPolicy = 'fail-open' | 'fail-closed' | ((error, ctx) => Decision)
 - [x] Day 2: Core infrastructure (Clock, Duration, MemoryStore, createLimiter, testkit)
 - [x] Day 3A: Fixed window algorithm (pure step, tests, contract suite, docs, benchmark entry; Lua port pending Day 6)
 - [x] Day 3B: Website foundation (Astro + Starlight docs, Preact interactive playground, browser FakeClock, ADRs 0011-0013)
-- [ ] Day 4: Token bucket algorithm
+- [x] Day 4: Token bucket algorithm (pure step, rational fixed-point arithmetic, model oracle, property tests, integration tests, contract suite, docs, benchmark entry; Lua port pending Day 6)
 - [ ] Day 5: Sliding window (log + counter)
 - [ ] Day 6: Leaky bucket + RedisStore + Lua
 - [ ] Day 7: Express/Fastify adapters + headers

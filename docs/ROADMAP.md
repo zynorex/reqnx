@@ -47,12 +47,19 @@
 - ADR-0011 (Website Technology Stack), ADR-0012 (Browser Demo Architecture), ADR-0013 (Base-Path & SEO Guardrails)
 - Multi-project Vitest integration and build pipeline validation
 
-## Day 4 — Token Bucket Algorithm
+## Day 4 — Token Bucket Algorithm ✅
 
-- Pure TS `step()` implementation
-- Continuous refill model
-- Conformance test cases
-- Unit tests + property-based tests
+- Pure TS `step()` implementation with exact rational fixed-point arithmetic (`a/b` coprime integers)
+- Continuous refill model with integer GCD normalisation and zero floating-point drift
+- Strict `parseConfig()` validation (`capacity`, `refillTokens`, `refillInterval`, capacityUnits <= 2^51, 366-day cap)
+- `peek()` read-only capacity check and `stateTtlMs()` matching full refill duration
+- Comprehensive unit tests: Golden Examples A, B, C, backwards clock, dynamic config changes, bounds, exactness
+- Model-based oracle test suite (1,000 runs against discrete 1-ms reference simulator)
+- Property-based tests (7 invariants via fast-check): rate envelope, idempotence, monotonicity, backwards clock
+- High-concurrency integration tests: 1,000 concurrent requests, sustained load at 2x rate, key isolation
+- Full mutation pass (15 mutations, zero survivors)
+- Benchmarks: pure `step()` throughput (>17M ops/s), Limiter MemoryStore (>800k ops/s), memory footprint (~295.8 B/key)
+- Docs: user-facing guide (`docs/algorithms/token-bucket.md`), Redis port spec (`docs/algorithms/token-bucket.redis-port.md`), and ADR-0014
 
 ## Day 5 — Sliding Window Algorithms
 
