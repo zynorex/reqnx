@@ -53,3 +53,10 @@ export type {
   FixedWindowState,
 } from './algorithms/fixed-window.js';
 export { fixedWindow } from './algorithms/fixed-window.js';
+
+export type {
+  TokenBucketInput,
+  TokenBucketConfig,
+  TokenBucketState,
+} from './algorithms/token-bucket.js';
+export { tokenBucket } from './algorithms/token-bucket.js';
