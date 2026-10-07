@@ -2,7 +2,7 @@
  * scripts/bench-memory.ts
  *
  * Measures memory footprint (bytes per key) for @reqnx/core MemoryStore with
- * the fixedWindow algorithm at 100,000 distinct keys using V8 garbage collection.
+ * the fixedWindow and tokenBucket algorithms at 100,000 distinct keys using V8 garbage collection.
  *
  * Run: node --expose-gc --import tsx scripts/bench-memory.ts
  */
@@ -10,9 +10,53 @@
 import * as os from 'node:os';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fixedWindow, createMemoryStore, createLimiter } from '../packages/core/src/index.js';
+import { fixedWindow, tokenBucket, createMemoryStore, createLimiter } from '../packages/core/src/index.js';
 
 declare const gc: (() => void) | undefined;
+
+async function measureAlgorithm(
+  name: string,
+  createLimiterInstance: (store: ReturnType<typeof createMemoryStore>) => ReturnType<typeof createLimiter>,
+  keyCount: number,
+) {
+  if (typeof gc !== 'function') {
+    throw new Error('GC must be exposed');
+  }
+
+  const store = createMemoryStore({ maxKeys: 150_000 });
+  const limiter = createLimiterInstance(store);
+
+  gc();
+  gc();
+  const baselineHeap = process.memoryUsage().heapUsed;
+
+  const t0 = performance.now();
+
+  for (let i = 0; i < keyCount; i++) {
+    await limiter.check(`user-key-${i}`);
+  }
+
+  const durationMs = performance.now() - t0;
+
+  gc();
+  gc();
+  // Keep store alive by reading its size
+  const keyCountStored = store.size();
+  const finalHeap = process.memoryUsage().heapUsed;
+  const heapDeltaBytes = finalHeap - baselineHeap;
+  const bytesPerKey = heapDeltaBytes / keyCount;
+
+  return {
+    algorithm: name,
+    keyCount: keyCountStored,
+    durationMs: Math.round(durationMs),
+    opsPerSec: Math.round(keyCount / (durationMs / 1000)),
+    baselineHeapBytes: baselineHeap,
+    finalHeapBytes: finalHeap,
+    heapDeltaBytes,
+    bytesPerKey: Math.round(bytesPerKey * 10) / 10,
+  };
+}
 
 async function main() {
   if (typeof gc !== 'function') {
@@ -24,38 +68,43 @@ async function main() {
   // eslint-disable-next-line no-console
   console.log('Starting memory footprint benchmark...');
 
-  // Force GC to establish clean baseline
-  gc();
-  gc();
-  const baselineHeap = process.memoryUsage().heapUsed;
-
   const KEY_COUNT = 100_000;
-  const store = createMemoryStore({ maxKeys: 150_000 });
-  const limiter = createLimiter({
-    algorithm: fixedWindow,
-    store,
-    prefix: 'bench',
-    config: { limit: 100, window: '1h' },
-  });
 
+  // 1. Measure Fixed Window
   // eslint-disable-next-line no-console
-  console.log(`Inserting ${KEY_COUNT.toLocaleString()} keys...`);
-  const t0 = performance.now();
+  console.log(`\n[1/2] Benchmarking fixed-window with ${KEY_COUNT.toLocaleString()} keys...`);
+  const fixedWindowResult = await measureAlgorithm(
+    'fixed-window',
+    (store) => {
+      return createLimiter({
+        algorithm: fixedWindow,
+        store,
+        prefix: 'bench-fw',
+        config: { limit: 100, window: '1h' },
+      });
+    },
+    KEY_COUNT,
+  );
+  // eslint-disable-next-line no-console
+  console.log(`Fixed Window: ${fixedWindowResult.bytesPerKey.toFixed(1)} B/key, ${fixedWindowResult.opsPerSec.toLocaleString()} ops/sec`);
 
-  for (let i = 0; i < KEY_COUNT; i++) {
-    await limiter.check(`user-key-${i}`);
-  }
-
-  const durationMs = performance.now() - t0;
-
-  // Force GC again to collect temporary allocations
-  gc();
-  gc();
-
-  const finalHeap = process.memoryUsage().heapUsed;
-  const heapDeltaBytes = finalHeap - baselineHeap;
-  const bytesPerKey = heapDeltaBytes / KEY_COUNT;
-  const storeStats = store.stats();
+  // 2. Measure Token Bucket
+  // eslint-disable-next-line no-console
+  console.log(`\n[2/2] Benchmarking token-bucket with ${KEY_COUNT.toLocaleString()} keys...`);
+  const tokenBucketResult = await measureAlgorithm(
+    'token-bucket',
+    (store) => {
+      return createLimiter({
+        algorithm: tokenBucket,
+        store,
+        prefix: 'bench-tb',
+        config: { capacity: 100, refillTokens: 10, refillInterval: '1s' },
+      });
+    },
+    KEY_COUNT,
+  );
+  // eslint-disable-next-line no-console
+  console.log(`Token Bucket: ${tokenBucketResult.bytesPerKey.toFixed(1)} B/key, ${tokenBucketResult.opsPerSec.toLocaleString()} ops/sec`);
 
   const envInfo = {
     date: new Date().toISOString(),
@@ -70,30 +119,15 @@ async function main() {
 
   const results = {
     environment: envInfo,
-    benchmark: {
-      algorithm: 'fixed-window',
-      store: 'MemoryStore',
-      keyCount: KEY_COUNT,
-      storeKeys: storeStats.keys,
-      durationMs: Math.round(durationMs),
-      opsPerSec: Math.round((KEY_COUNT / (durationMs / 1000))),
-      baselineHeapBytes: baselineHeap,
-      finalHeapBytes: finalHeap,
-      heapDeltaBytes,
-      bytesPerKey: Math.round(bytesPerKey * 10) / 10,
+    benchmarks: {
+      fixedWindow: fixedWindowResult,
+      tokenBucket: tokenBucketResult,
+      delta: {
+        bytesPerKeyDelta: Math.round((tokenBucketResult.bytesPerKey - fixedWindowResult.bytesPerKey) * 10) / 10,
+        opsPerSecRatio: Math.round((tokenBucketResult.opsPerSec / fixedWindowResult.opsPerSec) * 100) / 100,
+      },
     },
   };
-
-  // eslint-disable-next-line no-console
-  console.log('\n--- Benchmark Results ---');
-  // eslint-disable-next-line no-console
-  console.log(`Keys stored: ${storeStats.keys.toLocaleString()}`);
-  // eslint-disable-next-line no-console
-  console.log(`Duration: ${Math.round(durationMs)} ms (${Math.round(KEY_COUNT / (durationMs / 1000)).toLocaleString()} ops/sec)`);
-  // eslint-disable-next-line no-console
-  console.log(`Heap Delta: ${(heapDeltaBytes / (1024 * 1024)).toFixed(2)} MB`);
-  // eslint-disable-next-line no-console
-  console.log(`Bytes Per Key: ${bytesPerKey.toFixed(1)} B/key\n`);
 
   // Ensure docs/benchmarks directory exists
   const docsBenchmarksDir = path.join(import.meta.dirname, '..', 'docs', 'benchmarks');
@@ -102,10 +136,10 @@ async function main() {
   }
 
   // Save raw JSON
-  const jsonPath = path.join(docsBenchmarksDir, 'day-03.json');
+  const jsonPath = path.join(docsBenchmarksDir, 'day-04.json');
   fs.writeFileSync(jsonPath, JSON.stringify(results, null, 2), 'utf-8');
   // eslint-disable-next-line no-console
-  console.log(`Saved JSON results to ${jsonPath}`);
+  console.log(`\nSaved JSON results to ${jsonPath}\n`);
 }
 
 main().catch((err) => {

@@ -1,0 +1,38 @@
+{
+  "environment": {
+    "date": "2026-10-07T16:42:16.815Z",
+    "nodeVersion": "v24.12.0",
+    "platform": "win32",
+    "arch": "x64",
+    "os": "Windows_NT 10.0.26300",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12500H",
+    "cpuCores": 16,
+    "totalRamMb": 16069
+  },
+  "benchmarks": {
+    "fixedWindow": {
+      "algorithm": "fixed-window",
+      "keyCount": 100000,
+      "durationMs": 192,
+      "opsPerSec": 521495,
+      "baselineHeapBytes": 8173760,
+      "finalHeapBytes": 36274672,
+      "heapDeltaBytes": 28100912,
+      "bytesPerKey": 281
+    },
+    "tokenBucket": {
+      "algorithm": "token-bucket",
+      "keyCount": 100000,
+      "durationMs": 181,
+      "opsPerSec": 552804,
+      "baselineHeapBytes": 8332520,
+      "finalHeapBytes": 37912840,
+      "heapDeltaBytes": 29580320,
+      "bytesPerKey": 295.8
+    },
+    "delta": {
+      "bytesPerKeyDelta": 14.8,
+      "opsPerSecRatio": 1.06
+    }
+  }
+}
