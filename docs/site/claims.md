@@ -1,0 +1,20 @@
+# Reqnx Claims Ledger
+
+This ledger defines every factual claim made on the Reqnx landing page. Per the project honesty guidelines, copy may only draw from verified claims with existing repository evidence.
+
+| Claim ID | Verifiable Claim | Evidence Path(s) | Gating Feature | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `claim-zero-deps` | `@reqnx/core` has zero runtime dependencies. | `packages/core/package.json` | `primitive-core` | Verified |
+| `claim-module-formats` | Dual ESM and CommonJS builds with bundled TypeScript declarations. | `packages/core/package.json` | `primitive-core` | Verified |
+| `claim-pure-step` | Algorithms are pure `step()` state machines with no I/O, no system clock calls, and no floating-point arithmetic. | `packages/core/src/algorithms/fixed-window.ts`, `packages/core/src/algorithms/token-bucket.ts`, `docs/adr/0002-algorithm-contract-and-atomicity.md` | `algo-fixed-window` | Verified |
+| `claim-injected-clock` | Time is injected via a `Clock` interface, enabling deterministic tests without real-time delays. | `packages/core/src/clock.ts`, `packages/testkit/src/fake-clock.ts` | `primitive-clock` | Verified |
+| `claim-atomic-store` | Store operations are atomic: check, step, and state mutation happen in one step. | `packages/core/src/memory-store.ts`, `packages/core/src/limiter.ts`, `docs/adr/0002-algorithm-contract-and-atomicity.md` | `store-memory` | Verified |
+| `claim-memory-bounds` | `MemoryStore` bounds memory with LRU eviction and maximum key capacity. | `packages/core/src/memory-store.ts`, `docs/adr/0009-memory-store.md` | `store-memory` | Verified |
+| `claim-failure-policies` | Configurable failure policies (fail-open, fail-closed, or custom handler) protect traffic if a store fails. | `packages/core/src/limiter.ts`, `docs/adr/0004-failure-semantics.md` | `primitive-limiter` | Verified |
+| `claim-fixed-window-avail` | Fixed Window Counter partitions time into aligned epoch windows with O(1) time and memory. | `packages/core/src/algorithms/fixed-window.ts`, `docs/algorithms/fixed-window.md` | `algo-fixed-window` | Verified |
+| `claim-token-bucket-avail` | Token Bucket supports smooth continuous refill with burst capacity and variable request costs. | `packages/core/src/algorithms/token-bucket.ts`, `docs/algorithms/token-bucket.md` | `algo-token-bucket` | Verified |
+| `claim-browser-execution` | The live console runs the real `@reqnx/core` library inside your browser using a virtual clock. | `apps/site/src/engine/scenario.ts`, `docs/adr/0012-browser-demo-architecture.md` | `algo-fixed-window` | Verified |
+| `claim-contract-tests` | Reusable contract suites test any store or algorithm implementation against the specification. | `packages/testkit/src/algorithm-contract.ts`, `packages/testkit/src/store-contract.ts` | `primitive-testkit` | Verified |
+| `claim-model-tested` | Token Bucket is verified against an independent discrete oracle over thousands of fast-check sequences. | `packages/core/src/__tests__/token-bucket.model.test.ts` | `algo-token-bucket` | Verified |
+| `claim-adr-count` | 14 architectural decisions recorded in `docs/adr/` documenting every technical trade-off. | `docs/adr/` | `docs-adr` | Verified |
+| `claim-benchmark-throughput` | In-memory throughput: 520,000 checks per second on a single thread (12th Gen Intel i5-12500H, Node v24.12.0, Oct 2026). | `docs/benchmarks/day-03.json`, `docs/benchmarks/day-04.json` | `benchmarks-memory` | Verified |
