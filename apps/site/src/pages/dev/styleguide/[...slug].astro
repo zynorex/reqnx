@@ -9,6 +9,8 @@
 import Icon from '../../../components/common/Icon.astro';
 import StatusChip from '../../../components/common/StatusChip.astro';
 import ThemeToggle from '../../../components/common/ThemeToggle';
+import Logo from '../../../components/brand/Logo.astro';
+import Mascot from '../../../components/brand/Mascot.astro';
 import '../../../styles/global.css';
 
 export function getStaticPaths() {
@@ -160,6 +162,43 @@ const icons = [
           <span style="font-family: var(--rx-font-mono); font-size: 0.85rem; color: var(--rx-text-2); background: var(--rx-surface-2); border: 1px solid var(--rx-border); padding: 0.5rem 1rem; border-radius: var(--rx-radius-sm);">
             Aligned Epoch Window Ticks (40px minor, 200px major)
           </span>
+        </div>
+      </section>
+
+      <!-- 7. Brand Assets & Mascot -->
+      <section style="margin-bottom: 3.5rem;">
+        <h2 style="font-size: var(--rx-font-h3); margin-bottom: 1rem;">7. Brand Assets & Mascot Placements</h2>
+        <div style="display: flex; flex-direction: column; gap: 2rem; background: var(--rx-surface-2); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); padding: 2rem;">
+          <div>
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--rx-text-2);">Logo Sizes & Wordmark</h3>
+            <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+              <Logo size={24} />
+              <Logo size={32} />
+              <Logo size={48} />
+            </div>
+          </div>
+
+          <div>
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--rx-text-2);">Mascot Placements</h3>
+            <div style="display: flex; gap: 2rem; align-items: flex-end; flex-wrap: wrap;">
+              <div style="text-align: center;">
+                <Mascot placement="footer" />
+                <div style="font-size: 0.75rem; color: var(--rx-text-3); margin-top: 0.5rem;">footer (44px)</div>
+              </div>
+              <div style="text-align: center;">
+                <Mascot placement="section" />
+                <div style="font-size: 0.75rem; color: var(--rx-text-3); margin-top: 0.5rem;">section (220px)</div>
+              </div>
+              <div style="text-align: center;">
+                <Mascot placement="hero" />
+                <div style="font-size: 0.75rem; color: var(--rx-text-3); margin-top: 0.5rem;">hero (260px)</div>
+              </div>
+              <div style="text-align: center;">
+                <Mascot placement="cta" />
+                <div style="font-size: 0.75rem; color: var(--rx-text-3); margin-top: 0.5rem;">cta (300px)</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>

@@ -34,9 +34,25 @@
     --rx-accent-indigo: #4f46e5;
     --rx-accent-indigo-dim: #4338ca;
     --rx-accent-indigo-glow: rgba(79, 70, 229, 0.25);
-    --rx-accent-cyan: #06b6d4;
-    --rx-accent-cyan-dim: #0891b2;
-    --rx-accent-cyan-glow: rgba(6, 182, 212, 0.25);
+    --rx-accent-cyan: #14ddfd;
+    --rx-accent-cyan-dim: #0284c7;
+    --rx-accent-cyan-glow: rgba(20, 221, 253, 0.22);
+
+    /* ─── Brand Specific Tokens ─────────────────────────────────────────── */
+    --rx-brand-cyan: #14ddfd;
+    --rx-brand-cyan-dim: #0284c7;
+    --rx-brand-gold: #fcb020;
+    --rx-brand-charcoal: #111319;
+    --rx-motif-tick: rgba(255, 255, 255, 0.06);
+    --rx-motif-tick-major: rgba(20, 221, 253, 0.22);
+    --rx-console-border: rgba(255, 255, 255, 0.12);
+    --rx-console-bg: #0d0f14;
+    --rx-console-header: #131720;
+    --rx-dur-fast: 120ms;
+    --rx-dur-base: 200ms;
+    --rx-dur-slow: 400ms;
+    --rx-dur-reveal: 600ms;
+    --rx-ease-out: cubic-bezier(0.2, 0, 0, 1);
 
     /* ─── Semantic Dual-Coded Roles (Color + Shape/Text) ─────────────────── */
     --rx-semantic-allowed: #10b981;

@@ -71,17 +71,19 @@ export const algorithms: readonly AlgorithmEntry[] = [
     name: 'Token Bucket',
     description:
       'Tokens refill at a steady rate. Allows controlled bursts up to bucket capacity. Smooth rate enforcement.',
-    status: 'coming-soon',
+    status: 'available',
     slug: 'token-bucket',
     timeComplexity: 'O(1)',
     spaceComplexity: 'O(1)',
-    defaultConfig: { capacity: 10, refillRate: 1, interval: '1s' },
+    defaultConfig: { capacity: 10, refillRate: 2, interval: '1s' },
     traits: {
       memoryPerKey: '~320 bytes (tokens + last refill)',
       burstBehavior: 'Limited to maximum bucket capacity',
       boundaryBehavior: 'Smooth, continuous refill',
       accuracy: 'Exact continuous token balance',
     },
+    signaturePreset: 'token-bucket-burst',
+    evidencePath: 'packages/core/src/algorithms/token-bucket.ts',
   },
   {
     id: 'sliding-window-log',
@@ -171,8 +173,10 @@ export const allFeatures: readonly FeatureItem[] = [
     id: 'algo-token-bucket',
     kind: 'algorithm',
     name: 'Token Bucket',
-    status: 'planned',
+    status: 'available',
     blurb: 'Continuous token refill with burst capacity control.',
+    evidencePath: 'packages/core/src/algorithms/token-bucket.ts',
+    docsUrl: '/algorithms/token-bucket/',
   },
   {
     id: 'algo-sliding-log',

@@ -11,7 +11,8 @@
     "snippets:run": "tsx src/snippets/generate-output.ts",
     "facts": "tsx scripts/print-facts.ts",
     "shots": "tsx scripts/take-shots.ts",
-    "a11y": "tsx scripts/run-a11y.ts"
+    "a11y": "tsx scripts/run-a11y.ts",
+    "brand:build": "tsx scripts/brand-build.ts"
   },
   "dependencies": {
     "@astrojs/preact": "^4.0.0",
@@ -24,6 +25,8 @@
     "@axe-core/playwright": "^4.13.0",
     "playwright": "^1.63.0",
     "rehype-katex": "^7.0.0",
-    "remark-math": "^6.0.0"
+    "remark-math": "^6.0.0",
+    "sharp": "^0.35.5",
+    "svgo": "^4.1.0"
   }
 }

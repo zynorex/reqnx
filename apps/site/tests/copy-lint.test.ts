@@ -58,6 +58,6 @@ describe('Copy Deck Quality & Honesty Lint', () => {
     expect(copyDeck.hero.headlineOptions.length).toBeGreaterThanOrEqual(5);
     const primaryOptions = copyDeck.hero.headlineOptions.filter((h) => h.isPrimary);
     expect(primaryOptions).toHaveLength(1);
-    expect(primaryOptions[0]?.headline).toBe('Rate limiting you can reason about.');
+    expect(primaryOptions[0]?.headline).toBe('Rate limiting built from small, checkable parts.');
   });
 });

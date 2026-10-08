@@ -137,5 +137,31 @@ export function computeFacts(): readonly VerifiedFact[] {
     });
   }
 
+  // 7. In-memory throughput benchmark (rounded DOWN to 2 significant digits)
+  const benchPath = join(root, 'docs/benchmarks/day-04.json');
+  if (existsSync(benchPath)) {
+    try {
+      const bench = JSON.parse(readFileSync(benchPath, 'utf-8'));
+      const fixedOps = bench.benchmarks?.fixedWindow?.opsPerSec;
+      if (typeof fixedOps === 'number' && fixedOps > 0) {
+        // Round down to two significant digits: e.g. 521495 -> 520000 -> 520k /s
+        const magnitude = Math.pow(10, Math.floor(Math.log10(fixedOps)) - 1);
+        const roundedDown = Math.floor(fixedOps / magnitude) * magnitude;
+        const formatted = roundedDown >= 1000 ? `${Math.floor(roundedDown / 1000)}k /s` : `${roundedDown} /s`;
+        const cpu = bench.environment?.cpu ?? 'Node runner';
+        const nodeVer = bench.environment?.nodeVersion ?? 'Node';
+        facts.push({
+          id: 'benchmark-throughput',
+          value: formatted,
+          label: 'In-Memory Throughput',
+          detail: `Fixed window checks on single thread. Environment: ${cpu}, ${nodeVer}. Methodology in docs/benchmarks/day-04.md`,
+          sourceFile: 'docs/benchmarks/day-04.json',
+        });
+      }
+    } catch {
+      // Omit on parse error
+    }
+  }
+
   return facts;
 }

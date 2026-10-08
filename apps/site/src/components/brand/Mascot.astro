@@ -1,0 +1,92 @@
+---
+import { brandAssets, mascotPlacements, type MascotPlacement } from '../../brand';
+import { Image } from 'astro:assets';
+
+interface Props {
+  placement: MascotPlacement;
+  class?: string;
+  style?: string;
+}
+
+const { placement, class: className = '', style = '' } = Astro.props;
+const config = mascotPlacements[placement];
+const asset = placement === '404' ? brandAssets.notFound : brandAssets.mascot;
+---
+
+<div
+  class:list={['rx-mascot-container', `rx-mascot--${placement}`, className]}
+  style={style}
+>
+  <Image
+    src={asset.src}
+    alt=""
+    width={config.width}
+    height={config.height}
+    loading={config.loading}
+    fetchpriority={config.fetchpriority}
+    decoding="async"
+    class="rx-mascot-img"
+  />
+</div>
+
+<style>
+  .rx-mascot-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    user-select: none;
+    line-height: 0;
+  }
+
+  .rx-mascot-img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    transition: transform var(--rx-dur-base) var(--rx-ease-out);
+  }
+
+  @media (hover: hover) {
+    .rx-mascot-container:hover .rx-mascot-img {
+      transform: rotate(2.5deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rx-mascot-container:hover .rx-mascot-img {
+      transform: none;
+    }
+  }
+
+  .rx-mascot--hero {
+    max-width: 260px;
+  }
+
+  .rx-mascot--section {
+    max-width: 220px;
+  }
+
+  .rx-mascot--cta {
+    max-width: 300px;
+  }
+
+  .rx-mascot--footer {
+    max-width: 44px;
+  }
+
+  .rx-mascot--404 {
+    max-width: 560px;
+  }
+
+  @media (max-width: 768px) {
+    .rx-mascot--hero {
+      max-width: 180px;
+    }
+    .rx-mascot--cta {
+      max-width: 220px;
+    }
+    .rx-mascot--404 {
+      max-width: 340px;
+    }
+  }
+</style>

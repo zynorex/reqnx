@@ -30,7 +30,7 @@ describe('Feature Registry & Status Gating Evidence', () => {
 
   it('ensures every available algorithm has evidence that exists on disk', () => {
     const availableAlgos = algorithms.filter((a) => a.status === 'available');
-    expect(availableAlgos.length).toBe(1);
+    expect(availableAlgos.length).toBe(2);
 
     for (const algo of availableAlgos) {
       expect(algo.evidencePath).toBeDefined();

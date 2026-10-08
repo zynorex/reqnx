@@ -6,12 +6,18 @@ describe('Algorithm Registry', () => {
     expect(algorithms).toHaveLength(5);
   });
 
-  it('marks fixed-window as available and others as coming-soon', () => {
+  it('marks fixed-window and token-bucket as available and others as coming-soon', () => {
     const fixedWindowEntry = algorithms.find((a) => a.id === 'fixed-window');
     expect(fixedWindowEntry).toBeDefined();
     expect(fixedWindowEntry?.status).toBe('available');
 
-    const others = algorithms.filter((a) => a.id !== 'fixed-window');
+    const tokenBucketEntry = algorithms.find((a) => a.id === 'token-bucket');
+    expect(tokenBucketEntry).toBeDefined();
+    expect(tokenBucketEntry?.status).toBe('available');
+
+    const others = algorithms.filter(
+      (a) => a.id !== 'fixed-window' && a.id !== 'token-bucket'
+    );
     for (const algo of others) {
       expect(algo.status).toBe('coming-soon');
     }
@@ -27,8 +33,9 @@ describe('Algorithm Registry', () => {
 
   it('returns only available algorithms in getAvailableAlgorithms', () => {
     const available = getAvailableAlgorithms();
-    expect(available).toHaveLength(1);
-    expect(available[0]?.id).toBe('fixed-window');
+    expect(available).toHaveLength(2);
+    expect(available.map((a) => a.id)).toContain('fixed-window');
+    expect(available.map((a) => a.id)).toContain('token-bucket');
   });
 
   it('ensures each algorithm has complexity metadata and slug', () => {
