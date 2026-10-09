@@ -1,12 +1,15 @@
 # ADR 0015: Landing Page Architecture & Art Direction
 
 ## Status
+
 Accepted
 
 ## Context
+
 Reqnx requires a developer-facing landing page at `/` to explain what the library is, build developer trust, and demonstrate its atomic rate limiting mechanics directly in the browser. Infrastructure tools (Redis, Cloudflare, Envoy) earn trust through technical precision rather than decorative marketing hype. The page must balance an interactive browser instrument with strict performance budgets and accessibility standards.
 
 ## Decision
+
 1. **Art Direction: "The Instrument"**:
    - Palette anchors to dark charcoal canvas (`#0f1117`), electric cyan accents (`#14ddfd`), and amber gold tokens (`#fcb020`), with light theme variations providing $\ge 4.5:1$ contrast (e.g., cyan-teal `#0369a1`).
    - "Window Tick" motif: A repeating 1px hairline coordinate grid with 40px minor and 200px major boundary ticks representing epoch time windows.
@@ -23,5 +26,6 @@ Reqnx requires a developer-facing landing page at `/` to explain what the librar
    - Total landing client JS gzip is constrained to $\le 35\text{ KB}$ for the core instrument.
 
 ## Consequences
+
 - The page renders with near-instant static speed and zero CLS.
 - Developers can interact with the real `@reqnx/core` library executing on a simulated clock without downloading hefty external assets or analytics.

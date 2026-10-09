@@ -1,14 +1,17 @@
 # ADR 0017: Not Found Page & Route Manifest
 
 ## Status
+
 Accepted
 
 ## Context
+
 Reqnx requires a dedicated, branded 404 recovery page for the documentation site. The default 404 page provided by the Starlight theme uses generic typography and layout that does not match Reqnx's dark "Instrument" theme, does not incorporate the brand assets (`brand/404.png`), and provides no intelligent path recovery when developers arrive via broken external links or mistyped algorithm routes.
 
 Additionally, static hosting environments (GitHub Pages, Cloudflare Pages, S3/CloudFront) require a single, standalone `404.html` at the build root rather than nested redirects.
 
 ## Decision
+
 1. **Starlight 404 Override**:
    - Configured `disable404Route: true` in `apps/site/astro.config.mjs` to suppress Starlight's automatic 404 route generation.
    - Created `apps/site/src/pages/404.astro`, which compiles directly to `apps/site/dist/404.html`.
@@ -37,6 +40,7 @@ Additionally, static hosting environments (GitHub Pages, Cloudflare Pages, S3/Cl
    - Fully accessible with zero serious or critical Axe violations.
 
 ## Consequences
+
 - Single static `404.html` deployed cleanly across all static hosting providers.
 - Consistent developer experience and reduced bounce rate on mistyped URLs.
 - Covered by the automated screenshot matrix (`404-desktop-1440-dark.png`, `404-mobile-390-dark.png`) and Axe automated audits.

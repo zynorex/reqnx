@@ -1,7 +1,7 @@
 ---
-title: "Fixed Window Counter Algorithm"
-summary: "Simplest, lowest-overhead rate limiter that divides time into non-overlapping epoch-aligned windows."
-status: "implemented"
+title: 'Fixed Window Counter Algorithm'
+summary: 'Simplest, lowest-overhead rate limiter that divides time into non-overlapping epoch-aligned windows.'
+status: 'implemented'
 ---
 
 # Fixed Window Counter
@@ -33,13 +33,14 @@ const limiter = createLimiter({
   store: createMemoryStore(),
   prefix: 'api',
   config: {
-    limit: 100,      // Maximum allowed requests per window (1 to 2^31 - 1)
-    window: '1m',    // Window duration (e.g. '10s', '1m', '1h', or milliseconds)
+    limit: 100, // Maximum allowed requests per window (1 to 2^31 - 1)
+    window: '1m', // Window duration (e.g. '10s', '1m', '1h', or milliseconds)
   },
 });
 ```
 
 ### Config Validation Rules
+
 - `limit`: Must be a safe positive integer between `1` and `2,147,483,647` ($2^{31} - 1$).
 - `window`: String duration (e.g., `'500ms'`, `'10s'`, `'1m'`, `'2h'`) or integer milliseconds in `[1, 366 days]`.
 - Unknown properties are strictly rejected with `ConfigError`.
@@ -50,14 +51,14 @@ const limiter = createLimiter({
 
 When `limiter.check()` executes, the returned `Decision` fields convey specific semantics for Fixed Window:
 
-| Field | Type | Meaning in Fixed Window |
-|---|---|---|
-| `allowed` | `boolean` | `true` if $\text{count} + \text{cost} \le \text{limit}$; `false` otherwise. |
-| `limit` | `number` | The configured window limit. |
-| `remaining` | `number` | Remaining admitted capacity in the active window ($\text{limit} - \text{count}$). Minimum `0`. |
-| `resetAtMs` | `number` | Epoch millisecond timestamp when the active window closes ($\text{windowStart} + \text{windowMs}$). |
-| `retryAfterMs` | `number` | `0` when `allowed: true`. When denied, milliseconds remaining until window reset: $\max(1, \text{resetAtMs} - \text{nowMs})$. |
-| `degraded` | `boolean` | `true` only if the backing store failed and fallback policy applied; `false` in normal operation. |
+| Field          | Type      | Meaning in Fixed Window                                                                                                       |
+| -------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `allowed`      | `boolean` | `true` if $\text{count} + \text{cost} \le \text{limit}$; `false` otherwise.                                                   |
+| `limit`        | `number`  | The configured window limit.                                                                                                  |
+| `remaining`    | `number`  | Remaining admitted capacity in the active window ($\text{limit} - \text{count}$). Minimum `0`.                                |
+| `resetAtMs`    | `number`  | Epoch millisecond timestamp when the active window closes ($\text{windowStart} + \text{windowMs}$).                           |
+| `retryAfterMs` | `number`  | `0` when `allowed: true`. When denied, milliseconds remaining until window reset: $\max(1, \text{resetAtMs} - \text{nowMs})$. |
+| `degraded`     | `boolean` | `true` only if the backing store failed and fallback policy applied; `false` in normal operation.                             |
 
 ---
 
@@ -74,6 +75,7 @@ Window 1 [00:00 -> 01:00)           Window 2 [01:00 -> 02:00)
 ```
 
 In this scenario:
+
 - 100 requests are admitted at $t = 59,999\text{ ms}$ (at the end of Window 1).
 - 100 requests are admitted at $t = 60,000\text{ ms}$ (at the start of Window 2).
 - **Result:** 200 requests are admitted in a 1 millisecond span, which is $2 \times \text{limit}$.
@@ -88,12 +90,14 @@ If your system cannot tolerate a $2\times$ boundary burst, use **Sliding Window 
 ## When to Use and When Not to Use
 
 ### Recommended When:
+
 - **Low latency and maximum throughput** are paramount (over 20 million pure ops/sec).
 - **Memory footprint** must remain minimal (~273 bytes per key in Node.js V8 heap).
 - The downstream service can absorb momentary bursts of up to $2 \times \text{limit}$ at window boundaries.
 - Rate limits represent general usage quotas (e.g. 5,000 requests per hour per user).
 
 ### Not Recommended When:
+
 - Spikes at boundary lines must be smoothed evenly (use **Token Bucket** or **Leaky Bucket**).
 - Strict moving-window guarantees are required without double-limit bursts (use **Sliding Window Log** or **Sliding Window Counter**).
 
@@ -107,7 +111,7 @@ If your system cannot tolerate a $2\times$ boundary burst, use **Sliding Window 
   ```typescript
   interface FixedWindowState {
     readonly windowStart: number; // Epoch ms of window origin
-    readonly count: number;       // Admitted request tokens in this window
+    readonly count: number; // Admitted request tokens in this window
   }
   ```
 - **State Version**: `1`

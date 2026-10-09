@@ -40,11 +40,15 @@ describe('Claims Ledger Conformance', () => {
 
   it('ensures gating features for verified claims are currently available', () => {
     const availableFeatureIds = new Set(
-      allFeatures.filter((f) => f.status === 'available').map((f) => f.id)
+      allFeatures.filter((f) => f.status === 'available').map((f) => f.id),
     );
 
     for (const c of claims) {
-      if (c.gatingFeature.startsWith('algo-') || c.gatingFeature.startsWith('primitive-') || c.gatingFeature.startsWith('store-')) {
+      if (
+        c.gatingFeature.startsWith('algo-') ||
+        c.gatingFeature.startsWith('primitive-') ||
+        c.gatingFeature.startsWith('store-')
+      ) {
         expect(availableFeatureIds.has(c.gatingFeature)).toBe(true);
       }
     }

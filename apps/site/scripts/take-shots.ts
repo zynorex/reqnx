@@ -92,8 +92,20 @@ const SHOTS: ShotConfig[] = [
   { name: 'wide-1920-dark', urlPath: '/', width: 1920, height: 1080, theme: 'dark' },
   { name: 'ultrawide-2560-dark', urlPath: '/', width: 2560, height: 1440, theme: 'dark' },
   // 404 at deep missing path
-  { name: '404-desktop-1440-dark', urlPath: '/deeply/nested/missing/route', width: 1440, height: 900, theme: 'dark' },
-  { name: '404-mobile-390-dark', urlPath: '/deeply/nested/missing/route', width: 390, height: 844, theme: 'dark' },
+  {
+    name: '404-desktop-1440-dark',
+    urlPath: '/deeply/nested/missing/route',
+    width: 1440,
+    height: 900,
+    theme: 'dark',
+  },
+  {
+    name: '404-mobile-390-dark',
+    urlPath: '/deeply/nested/missing/route',
+    width: 390,
+    height: 844,
+    theme: 'dark',
+  },
 ];
 
 async function main() {

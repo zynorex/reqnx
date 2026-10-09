@@ -94,7 +94,7 @@ async function main() {
   fs.writeFileSync(
     path.join(brandDir, 'manifest.json'),
     JSON.stringify(manifest, null, 2) + '\n',
-    'utf-8'
+    'utf-8',
   );
   console.log('✓ brand/manifest.json generated.');
 
@@ -140,7 +140,7 @@ async function main() {
   fs.writeFileSync(
     path.join(publicDir, 'site.webmanifest'),
     JSON.stringify(webManifest, null, 2) + '\n',
-    'utf-8'
+    'utf-8',
   );
   console.log('✓ public/site.webmanifest generated.');
 
@@ -148,37 +148,82 @@ async function main() {
   // Logo derivatives
   const logoBuf = fs.readFileSync(path.join(brandDir, 'logo.png'));
   for (const width of [64, 128, 256, 512]) {
-    await sharp(logoBuf).resize(width).webp({ quality: 90 }).toFile(path.join(assetsBrandDir, `logo-${width}.webp`));
-    await sharp(logoBuf).resize(width).png({ compressionLevel: 9 }).toFile(path.join(assetsBrandDir, `logo-${width}.png`));
+    await sharp(logoBuf)
+      .resize(width)
+      .webp({ quality: 90 })
+      .toFile(path.join(assetsBrandDir, `logo-${width}.webp`));
+    await sharp(logoBuf)
+      .resize(width)
+      .png({ compressionLevel: 9 })
+      .toFile(path.join(assetsBrandDir, `logo-${width}.png`));
   }
-  await sharp(logoBuf).resize(128).webp({ quality: 90 }).toFile(path.join(assetsBrandDir, 'logo.webp'));
-  await sharp(logoBuf).resize(128).png({ compressionLevel: 9 }).toFile(path.join(assetsBrandDir, 'logo.png'));
+  await sharp(logoBuf)
+    .resize(128)
+    .webp({ quality: 90 })
+    .toFile(path.join(assetsBrandDir, 'logo.webp'));
+  await sharp(logoBuf)
+    .resize(128)
+    .png({ compressionLevel: 9 })
+    .toFile(path.join(assetsBrandDir, 'logo.png'));
 
   // Mascot derivatives
   const mascotBuf = fs.readFileSync(path.join(brandDir, 'mascot.png'));
   for (const width of [160, 240, 360, 480, 720]) {
-    await sharp(mascotBuf).resize(width).webp({ quality: 85 }).toFile(path.join(assetsBrandDir, `mascot-${width}.webp`));
-    await sharp(mascotBuf).resize(width).png({ compressionLevel: 9 }).toFile(path.join(assetsBrandDir, `mascot-${width}.png`));
+    await sharp(mascotBuf)
+      .resize(width)
+      .webp({ quality: 85 })
+      .toFile(path.join(assetsBrandDir, `mascot-${width}.webp`));
+    await sharp(mascotBuf)
+      .resize(width)
+      .png({ compressionLevel: 9 })
+      .toFile(path.join(assetsBrandDir, `mascot-${width}.png`));
   }
-  await sharp(mascotBuf).resize(480).webp({ quality: 85 }).toFile(path.join(assetsBrandDir, 'mascot.webp'));
-  await sharp(mascotBuf).resize(480).png({ compressionLevel: 9 }).toFile(path.join(assetsBrandDir, 'mascot.png'));
+  await sharp(mascotBuf)
+    .resize(480)
+    .webp({ quality: 85 })
+    .toFile(path.join(assetsBrandDir, 'mascot.webp'));
+  await sharp(mascotBuf)
+    .resize(480)
+    .png({ compressionLevel: 9 })
+    .toFile(path.join(assetsBrandDir, 'mascot.png'));
 
   // 404 derivatives
   const notFoundBuf = fs.readFileSync(path.join(brandDir, '404.png'));
   for (const width of [400, 560, 840, 1120]) {
-    await sharp(notFoundBuf).resize(width).webp({ quality: 85 }).toFile(path.join(assetsBrandDir, `404-${width}.webp`));
-    await sharp(notFoundBuf).resize(width).png({ compressionLevel: 9 }).toFile(path.join(assetsBrandDir, `404-${width}.png`));
+    await sharp(notFoundBuf)
+      .resize(width)
+      .webp({ quality: 85 })
+      .toFile(path.join(assetsBrandDir, `404-${width}.webp`));
+    await sharp(notFoundBuf)
+      .resize(width)
+      .png({ compressionLevel: 9 })
+      .toFile(path.join(assetsBrandDir, `404-${width}.png`));
   }
-  await sharp(notFoundBuf).resize(560).webp({ quality: 85 }).toFile(path.join(assetsBrandDir, '404.webp'));
-  await sharp(notFoundBuf).resize(560).png({ compressionLevel: 9 }).toFile(path.join(assetsBrandDir, '404.png'));
+  await sharp(notFoundBuf)
+    .resize(560)
+    .webp({ quality: 85 })
+    .toFile(path.join(assetsBrandDir, '404.webp'));
+  await sharp(notFoundBuf)
+    .resize(560)
+    .png({ compressionLevel: 9 })
+    .toFile(path.join(assetsBrandDir, '404.png'));
 
   // Banner derivatives
   const bannerBuf = fs.readFileSync(path.join(brandDir, 'banner.png'));
   for (const width of [724, 1200]) {
-    await sharp(bannerBuf).resize(width).webp({ quality: 85 }).toFile(path.join(assetsBrandDir, `banner-${width}.webp`));
+    await sharp(bannerBuf)
+      .resize(width)
+      .webp({ quality: 85 })
+      .toFile(path.join(assetsBrandDir, `banner-${width}.webp`));
   }
-  await sharp(bannerBuf).resize(1200).webp({ quality: 85 }).toFile(path.join(assetsBrandDir, 'banner.webp'));
-  await sharp(bannerBuf).resize(1200).png({ compressionLevel: 9 }).toFile(path.join(assetsBrandDir, 'banner.png'));
+  await sharp(bannerBuf)
+    .resize(1200)
+    .webp({ quality: 85 })
+    .toFile(path.join(assetsBrandDir, 'banner.webp'));
+  await sharp(bannerBuf)
+    .resize(1200)
+    .png({ compressionLevel: 9 })
+    .toFile(path.join(assetsBrandDir, 'banner.png'));
 
   console.log('✓ All brand asset derivatives generated successfully.');
 }

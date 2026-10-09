@@ -15,9 +15,7 @@ describe('Algorithm Registry', () => {
     expect(tokenBucketEntry).toBeDefined();
     expect(tokenBucketEntry?.status).toBe('available');
 
-    const others = algorithms.filter(
-      (a) => a.id !== 'fixed-window' && a.id !== 'token-bucket'
-    );
+    const others = algorithms.filter((a) => a.id !== 'fixed-window' && a.id !== 'token-bucket');
     for (const algo of others) {
       expect(algo.status).toBe('coming-soon');
     }

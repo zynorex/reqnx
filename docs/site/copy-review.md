@@ -9,30 +9,30 @@
 
 ## 1. Header & Navigation
 
-| Element | Text | Evidence / Binding |
-| :--- | :--- | :--- |
-| **Brand Logo Alt** | REQNX home | Accessibility standard |
-| **Version Chip** | `0.x Pre-release` | `packages/core/package.json` (`0.0.0`) |
-| **Nav Links** | Docs · Algorithms · Playground · Status · GitHub | Valid site routes and repo link |
-| **Theme Toggle** | System · Light · Dark | 3-state localStorage + media query toggle |
-| **Primary CTA** | Get started | Links to `/getting-started/` |
+| Element            | Text                                             | Evidence / Binding                        |
+| :----------------- | :----------------------------------------------- | :---------------------------------------- |
+| **Brand Logo Alt** | REQNX home                                       | Accessibility standard                    |
+| **Version Chip**   | `0.x Pre-release`                                | `packages/core/package.json` (`0.0.0`)    |
+| **Nav Links**      | Docs · Algorithms · Playground · Status · GitHub | Valid site routes and repo link           |
+| **Theme Toggle**   | System · Light · Dark                            | 3-state localStorage + media query toggle |
+| **Primary CTA**    | Get started                                      | Links to `/getting-started/`              |
 
 ---
 
 ## 2. Hero Section
 
 - **Eyebrow Chip**: `Open source · MIT · v0.x`  
-  *(Facts: MIT license on disk; v0.x pre-release)*
-- **Primary Headline**: `Rate limiting built from small, checkable parts.`  
+  _(Facts: MIT license on disk; v0.x pre-release)_
+- **Primary Headline**: `Rate limiting built from small, checkable parts.`
 - **Subhead**: `Zero runtime dependencies. Pure state-transition functions. Injected clocks and atomic stores so your tests and callers always agree.`  
-  *(Claims: `zero-dependencies`, `pure-algorithms`, `injected-clock`, `concurrency-atomic`)*
+  _(Claims: `zero-dependencies`, `pure-algorithms`, `injected-clock`, `concurrency-atomic`)_
 - **Primary Action**: `Get started` -> `/getting-started/`
 - **Secondary Action**: `Try the playground` -> `/playground/`
 - **Command Box**:
   - Unpublished state: `RUN FROM SOURCE` `git clone https://github.com/zynorex/reqnx.git`
   - Published state: `INSTALL` `npm install @reqnx/core`
 - **Live Instrument Caption**: `Simulated time. This is the real @reqnx/core library running in your browser.`  
-  *(Evidence: Browser executes real `@reqnx/core` bundle via Preact and Web Worker / fake clock)*
+  _(Evidence: Browser executes real `@reqnx/core` bundle via Preact and Web Worker / fake clock)_
 - **Mascot Placement**: Supportive co-pilot positioned outside data boundaries, peering over the instrument stage. Hidden on `<900px` viewports.
 
 ---
@@ -62,9 +62,9 @@ Verifiable build-time facts computed dynamically by `facts.ts`:
   - `retryAfterMs` (`number`): Milliseconds the client must wait before retrying when rejected.
   - `limit` (`number`): The maximum capacity configured for this key and span.
 - **Why Exact Rate Limiting Is Hard**:
-  - **Time and drift**: System clocks jump backward during NTP syncs, and servers in a cluster do not agree on the current millisecond. *Solution: Algorithms never read the system clock directly. Time is injected as an explicit integer, and window resets anchor to epoch intervals.*
-  - **Race conditions**: Two simultaneous requests can both observe one token remaining and both deduct it, allowing traffic past the quota. *Solution: Check, algorithm step, and state persistence execute as a single atomic operation in MemoryStore and in Redis Lua scripts.*
-  - **Store unavailability**: When Redis disconnects or a store crashes, uncaught errors crash process handlers or block legitimate traffic. *Solution: Configurable failure policies (fail-open, fail-closed, custom fallback) isolate store errors and tag degraded decisions clearly.*
+  - **Time and drift**: System clocks jump backward during NTP syncs, and servers in a cluster do not agree on the current millisecond. _Solution: Algorithms never read the system clock directly. Time is injected as an explicit integer, and window resets anchor to epoch intervals._
+  - **Race conditions**: Two simultaneous requests can both observe one token remaining and both deduct it, allowing traffic past the quota. _Solution: Check, algorithm step, and state persistence execute as a single atomic operation in MemoryStore and in Redis Lua scripts._
+  - **Store unavailability**: When Redis disconnects or a store crashes, uncaught errors crash process handlers or block legitimate traffic. _Solution: Configurable failure policies (fail-open, fail-closed, custom fallback) isolate store errors and tag degraded decisions clearly._
 - **Who It's For**:
   - Backend engineers building Node.js and TypeScript APIs that need deterministic rate limiting.
   - Teams requiring verifiable concurrency guarantees across both single-process and distributed Redis tiers.
@@ -156,6 +156,7 @@ Verifiable build-time facts computed dynamically by `facts.ts`:
 ## 12. Frequently Asked Questions
 
 Includes 14 deep technical answers categorised into:
+
 1. **Getting Started**: Redis necessity, algorithm selection, key choosing, framework adapters.
 2. **Design & Mechanics**: Clock drift & NTP jumps, concurrency safety, store failure isolation, Redis Cluster hash slots, edge runtimes.
 3. **Production & Operations**: Production status (v0.x pre-release), throughput benchmarks, deterministic testing with FakeClock, telemetry & hooks.

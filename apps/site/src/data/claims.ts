@@ -46,8 +46,7 @@ export const claims: readonly Claim[] = [
   },
   {
     id: 'claim-atomic-store',
-    claim:
-      'Store operations are atomic: check, step, and state mutation happen in one step.',
+    claim: 'Store operations are atomic: check, step, and state mutation happen in one step.',
     evidencePaths: [
       'packages/core/src/memory-store.ts',
       'packages/core/src/limiter.ts',
@@ -57,22 +56,15 @@ export const claims: readonly Claim[] = [
   },
   {
     id: 'claim-memory-bounds',
-    claim:
-      'MemoryStore bounds memory with LRU eviction and maximum key capacity.',
-    evidencePaths: [
-      'packages/core/src/memory-store.ts',
-      'docs/adr/0009-memory-store.md',
-    ],
+    claim: 'MemoryStore bounds memory with LRU eviction and maximum key capacity.',
+    evidencePaths: ['packages/core/src/memory-store.ts', 'docs/adr/0009-memory-store.md'],
     gatingFeature: 'store-memory',
   },
   {
     id: 'claim-failure-policies',
     claim:
       'Configurable failure policies (fail-open, fail-closed, or custom handler) protect traffic if a store fails.',
-    evidencePaths: [
-      'packages/core/src/limiter.ts',
-      'docs/adr/0004-failure-semantics.md',
-    ],
+    evidencePaths: ['packages/core/src/limiter.ts', 'docs/adr/0004-failure-semantics.md'],
     gatingFeature: 'algo-fixed-window',
   },
   {
@@ -137,10 +129,7 @@ export const claims: readonly Claim[] = [
     id: 'claim-benchmark-throughput',
     claim:
       'In-memory throughput: 520,000 checks per second on a single thread (12th Gen Intel i5-12500H, Node v24.12.0, Oct 2026).',
-    evidencePaths: [
-      'docs/benchmarks/day-03.json',
-      'docs/benchmarks/day-04.json',
-    ],
+    evidencePaths: ['docs/benchmarks/day-03.json', 'docs/benchmarks/day-04.json'],
     gatingFeature: 'algo-fixed-window',
   },
 ] as const;

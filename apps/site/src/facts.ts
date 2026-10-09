@@ -147,7 +147,8 @@ export function computeFacts(): readonly VerifiedFact[] {
         // Round down to two significant digits: e.g. 521495 -> 520000 -> 520k /s
         const magnitude = Math.pow(10, Math.floor(Math.log10(fixedOps)) - 1);
         const roundedDown = Math.floor(fixedOps / magnitude) * magnitude;
-        const formatted = roundedDown >= 1000 ? `${Math.floor(roundedDown / 1000)}k /s` : `${roundedDown} /s`;
+        const formatted =
+          roundedDown >= 1000 ? `${Math.floor(roundedDown / 1000)}k /s` : `${roundedDown} /s`;
         const cpu = bench.environment?.cpu ?? 'Node runner';
         const nodeVer = bench.environment?.nodeVersion ?? 'Node';
         facts.push({

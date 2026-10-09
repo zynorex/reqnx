@@ -657,7 +657,12 @@ describe('fixedWindow algorithm — Property-Based Tests', () => {
           const pastWinStart = Math.floor(pastNow / config.windowMs) * config.windowMs;
           if (pastWinStart < r1.nextState.windowStart) {
             const rBackwards = fixedWindow.step(r1.nextState, config, pastNow, cost);
-            const rAtStored = fixedWindow.step(r1.nextState, config, r1.nextState.windowStart, cost);
+            const rAtStored = fixedWindow.step(
+              r1.nextState,
+              config,
+              r1.nextState.windowStart,
+              cost,
+            );
 
             expect(rBackwards.decision.allowed).toBe(rAtStored.decision.allowed);
             expect(rBackwards.decision.remaining).toBe(rAtStored.decision.remaining);
