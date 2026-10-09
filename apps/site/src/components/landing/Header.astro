@@ -2,6 +2,7 @@
 import { siteConfig, withBase } from '../../site.config';
 import Icon from '../common/Icon.astro';
 import { ThemeToggle } from '../common/ThemeToggle';
+import Logo from '../brand/Logo.astro';
 
 interface Props {
   currentPath?: string;
@@ -26,9 +27,7 @@ const navItems = [
 <header class="rx-header" id="rx-site-header">
   <div class="rx-header__inner">
     <div class="rx-header__brand">
-      <a href={withBase('/')} class="rx-header__logo" aria-label={`${siteConfig.name} Home`}>
-        <span class="rx-header__wordmark">{siteConfig.name}</span>
-      </a>
+      <Logo size={30} showText={true} />
       <span class="rx-header__version" aria-label={`Version ${siteConfig.version}`}>
         {siteConfig.version}
       </span>
@@ -297,11 +296,15 @@ const navItems = [
       padding: 0.375rem 0.875rem;
       font-size: var(--rx-font-small);
       font-weight: 600;
-      color: #ffffff;
+      color: #ffffff !important;
       background: var(--rx-accent-indigo);
       border-radius: var(--rx-radius-sm);
       text-decoration: none;
       transition: background-color var(--rx-transition-fast), transform var(--rx-transition-fast);
+    }
+
+    .rx-header__cta span {
+      color: #ffffff !important;
     }
 
     .rx-header__cta:hover {

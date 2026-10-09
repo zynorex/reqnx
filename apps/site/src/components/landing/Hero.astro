@@ -6,6 +6,7 @@ import { LiveConsole } from './LiveConsole';
 import ProofStrip from './ProofStrip.astro';
 import CopyButton from '../common/CopyButton';
 import Icon from '../common/Icon.astro';
+import Mascot from '../brand/Mascot.astro';
 
 const initialState = await getPrecomputedHeroState();
 const commandText = siteConfig.published ? siteConfig.installCmd : siteConfig.fromSourceCmd;
@@ -34,23 +35,28 @@ const commandLabel = siteConfig.published ? 'Install' : 'Run from source';
     <div class="rx-hero-actions">
       <div class="rx-hero-ctas">
         <a href={withBase('/getting-started/')} class="rx-btn rx-btn--primary">
-          <span>{landingCopy.hero.primaryCta}</span>
+          <span>{landingCopy.hero.ctaPrimary}</span>
           <Icon name="arrow-right" size={16} ariaHidden={true} />
         </a>
         <a href={withBase('/playground/')} class="rx-btn rx-btn--secondary">
-          <span>{landingCopy.hero.secondaryCta}</span>
+          <span>{landingCopy.hero.ctaSecondary}</span>
         </a>
       </div>
 
       <div class="rx-cmd-box">
         <span class="rx-cmd-box__label">{commandLabel}</span>
-        <code class="rx-cmd-box__code">{commandText}</code>
+        <code class="rx-cmd-box__code" tabindex="0" role="region" aria-label="Terminal command">{commandText}</code>
         <CopyButton client:load text={commandText} />
       </div>
     </div>
 
-    <!-- The Instrument: Live Browser Console -->
-    <LiveConsole client:idle initialState={initialState} />
+    <!-- The Instrument: Live Browser Console with Mascot Co-Pilot -->
+    <div class="rx-hero-console-stage">
+      <div class="rx-hero-mascot-wrapper" aria-hidden="true">
+        <Mascot placement="hero" />
+      </div>
+      <LiveConsole client:idle initialState={initialState} />
+    </div>
 
     <!-- Verified Facts Proof Strip -->
     <ProofStrip />

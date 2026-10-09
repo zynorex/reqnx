@@ -68,6 +68,13 @@ pnpm bench:memory            # Memory footprint benchmark (--expose-gc)
 pnpm --filter @reqnx/core test
 pnpm --filter @reqnx/core build
 
+# Website & Docs
+pnpm --filter @reqnx/site dev        # Run Astro development server
+pnpm --filter @reqnx/site build      # Build static docs and landing page
+pnpm --filter @reqnx/site run a11y   # Axe accessibility audit (Desktop/Mobile, Dark/Light)
+pnpm --filter @reqnx/site run shots  # Capture multi-viewport screenshot matrix
+pnpm --filter @reqnx/site run brand:build # Re-generate responsive brand asset derivatives
+
 # Redis for integration tests
 docker compose up -d
 docker compose down
@@ -83,6 +90,10 @@ docker compose down
 - **Key schema:** `reqnx:{prefix}:{algorithmId}:{identity}` — max 512 bytes; oversized keys rejected with `InputError` (never silently hashed or truncated).
 - **Testing:** Use `FakeClock` only. No real timers (`setTimeout`, `setInterval`) in core/store tests. Run contract suites (`runStoreContractSuite`, `runAlgorithmContractSuite`) for all store and algorithm implementations.
 - **Numerics & Exact Arithmetic:** Rates across all algorithms must use exact integer fixed-point arithmetic (e.g. Euclidean GCD coprime `(a, b)` reduction). Floating-point rate representation and accumulation are strictly prohibited. All intermediate calculations must remain bounded within safe integer limits (`2^53 - 1`, `capacityUnits <= 2^51`) to guarantee identical results across V8, edge runtimes, and Redis Lua 5.1 doubles.
+- **Brand & Mascot Usage:** Master assets in `brand/` are strictly read-only. Derivatives are generated via `brand:build` and hashed in `brand/manifest.json`. In Astro components, reference typed descriptors from `apps/site/src/brand.ts`. Mascot placement is permitted ONLY in hero background/peeking, open source badge, final CTA companion, 404 recovery page, and footer cameo. Mascot is strictly barred from data tables, live console output logs, code recipes, and FAQ disclosures.
+- **Landing Page Copy Policy:** Zero marketing hype words ("blazing fast", "revolutionary", "zero-overhead", "unrivaled"). Tone is technical, calm, and honest. All factual claims must be recorded in `docs/site/claims.md` with verifiable commands or code paths. Feature availability gating must query `apps/site/src/features.ts` (with valid `evidencePath`).
+- **404 Routing & Recovery:** Handled via `apps/site/src/pages/404.astro` (`disable404Route: true` in Starlight config) emitting a single static `dist/404.html` with client-side fuzzy path recovery matching against known routes.
+- **Accessibility:** All pages must pass Axe audits with 0 serious or critical violations across both dark and light modes. Interactive scroll areas (`overflow-x: auto`) must declare `tabindex="0" role="region" aria-label="..."`. Button text and link contrast must satisfy WCAG AA ($\ge 4.5:1$).
 
 ## Definition of Done: New Algorithm
 
@@ -144,6 +155,7 @@ type StoreErrorPolicy = 'fail-open' | 'fail-closed' | ((error, ctx) => Decision)
 - [x] Day 2: Core infrastructure (Clock, Duration, MemoryStore, createLimiter, testkit)
 - [x] Day 3A: Fixed window algorithm (pure step, tests, contract suite, docs, benchmark entry; Lua port pending Day 6)
 - [x] Day 3B: Website foundation (Astro + Starlight docs, Preact interactive playground, browser FakeClock, ADRs 0011-0013)
+- [x] Day 3C / Landing v2: Production landing page at `/` (14 sections, live instrument Preact islands, Bento grid, Boundary burst, honest trade-offs) and branded 404 recovery page at `/404`, brand asset pipeline, Axe a11y 0 violations, ADRs 0015-0018
 - [x] Day 4: Token bucket algorithm (pure step, rational fixed-point arithmetic, model oracle, property tests, integration tests, contract suite, docs, benchmark entry; Lua port pending Day 6)
 - [ ] Day 5: Sliding window (log + counter)
 - [ ] Day 6: Leaky bucket + RedisStore + Lua

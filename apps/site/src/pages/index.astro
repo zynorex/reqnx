@@ -2,19 +2,33 @@
 import { siteConfig, withBase } from '../site.config';
 import Header from '../components/landing/Header.astro';
 import Hero from '../components/landing/Hero.astro';
+import WhatItIs from '../components/landing/WhatItIs.astro';
+import WhyChoose from '../components/landing/WhyChoose.astro';
+import TheSeam from '../components/landing/TheSeam.astro';
+import AlgorithmTabs from '../components/landing/AlgorithmTabs.astro';
+import Quickstart from '../components/landing/Quickstart.astro';
+import Recipes from '../components/landing/Recipes.astro';
+import Architecture from '../components/landing/Architecture.astro';
+import StatusSection from '../components/landing/StatusSection.astro';
+import FaqSection from '../components/landing/FaqSection.astro';
+import OpenSourceSection from '../components/landing/OpenSourceSection.astro';
+import FinalCta from '../components/landing/FinalCta.astro';
+import Footer from '../components/landing/Footer.astro';
+import BrandIcons from '../components/brand/BrandIcons.astro';
 import '../styles/global.css';
 import '../styles/landing.css';
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{siteConfig.name} — Rate limiting you can reason about</title>
     <meta name="description" content={siteConfig.description} />
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+
+    <BrandIcons />
 
     <!-- Typography: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -43,6 +57,19 @@ import '../styles/landing.css';
 
     <main id="main-content">
       <Hero />
+      <WhatItIs />
+      <WhyChoose />
+      <TheSeam />
+      <AlgorithmTabs />
+      <Quickstart />
+      <Recipes />
+      <Architecture />
+      <StatusSection />
+      <FaqSection />
+      <OpenSourceSection />
+      <FinalCta />
     </main>
+
+    <Footer />
   </body>
 </html>

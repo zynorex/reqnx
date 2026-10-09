@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="brand/logo.png" width="128" height="128" alt="Reqnx Logo" />
+</p>
+
 # REQNX
 
 > Pluggable, distributed-ready rate limiter for Node.js — written in TypeScript.
@@ -43,11 +47,30 @@ if (!decision.allowed) {
 - 📊 **Observable** — Hooks for Prometheus metrics and structured logging
 - 🌐 **Portable** — Core runs on Node, Bun, Deno, edge runtimes (zero `node:` imports)
 
-## Documentation
+## Documentation & Website
 
 - [Architecture](docs/architecture.md) — design principles and Mermaid diagrams
 - [Roadmap](docs/ROADMAP.md) — 10-day development plan
 - [ADRs](docs/adr/) — architectural decision records
+- [Brand Guidelines](brand/README.md) — asset rules, roles, and checksums
+
+### Interactive Website & Docs
+
+The documentation and interactive landing page live in `apps/site` (built with Astro & Starlight):
+
+```bash
+# Start local docs server
+pnpm --filter @reqnx/site dev
+
+# Build static production site
+pnpm --filter @reqnx/site build
+
+# Run Axe accessibility test suite (0 serious/critical violations)
+pnpm --filter @reqnx/site run a11y
+
+# Capture multi-viewport screenshot matrix
+pnpm --filter @reqnx/site run shots
+```
 
 ## Status
 

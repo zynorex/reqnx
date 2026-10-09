@@ -1,0 +1,359 @@
+---
+import { siteConfig, withBase } from '../site.config';
+import { landingCopy } from '../copy/landing.copy';
+import { siteRoutes } from '../routes';
+import Header from '../components/landing/Header.astro';
+import Footer from '../components/landing/Footer.astro';
+import BrandIcons from '../components/brand/BrandIcons.astro';
+import Mascot from '../components/brand/Mascot.astro';
+import Icon from '../components/common/Icon.astro';
+import '../styles/global.css';
+
+const knownRoutes = siteRoutes
+  .filter((r) => r.path !== '/404/')
+  .map((r) => ({ path: r.path, title: r.title, href: withBase(r.path) }));
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page not found | {siteConfig.name}</title>
+    <meta name="robots" content="noindex, nofollow" />
+
+    <BrandIcons />
+
+    <!-- Typography: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    />
+
+    <!-- Early Theme Script to prevent flash -->
+    <script is:inline>
+      (function () {
+        try {
+          const stored = localStorage.getItem('rx-theme') || 'system';
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const isDark = stored === 'dark' || (stored === 'system' && prefersDark);
+          document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="rx-404-page">
+    <Header currentPath={withBase('/404/')} />
+
+    <main id="main-content" class="rx-404-main">
+      <div class="rx-container rx-404-layout">
+        <!-- Left: Copy & Actions -->
+        <div class="rx-404-content">
+          <div class="rx-eyebrow">{landingCopy.notFound.eyebrow}</div>
+          <h1 class="rx-404-title">{landingCopy.notFound.headline}</h1>
+          <p class="rx-404-subhead">{landingCopy.notFound.subhead}</p>
+
+          <!-- Dynamic Missing Path Readout (Progressive Enhancement) -->
+          <div id="rx-path-inspector" class="rx-path-inspector" style="display: none;">
+            <span class="rx-path-label">Requested:</span>
+            <code id="rx-missing-path" class="rx-missing-path"></code>
+          </div>
+
+          <!-- Suggested Routes Box (Populated by client script if close matches exist) -->
+          <div id="rx-suggestions" class="rx-suggestions" style="display: none;">
+            <span class="rx-suggestions-heading">Did you mean:</span>
+            <ul id="rx-suggestions-list" class="rx-suggestions-list" role="list"></ul>
+          </div>
+
+          <!-- Primary & Secondary Actions -->
+          <div class="rx-404-actions">
+            <a href={withBase('/')} class="rx-btn rx-btn--primary">
+              <span>{landingCopy.notFound.backHomeCta}</span>
+              <Icon name="arrow-right" size={16} ariaHidden={true} />
+            </a>
+            <div class="rx-404-links">
+              <a href={withBase('/getting-started/')} class="rx-link-secondary">
+                {landingCopy.notFound.docsLink}
+              </a>
+              <span class="rx-sep" aria-hidden="true">·</span>
+              <a href={withBase('/algorithms/')} class="rx-link-secondary">
+                {landingCopy.notFound.algorithmsLink}
+              </a>
+              <span class="rx-sep" aria-hidden="true">·</span>
+              <a href={withBase('/playground/')} class="rx-link-secondary">
+                {landingCopy.notFound.playgroundLink}
+              </a>
+            </div>
+          </div>
+
+          <div class="rx-404-report">
+            <a
+              href={`${siteConfig.repo}/issues/new?title=Broken+link+report&body=Found+broken+link`}
+              target="_blank"
+              rel="noreferrer noopener"
+              class="rx-report-link"
+            >
+              <span>{landingCopy.notFound.reportBrokenLink}</span>
+              <span class="rx-sr-only">(opens in a new tab)</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: 404 Illustration -->
+        <div class="rx-404-art">
+          <Mascot placement="404" />
+        </div>
+      </div>
+    </main>
+
+    <Footer />
+
+    <!-- Inline Route Recovery Script (<5KB, no external deps) -->
+    <script is:inline define:vars={{ knownRoutes }}>
+      (function () {
+        try {
+          const pathname = window.location.pathname;
+          if (!pathname || pathname === '/' || pathname === '/404' || pathname === '/404/') return;
+
+          // Display sanitized requested path
+          const inspectorEl = document.getElementById('rx-path-inspector');
+          const pathEl = document.getElementById('rx-missing-path');
+          if (inspectorEl && pathEl) {
+            pathEl.textContent = pathname.slice(0, 80);
+            inspectorEl.style.display = 'inline-flex';
+          }
+
+          // Fuzzy search closest route by token overlap / edit distance
+          const searchTokens = pathname.toLowerCase().split(/[/_-]/).filter(Boolean);
+          if (searchTokens.length === 0) return;
+
+          const scored = knownRoutes
+            .map((route) => {
+              const routeTokens = route.path.toLowerCase().split(/[/_-]/).filter(Boolean);
+              let score = 0;
+              for (const st of searchTokens) {
+                for (const rt of routeTokens) {
+                  if (rt === st) score += 3;
+                  else if (rt.includes(st) || st.includes(rt)) score += 1;
+                }
+              }
+              return { route, score };
+            })
+            .filter((item) => item.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 3);
+
+          if (scored.length > 0) {
+            const listEl = document.getElementById('rx-suggestions-list');
+            const suggestionsEl = document.getElementById('rx-suggestions');
+            if (listEl && suggestionsEl) {
+              listEl.innerHTML = '';
+              for (const { route } of scored) {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = route.href;
+                a.textContent = route.title;
+                a.className = 'rx-suggestion-link';
+                li.appendChild(a);
+                listEl.appendChild(li);
+              }
+              suggestionsEl.style.display = 'block';
+            }
+          }
+        } catch (e) {
+          // Graceful fallback
+        }
+      })();
+    </script>
+  </body>
+</html>
+
+<style>
+  .rx-404-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--rx-surface-1);
+    color: var(--rx-text-1);
+  }
+
+  .rx-404-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: clamp(3rem, 6vw, 6rem) 1.5rem;
+    position: relative;
+    overflow: hidden;
+    /* Subtle window-tick motif background */
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--rx-tick-color, rgba(255, 255, 255, 0.03)) 0px,
+      var(--rx-tick-color, rgba(255, 255, 255, 0.03)) 1px,
+      transparent 1px,
+      transparent 40px
+    );
+  }
+
+  .rx-404-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3.5rem;
+    align-items: center;
+    width: 100%;
+  }
+
+  .rx-404-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rx-404-title {
+    font-size: var(--rx-font-h2);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0.5rem 0 1rem;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .rx-404-subhead {
+    font-size: var(--rx-font-lede);
+    color: var(--rx-text-2);
+    margin: 0 0 1.5rem;
+    line-height: 1.6;
+    max-width: 50ch;
+  }
+
+  .rx-path-inspector {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-sm);
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .rx-path-label {
+    color: var(--rx-text-3);
+    font-family: var(--rx-font-mono);
+  }
+
+  .rx-missing-path {
+    color: var(--rx-semantic-denied);
+    font-family: var(--rx-font-mono);
+  }
+
+  .rx-suggestions {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-md);
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .rx-suggestions-heading {
+    display: block;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rx-text-3);
+    margin-bottom: 0.5rem;
+  }
+
+  .rx-suggestions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  :global(.rx-suggestion-link) {
+    color: var(--rx-accent-cyan);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    transition: text-decoration var(--rx-dur-fast) ease;
+  }
+
+  :global(.rx-suggestion-link:hover) {
+    text-decoration: underline;
+  }
+
+  .rx-404-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .rx-404-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.9375rem;
+  }
+
+  .rx-link-secondary {
+    color: var(--rx-text-2);
+    text-decoration: none;
+    transition: color var(--rx-dur-fast) ease;
+  }
+
+  .rx-link-secondary:hover {
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-sep {
+    color: var(--rx-text-3);
+  }
+
+  .rx-404-report {
+    font-size: 0.8125rem;
+  }
+
+  .rx-report-link {
+    color: var(--rx-text-3);
+    text-decoration: none;
+    transition: color var(--rx-dur-fast) ease;
+  }
+
+  .rx-report-link:hover {
+    color: var(--rx-text-2);
+    text-decoration: underline;
+  }
+
+  .rx-404-art {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media (max-width: 900px) {
+    .rx-404-layout {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .rx-404-art {
+      order: 2;
+    }
+
+    .rx-404-content {
+      order: 1;
+    }
+  }
+</style>

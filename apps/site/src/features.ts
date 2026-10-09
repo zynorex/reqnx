@@ -253,3 +253,6 @@ export const allFeatures: readonly FeatureItem[] = [
     evidencePath: 'packages/testkit/src/conformance.ts',
   },
 ] as const;
+
+/** Alias for allFeatures. */
+export const features = allFeatures;

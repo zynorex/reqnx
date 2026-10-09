@@ -11,8 +11,8 @@ const shouldRender = facts.length >= 3;
       <div class="rx-proof-card" tabindex="0">
         <span class="rx-proof-card__metric">{fact.value}</span>
         <span class="rx-proof-card__label">{fact.label}</span>
-        <span class="rx-proof-card__source" title={`Verified at build time from ${fact.source}`}>
-          Source: {fact.source}
+        <span class="rx-proof-card__source" title={`Verified at build time from ${fact.sourceFile}`}>
+          Source: {fact.sourceFile}
         </span>
       </div>
     ))}

@@ -1,0 +1,289 @@
+---
+import Section from './Section.astro';
+import { landingCopy } from '../../copy/landing.copy';
+import { siteConfig } from '../../site.config';
+import Icon from '../common/Icon.astro';
+import Mascot from '../brand/Mascot.astro';
+
+const { openSource } = landingCopy;
+
+const recentAdrs = [
+  {
+    id: '0014',
+    title: 'Token Bucket Algorithm & Discrete Oracle',
+    path: 'docs/adr/0014-token-bucket-algorithm.md',
+    status: 'Accepted',
+  },
+  {
+    id: '0013',
+    title: 'Base Path Configuration for Static Deployment',
+    path: 'docs/adr/0013-base-path-configuration.md',
+    status: 'Accepted',
+  },
+  {
+    id: '0012',
+    title: 'Browser Demo Architecture & In-Browser Execution',
+    path: 'docs/adr/0012-browser-demo-architecture.md',
+    status: 'Accepted',
+  },
+  {
+    id: '0011',
+    title: 'Website Technology Stack & Island Architecture',
+    path: 'docs/adr/0011-website-technology-stack.md',
+    status: 'Accepted',
+  },
+  {
+    id: '0010',
+    title: 'Fixed Window Algorithm Contract & Portability',
+    path: 'docs/adr/0010-fixed-window-algorithm.md',
+    status: 'Accepted',
+  },
+];
+---
+
+<Section
+  id="open-source"
+  eyebrow={openSource.eyebrow}
+  title={openSource.title}
+  lede={openSource.lede}
+  alt={true}
+>
+  <div class="rx-os-grid">
+    <!-- Left: Repository Info & Mascot Cameo -->
+    <div class="rx-os-card">
+      <div class="rx-os-mascot-row">
+        <div class="rx-os-mascot" aria-hidden="true">
+          <Mascot placement="section" />
+        </div>
+        <div>
+          <span class="rx-os-badge">MIT License</span>
+          <h3 class="rx-os-card-title">Free & Open Source Software</h3>
+        </div>
+      </div>
+      <p class="rx-os-card-desc">
+        Reqnx is open source software published under the permissive MIT license. Commercial and personal projects can adopt, embed, or fork the library without restrictions.
+      </p>
+
+      <div class="rx-os-actions">
+        <a href={siteConfig.repo} class="rx-btn rx-btn-primary" target="_blank" rel="noopener noreferrer">
+          <Icon name="github" size={16} ariaHidden={true} />
+          <span>GitHub Repository</span>
+        </a>
+        <a href={`${siteConfig.repo}/blob/main/LICENSE`} class="rx-btn rx-btn-outline" target="_blank" rel="noopener noreferrer">
+          <span>View MIT License</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Right: Architecture Decision Records Log -->
+    <div class="rx-adr-card">
+      <div class="rx-adr-header">
+        <div class="rx-adr-badge">
+          <span class="rx-badge-dot"></span>
+          <span>14 Accepted ADRs</span>
+        </div>
+        <h3 class="rx-adr-title">{openSource.recentDecisionsTitle}</h3>
+      </div>
+
+      <div class="rx-adr-list">
+        {recentAdrs.map((adr) => (
+          <a
+            href={`${siteConfig.repo}/blob/main/${adr.path}`}
+            class="rx-adr-item"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div class="rx-adr-top">
+              <span class="rx-adr-id">ADR-{adr.id}</span>
+              <span class="rx-adr-status">{adr.status}</span>
+            </div>
+            <span class="rx-adr-name">{adr.title}</span>
+          </a>
+        ))}
+      </div>
+
+      <div class="rx-adr-footer">
+        <a href={`${siteConfig.repo}/tree/main/docs/adr`} class="rx-adr-all-link" target="_blank" rel="noopener noreferrer">
+          <span>{openSource.viewAllDecisions}</span>
+          <Icon name="arrow-right" size={12} ariaHidden={true} />
+        </a>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-os-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+
+  @media (max-width: 900px) {
+    .rx-os-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .rx-os-card {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-md);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .rx-os-mascot-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .rx-os-mascot {
+    flex-shrink: 0;
+  }
+
+  .rx-os-badge {
+    display: inline-block;
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--rx-accent-cyan);
+    background: rgba(20, 221, 253, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--rx-radius-xs);
+    margin-bottom: 0.25rem;
+  }
+
+  .rx-os-card-title {
+    font-size: 1.125rem;
+    margin: 0;
+    color: var(--rx-text-1);
+  }
+
+  .rx-os-card-desc {
+    font-size: 0.875rem;
+    color: var(--rx-text-2);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .rx-os-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  /* ADR Card */
+  .rx-adr-card {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-md);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .rx-adr-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .rx-adr-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--rx-semantic-allowed);
+  }
+
+  .rx-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--rx-semantic-allowed);
+    box-shadow: 0 0 6px var(--rx-semantic-allowed-glow);
+  }
+
+  .rx-adr-title {
+    font-size: 1.125rem;
+    margin: 0;
+    color: var(--rx-text-1);
+  }
+
+  .rx-adr-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .rx-adr-item {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-sm);
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    text-decoration: none;
+    transition: all var(--rx-transition-fast);
+  }
+
+  .rx-adr-item:hover {
+    border-color: var(--rx-border-hover);
+    background: var(--rx-surface-3);
+  }
+
+  .rx-adr-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .rx-adr-id {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-adr-status {
+    font-family: var(--rx-font-mono);
+    font-size: 0.625rem;
+    color: var(--rx-text-3);
+    text-transform: uppercase;
+  }
+
+  .rx-adr-name {
+    font-size: 0.8125rem;
+    color: var(--rx-text-2);
+    font-weight: 500;
+  }
+
+  .rx-adr-footer {
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .rx-adr-all-link {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    color: var(--rx-text-3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .rx-adr-all-link:hover {
+    color: var(--rx-accent-cyan);
+  }
+</style>

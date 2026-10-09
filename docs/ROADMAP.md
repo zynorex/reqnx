@@ -47,6 +47,32 @@
 - ADR-0011 (Website Technology Stack), ADR-0012 (Browser Demo Architecture), ADR-0013 (Base-Path & SEO Guardrails)
 - Multi-project Vitest integration and build pipeline validation
 
+## Day 3C — Landing Page v2 & Branded 404 ✅
+
+- Production landing page at `/` featuring 14 developer-focused sections in exact spec sequence:
+  - Header & Brand Navigation with live theme toggle and responsive layout
+  - Hero with dual live browser rate limiter console (`LiveConsole` Preact island for Fixed Window & Token Bucket)
+  - Social proof & technical verification strip (257 passing tests, 8 packages, 0 deps, strictly typed)
+  - What It Is & Core Decision shape breakdown
+  - Why Choose Reqnx: 12-column Bento grid of 6 core guarantees, 3-layer architecture, and honest "When NOT to use" section
+  - The Seam: 3-frame animated window boundary burst engine (proving $2\times$ burst phenomena)
+  - Algorithm selection matrix & ARIA-compliant tabbed traits comparison
+  - Interactive Quickstart with verified runtime output table for Core, Express, Fastify, and Redis
+  - Tested production recipe cards (tiering, burst buffer, cost-weighted AI tokens) with real Decision outputs
+  - Architecture interactive execution flow with runtime compatibility matrix (Node, Bun, Deno, Edge)
+  - Real-time project maturity status meter backed by `features.ts` and repository evidence paths
+  - Deep technical FAQ with 14 detailed answers across 4 categories
+  - Open Source & Community governance with MIT terms and recent 5 ADRs log
+  - Final CTA with coordinate grid tick motif, companion mascot, and one-click copyable install snippet
+  - Footer with site-wide navigation, GitHub links, and subtle brand badge
+- Custom branded 404 page (`/404.astro`) emitting standalone `dist/404.html` via Starlight override:
+  - Official distressed mascot artwork (`brand/404.png`)
+  - Client-side fuzzy path recovery with Levenshtein route matching against known documentation paths
+- Brand asset pipeline (`scripts/brand-build.ts`) generating responsive WebP/PNG derivatives, multi-resolution `favicon.ico`, and `site.webmanifest` verified by SHA-256 manifest
+- Zero marketing hype words, strictly adhering to claims ledger (`docs/site/claims.md`)
+- 100% WCAG AA compliant with Axe accessibility audit passing with 0 serious/critical violations
+- ADR-0015 (Landing Architecture & Art Direction), ADR-0016 (Brand Asset Pipeline & Usage Rules), ADR-0017 (Not Found Page & Route Manifest), ADR-0018 (Content System & Claims Ledger)
+
 ## Day 4 — Token Bucket Algorithm ✅
 
 - Pure TS `step()` implementation with exact rational fixed-point arithmetic (`a/b` coprime integers)

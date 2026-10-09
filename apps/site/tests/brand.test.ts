@@ -23,7 +23,7 @@ describe('Brand Asset System & Manifest Conformance', () => {
     expect(existsSync(manifestPath)).toBe(true);
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
 
-    for (const [file, info] of Object.entries<any>(manifest)) {
+    for (const [file, info] of Object.entries<{ checksum: string; byteSize: number }>(manifest)) {
       const origPath = join(root, 'brand', file);
       expect(existsSync(origPath)).toBe(true);
 

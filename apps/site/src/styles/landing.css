@@ -232,6 +232,37 @@
   }
 
   /* ─── Live Console (The Instrument Frame) ─────────────────────────────────── */
+  .rx-hero-console-stage {
+    position: relative;
+    width: 100%;
+    max-width: 1080px;
+    margin: 1.5rem auto 2.5rem;
+  }
+
+  .rx-hero-mascot-wrapper {
+    position: absolute;
+    top: -75px;
+    right: 28px;
+    z-index: 5;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @media (max-width: 1024px) {
+    .rx-hero-mascot-wrapper {
+      top: -55px;
+      right: 16px;
+      transform: scale(0.8);
+      transform-origin: bottom right;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .rx-hero-mascot-wrapper {
+      display: none;
+    }
+  }
+
   .rx-console {
     width: 100%;
     max-width: 1080px;
@@ -242,7 +273,7 @@
       0 20px 40px -15px rgba(0, 0, 0, 0.5),
       0 0 0 1px var(--rx-border-subtle);
     overflow: hidden;
-    margin: 1rem auto 2.5rem;
+    margin: 0 auto;
     text-align: left;
     display: flex;
     flex-direction: column;

@@ -1,0 +1,218 @@
+---
+import { siteConfig, withBase } from '../../site.config';
+import { landingCopy } from '../../copy/landing.copy';
+import Logo from '../brand/Logo.astro';
+import Mascot from '../brand/Mascot.astro';
+import { ThemeToggle } from '../common/ThemeToggle';
+import Icon from '../common/Icon.astro';
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="rx-footer" role="contentinfo">
+  <div class="rx-footer__container">
+    <div class="rx-footer__grid">
+      <!-- Col 1: Brand & Tagline -->
+      <div class="rx-footer__col-brand">
+        <Logo size={28} showText={true} />
+        <p class="rx-footer__tagline">{siteConfig.tagline}</p>
+        <div class="rx-footer__version-wrap">
+          <span class="rx-footer__version">v{siteConfig.version}</span>
+          <span class="rx-footer__status-chip">Pre-release</span>
+        </div>
+      </div>
+
+      <!-- Col 2: Project Links -->
+      <div class="rx-footer__col">
+        <h3 class="rx-footer__heading">Project</h3>
+        <ul class="rx-footer__links" role="list">
+          <li><a href={withBase('/getting-started/')}>Docs</a></li>
+          <li><a href={withBase('/algorithms/')}>Algorithms</a></li>
+          <li><a href={withBase('/playground/')}>Playground</a></li>
+          <li><a href="#status">Status</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Source & Governance -->
+      <div class="rx-footer__col">
+        <h3 class="rx-footer__heading">Source</h3>
+        <ul class="rx-footer__links" role="list">
+          <li>
+            <a href={siteConfig.repo} target="_blank" rel="noreferrer noopener">
+              GitHub <span class="rx-sr-only">(opens in a new tab)</span>
+            </a>
+          </li>
+          <li>
+            <a href={`${siteConfig.repo}/issues`} target="_blank" rel="noreferrer noopener">
+              Issues <span class="rx-sr-only">(opens in a new tab)</span>
+            </a>
+          </li>
+          <li>
+            <a href={`${siteConfig.repo}/blob/main/CONTRIBUTING.md`} target="_blank" rel="noreferrer noopener">
+              Contributing <span class="rx-sr-only">(opens in a new tab)</span>
+            </a>
+          </li>
+          <li>
+            <a href={`${siteConfig.repo}/blob/main/LICENSE`} target="_blank" rel="noreferrer noopener">
+              MIT License <span class="rx-sr-only">(opens in a new tab)</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Preferences & Mascot sign-off -->
+      <div class="rx-footer__col rx-footer__col--pref">
+        <h3 class="rx-footer__heading">Theme</h3>
+        <div class="rx-footer__theme">
+          <ThemeToggle client:load />
+        </div>
+        <div class="rx-footer__mascot-cameo" title="Reqnx Mascot">
+          <Mascot placement="footer" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Fine Print & Disclaimers -->
+    <div class="rx-footer__bottom">
+      <p class="rx-footer__license">
+        {landingCopy.footer.brandLicenseNote}
+      </p>
+      <p class="rx-footer__disclaimer">
+        {landingCopy.footer.trademarkNotice}
+      </p>
+      <div class="rx-footer__sub">
+        <span>{landingCopy.footer.trackingNotice}</span>
+        <span>&copy; {currentYear} {siteConfig.name} Project Contributors</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .rx-footer {
+    border-top: 1px solid var(--rx-border-subtle);
+    background-color: var(--rx-surface-1);
+    color: var(--rx-text-2);
+    padding: clamp(3rem, 6vw, 5rem) 1.5rem 2.5rem;
+    font-size: 0.875rem;
+  }
+
+  .rx-footer__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .rx-footer__grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .rx-footer__tagline {
+    margin: 0.875rem 0 1rem;
+    color: var(--rx-text-3);
+    font-size: 0.875rem;
+    max-width: 32ch;
+  }
+
+  .rx-footer__version-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+  }
+
+  .rx-footer__version {
+    color: var(--rx-text-2);
+  }
+
+  .rx-footer__status-chip {
+    padding: 2px 8px;
+    border-radius: var(--rx-radius-full);
+    background: var(--rx-surface-3);
+    color: var(--rx-accent-cyan);
+    border: 1px solid var(--rx-border-subtle);
+  }
+
+  .rx-footer__heading {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rx-text-1);
+    margin: 0 0 1.25rem;
+    font-weight: 600;
+  }
+
+  .rx-footer__links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rx-footer__links a {
+    color: var(--rx-text-2);
+    text-decoration: none;
+    transition: color var(--rx-dur-fast) ease;
+  }
+
+  .rx-footer__links a:hover {
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-footer__col--pref {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rx-footer__mascot-cameo {
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .rx-footer__bottom {
+    border-top: 1px solid var(--rx-border-subtle);
+    padding-top: 2rem;
+    font-size: 0.8125rem;
+    color: var(--rx-text-3);
+    line-height: 1.6;
+  }
+
+  .rx-footer__license,
+  .rx-footer__disclaimer {
+    margin: 0 0 0.75rem;
+  }
+
+  .rx-footer__sub {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--rx-border-subtle);
+  }
+
+  @media (max-width: 840px) {
+    .rx-footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .rx-footer__col-brand {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .rx-footer__grid {
+      grid-template-columns: 1fr;
+    }
+    .rx-footer__col-brand {
+      grid-column: span 1;
+    }
+  }
+</style>
