@@ -311,7 +311,10 @@
     background: transparent;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: all var(--rx-transition-fast);
+    transition:
+      color var(--rx-dur-fast) var(--rx-ease-out),
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out);
     white-space: nowrap;
   }
 

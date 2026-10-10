@@ -1,0 +1,184 @@
+{
+  "timestamp": "2026-10-10T03:52:44.261Z",
+  "environment": {
+    "nodeVersion": "v24.12.0",
+    "platform": "win32",
+    "browser": "Chromium (Playwright Mobile 390x844)",
+    "viewport": "390x844 @2x"
+  },
+  "lighthouseNote": "Measured via Chromium PerformanceObserver in Playwright mobile emulation profile (Lighthouse standalone requires Chrome debugging protocol server or CLI; metrics below reflect Chromium CDP web-vitals equivalents).",
+  "webVitalsMobile": {
+    "fcpMs": 3216,
+    "lcpMs": 3216,
+    "cls": 0,
+    "tbtMs": 0,
+    "longTaskCount": 0
+  },
+  "bundleSizes": {
+    "indexHtml": {
+      "rawBytes": 156517,
+      "gzipBytes": 25415
+    },
+    "notFoundHtml": {
+      "rawBytes": 28800,
+      "gzipBytes": 7809
+    },
+    "totalClientJs": {
+      "rawBytes": 163382,
+      "gzipBytes": 55080
+    },
+    "totalClientCss": {
+      "rawBytes": 152666,
+      "gzipBytes": 27770
+    },
+    "chunks": {
+      "404.BQuHnvOm.png": {
+        "raw": 122358,
+        "gzip": 122064
+      },
+      "404.BvBWC3Fs_Z2hp9l7.webp": {
+        "raw": 35410,
+        "gzip": 35423
+      },
+      "banner.B_qucDd4.webp": {
+        "raw": 23676,
+        "gzip": 23704
+      },
+      "banner.CA1TRRgl.png": {
+        "raw": 389087,
+        "gzip": 389225
+      },
+      "client.CZ6l4rWy.js": {
+        "raw": 1251,
+        "gzip": 734
+      },
+      "CopyButton.BZbNaZaE.js": {
+        "raw": 695,
+        "gzip": 471
+      },
+      "ec.0vx5m.js": {
+        "raw": 2523,
+        "gzip": 1164
+      },
+      "ec.v4551.css": {
+        "raw": 18222,
+        "gzip": 3958
+      },
+      "fake-clock.uWAlcPb-.js": {
+        "raw": 12393,
+        "gzip": 4337
+      },
+      "hooks.module.DR8Xx9YK.js": {
+        "raw": 2661,
+        "gzip": 1183
+      },
+      "index.3kQXo6W9.css": {
+        "raw": 46314,
+        "gzip": 6563
+      },
+      "index.C6lCXW5u.css": {
+        "raw": 9212,
+        "gzip": 2646
+      },
+      "index.C81JZ7nk.css": {
+        "raw": 66383,
+        "gzip": 11774
+      },
+      "index.DeHxbJzw.css": {
+        "raw": 8981,
+        "gzip": 1836
+      },
+      "jsxRuntime.module.Dqw-6DmR.js": {
+        "raw": 415,
+        "gzip": 301
+      },
+      "LiveConsole.KxkqATmu.js": {
+        "raw": 13453,
+        "gzip": 4705
+      },
+      "logo.BP4nN82D.png": {
+        "raw": 11188,
+        "gzip": 11211
+      },
+      "logo.fqQSGszL_206RFP.webp": {
+        "raw": 342,
+        "gzip": 365
+      },
+      "logo.fqQSGszL_Z4rAya.webp": {
+        "raw": 334,
+        "gzip": 357
+      },
+      "mascot.Mo98yDzF_XlpYt.webp": {
+        "raw": 1336,
+        "gzip": 1359
+      },
+      "mascot.Mo98yDzF_YEv0r.webp": {
+        "raw": 13854,
+        "gzip": 13877
+      },
+      "mascot.Mo98yDzF_Z1yazA.webp": {
+        "raw": 9124,
+        "gzip": 9147
+      },
+      "mascot.Mo98yDzF_Z2a1Xhf.webp": {
+        "raw": 11448,
+        "gzip": 11471
+      },
+      "mascot.xhiUGBGm.png": {
+        "raw": 115330,
+        "gzip": 114843
+      },
+      "MobileTableOfContents.astro_astro_type_script_index_0_lang.C181hMzK.js": {
+        "raw": 667,
+        "gzip": 403
+      },
+      "page.B1D-nYk3.js": {
+        "raw": 2242,
+        "gzip": 1013
+      },
+      "preact.module.BTqC4RwC.js": {
+        "raw": 10569,
+        "gzip": 4477
+      },
+      "preload-helper.BlTxHScW.js": {
+        "raw": 1110,
+        "gzip": 650
+      },
+      "print.DNXP8c50.css": {
+        "raw": 3554,
+        "gzip": 993
+      },
+      "ScenarioPlayer.D6HsRO2B.js": {
+        "raw": 8787,
+        "gzip": 2886
+      },
+      "Search.astro_astro_type_script_index_0_lang.CLg7mG-P.js": {
+        "raw": 1799,
+        "gzip": 932
+      },
+      "signals.module.C7q4IzcB.js": {
+        "raw": 7915,
+        "gzip": 3077
+      },
+      "TableOfContents.astro_astro_type_script_index_0_lang.CKWWgpjV.js": {
+        "raw": 1673,
+        "gzip": 863
+      },
+      "ThemeToggle.Dn3beHif.js": {
+        "raw": 1065,
+        "gzip": 559
+      },
+      "ui-core.D7EsID-j.js": {
+        "raw": 94164,
+        "gzip": 27325
+      }
+    }
+  },
+  "budgets": {
+    "maxMotionJsGzipBytes": 6144,
+    "maxMotionCssGzipBytes": 5120,
+    "maxLcpDeltaMs": 50,
+    "maxCls": 0.02,
+    "maxTbtMs": 20
+  }
+}

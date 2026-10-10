@@ -32,7 +32,7 @@ const knownRoutes = siteRoutes
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
     />
 
-    <!-- Early Theme Script to prevent flash -->
+    <!-- Early Theme & Motion Script to prevent flash -->
     <script is:inline>
       (function () {
         try {
@@ -40,8 +40,18 @@ const knownRoutes = siteRoutes
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           const isDark = stored === 'dark' || (stored === 'system' && prefersDark);
           document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+
+          const storedMotion = localStorage.getItem('rx-motion');
+          const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const isSaveData = Boolean(navigator.connection && navigator.connection.saveData);
+          if (storedMotion === 'reduced' || prefersReduced || isSaveData) {
+            document.documentElement.dataset.motion = 'reduced';
+          } else {
+            document.documentElement.dataset.motion = 'full';
+          }
         } catch (e) {
           document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.dataset.motion = 'full';
         }
       })();
     </script>

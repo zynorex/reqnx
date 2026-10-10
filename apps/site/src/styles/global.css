@@ -48,11 +48,68 @@
     --rx-console-border: rgba(255, 255, 255, 0.12);
     --rx-console-bg: #0d0f14;
     --rx-console-header: #131720;
-    --rx-dur-fast: 120ms;
+    /* ─── Motion Durations ─────────────────────────────────────────── */
+    --rx-dur-instant: 90ms;
+    --rx-dur-fast: 140ms;
     --rx-dur-base: 200ms;
+    --rx-dur-panel: 260ms;
+    --rx-dur-wipe: 450ms;
+    --rx-dur-reveal: 480ms;
+    --rx-dur-hairline: 600ms;
+    --rx-dur-hero: 900ms;
+    --rx-dur-page: 180ms;
     --rx-dur-slow: 400ms;
-    --rx-dur-reveal: 600ms;
+
+    /* ─── Motion Distances ─────────────────────────────────────────── */
+    --rx-dist-xs: 4px;
+    --rx-dist-sm: 8px;
+    --rx-dist-md: 12px;
+    --rx-dist-lg: 16px;
+    --rx-dist-xl: 24px;
+
+    /* ─── Motion Easings ───────────────────────────────────────────── */
     --rx-ease-out: cubic-bezier(0.2, 0, 0, 1);
+    --rx-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --rx-ease-snap: cubic-bezier(0.25, 1, 0.5, 1);
+    --rx-ease-spring: linear(
+      0,
+      0.0398,
+      0.1348,
+      0.2567,
+      0.386,
+      0.5104,
+      0.6227,
+      0.7192,
+      0.799,
+      0.8626,
+      0.9118,
+      0.9483,
+      0.9745,
+      0.9925,
+      1.004,
+      1.0108,
+      1.0141,
+      1.0152,
+      1.0147,
+      1.0133,
+      1.0115,
+      1.0095,
+      1.0076,
+      1.0059,
+      1.0044,
+      1.0032,
+      1.0022,
+      1.0014,
+      1.0008,
+      1.0004,
+      1.0001,
+      1,
+      1
+    );
+
+    /* ─── Motion Stagger Caps ──────────────────────────────────────── */
+    --rx-stagger-step: 40ms;
+    --rx-stagger-cap: 400ms;
 
     /* ─── Semantic Dual-Coded Roles (Color + Shape/Text) ─────────────────── */
     --rx-semantic-allowed: #10b981;
@@ -365,10 +422,11 @@
     padding: 0.65rem 1.25rem;
     border-radius: var(--rx-radius-sm);
     border: 1px solid transparent;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all var(--rx-transition-fast);
-    box-sizing: border-box;
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      color var(--rx-dur-fast) var(--rx-ease-out),
+      transform var(--rx-dur-fast) var(--rx-ease-out);
     min-height: 44px; /* Touch target minimum */
   }
 
@@ -423,7 +481,10 @@
     font-family: var(--rx-font-mono);
     font-size: 0.75rem;
     cursor: pointer;
-    transition: all var(--rx-transition-fast);
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      color var(--rx-dur-fast) var(--rx-ease-out);
     min-height: 36px;
   }
 

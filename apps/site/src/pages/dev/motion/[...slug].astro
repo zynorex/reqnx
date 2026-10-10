@@ -1,0 +1,507 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/pages/dev/motion/[...slug].astro
+//
+// Dev-only Motion Lab.
+// CRITICAL REQUIREMENT:
+// Produces 0 output in production builds via getStaticPaths returning [].
+// ──────────────────────────────────────────────────────────────────────────────
+
+import { motionRegistry } from '../../../motion/registry.js';
+import ThemeToggle from '../../../components/common/ThemeToggle';
+import '../../../styles/global.css';
+import '../../../styles/landing.css';
+
+export function getStaticPaths() {
+  if (import.meta.env.PROD) {
+    return [];
+  }
+  return [{ params: { slug: undefined } }];
+}
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark" data-motion="full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reqnx Motion Lab (Dev Only)</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    />
+  </head>
+  <body class="rx-lab-body">
+    <header class="rx-lab-header">
+      <div class="rx-lab-header__inner">
+        <div>
+          <span class="rx-lab-badge">DEV LAB</span>
+          <h1 class="rx-lab-title">Motion & Micro-interactions Registry</h1>
+          <p class="rx-lab-sub">
+            Inspection, scrubbing, and accessibility testing for all 28 motion effects.
+          </p>
+        </div>
+        <div class="rx-lab-controls">
+          <div class="rx-lab-control-group">
+            <span class="rx-lab-control-label">Speed</span>
+            <div class="rx-lab-btn-group" role="group" aria-label="Playback rate">
+              <button type="button" class="rx-rate-btn is-active" data-rate="1">1x</button>
+              <button type="button" class="rx-rate-btn" data-rate="0.5">0.5x</button>
+              <button type="button" class="rx-rate-btn" data-rate="0.25">0.25x</button>
+              <button type="button" class="rx-rate-btn" data-rate="0.1">0.1x</button>
+            </div>
+          </div>
+          <div class="rx-lab-control-group">
+            <label class="rx-lab-checkbox-label">
+              <input type="checkbox" id="toggle-reduced-motion" />
+              <span>Reduced Motion</span>
+            </label>
+          </div>
+          <div class="rx-lab-control-group">
+            <label class="rx-lab-checkbox-label">
+              <input type="checkbox" id="toggle-strip-effects" />
+              <span>Without Effects</span>
+            </label>
+          </div>
+          <div class="rx-lab-control-group">
+            <ThemeToggle client:load />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="rx-lab-main">
+      <div class="rx-lab-grid">
+        {
+          motionRegistry.map((effect) => (
+            <article class="rx-effect-card" id={`card-${effect.id}`} data-effect-id={effect.id}>
+              <div class="rx-effect-card__header">
+                <div class="rx-effect-card__meta">
+                  <span class="rx-effect-id">{effect.id}</span>
+                  <span class="rx-effect-region">{effect.region}</span>
+                  <span class={`rx-effect-prio is-${effect.priority}`}>
+                    {effect.priority === 'M' ? 'Must' : effect.priority === 'S' ? 'Should' : 'Stretch'}
+                  </span>
+                  {!effect.enabled && <span class="rx-effect-deferred">Deferred</span>}
+                </div>
+                <button type="button" class="rx-replay-btn" data-target={effect.id}>
+                  Replay
+                </button>
+              </div>
+
+              <h2 class="rx-effect-card__title">{effect.title}</h2>
+              <p class="rx-effect-card__desc">{effect.description}</p>
+
+              <!-- Interactive stage preview box -->
+              <div class="rx-effect-stage" id={`stage-${effect.id}`}>
+                <div class="rx-stage-element" data-demo={effect.id}>
+                  <div class="rx-demo-inner">
+                    <span class="rx-demo-indicator" />
+                    <span class="rx-demo-label">{effect.id} Preview</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Technical Details & Fallback Contract -->
+              <div class="rx-effect-card__specs">
+                <div class="rx-spec-item">
+                  <span class="rx-spec-k">Reduced Motion:</span>
+                  <span class="rx-spec-v">{effect.reducedMotion}</span>
+                </div>
+                <div class="rx-spec-item">
+                  <span class="rx-spec-k">No-JS:</span>
+                  <span class="rx-spec-v">{effect.noJs}</span>
+                </div>
+                <div class="rx-spec-item">
+                  <span class="rx-spec-k">Fallback:</span>
+                  <span class="rx-spec-v">{effect.fallback}</span>
+                </div>
+                <div class="rx-spec-item rx-spec-item--budget">
+                  <span class="rx-spec-k">Budget Cost:</span>
+                  <span class="rx-spec-v">
+                    ~{effect.estJsKb} KB JS / ~{effect.estCssKb} KB CSS
+                  </span>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </main>
+
+    <style>
+      .rx-lab-body {
+        margin: 0;
+        background-color: var(--rx-surface-1);
+        color: var(--rx-text-1);
+        font-family: var(--rx-font-sans, 'Inter', sans-serif);
+        line-height: 1.5;
+        padding-bottom: 4rem;
+      }
+
+      .rx-lab-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background-color: var(--rx-surface-1);
+        border-bottom: 1px solid var(--rx-border-subtle, rgba(255, 255, 255, 0.12));
+        padding: 1.25rem 2rem;
+        backdrop-filter: blur(12px);
+      }
+
+      .rx-lab-header__inner {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
+
+      .rx-lab-badge {
+        display: inline-block;
+        background: var(--rx-accent-indigo-dim, #4338ca);
+        color: #ffffff;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.35rem;
+      }
+
+      .rx-lab-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      .rx-lab-sub {
+        margin: 0.2rem 0 0;
+        font-size: 0.8125rem;
+        color: var(--rx-text-3);
+      }
+
+      .rx-lab-controls {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        flex-wrap: wrap;
+      }
+
+      .rx-lab-control-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+      }
+
+      .rx-lab-control-label {
+        color: var(--rx-text-3);
+        font-weight: 500;
+      }
+
+      .rx-lab-btn-group {
+        display: inline-flex;
+        background: var(--rx-surface-2);
+        border: 1px solid var(--rx-border-subtle, rgba(255, 255, 255, 0.12));
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      .rx-rate-btn {
+        border: none;
+        background: transparent;
+        color: var(--rx-text-3);
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background var(--rx-dur-fast) var(--rx-ease-out),
+          color var(--rx-dur-fast) var(--rx-ease-out);
+      }
+
+      .rx-rate-btn.is-active {
+        background: var(--rx-accent-cyan);
+        color: #0f1117;
+      }
+
+      .rx-lab-checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        cursor: pointer;
+        color: var(--rx-text-2);
+        user-select: none;
+      }
+
+      .rx-lab-main {
+        max-width: 1440px;
+        margin: 2rem auto 0;
+        padding: 0 2rem;
+      }
+
+      .rx-lab-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .rx-effect-card {
+        background: var(--rx-surface-2);
+        border: 1px solid var(--rx-border-subtle, rgba(255, 255, 255, 0.12));
+        border-radius: 10px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        position: relative;
+      }
+
+      .rx-effect-card__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .rx-effect-card__meta {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .rx-effect-id {
+        font-family: var(--rx-font-mono, monospace);
+        font-size: 0.8125rem;
+        font-weight: 700;
+        background: var(--rx-surface-4);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        color: var(--rx-accent-cyan);
+      }
+
+      .rx-effect-region {
+        font-size: 0.6875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--rx-text-3);
+      }
+
+      .rx-effect-prio {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+      }
+
+      .rx-effect-prio.is-M {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+      }
+
+      .rx-effect-prio.is-S {
+        background: rgba(20, 221, 253, 0.15);
+        color: var(--rx-accent-cyan);
+      }
+
+      .rx-effect-prio.is-X {
+        background: rgba(251, 113, 133, 0.15);
+        color: #fb7185;
+      }
+
+      .rx-effect-deferred {
+        font-size: 0.6875rem;
+        background: rgba(100, 116, 139, 0.2);
+        color: var(--rx-text-3);
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+      }
+
+      .rx-replay-btn {
+        border: 1px solid var(--rx-border-subtle, rgba(255, 255, 255, 0.15));
+        background: var(--rx-surface-3);
+        color: var(--rx-text-2);
+        border-radius: 4px;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background var(--rx-dur-fast) var(--rx-ease-out),
+          color var(--rx-dur-fast) var(--rx-ease-out);
+      }
+
+      .rx-replay-btn:hover {
+        background: var(--rx-surface-4);
+        color: var(--rx-text-1);
+      }
+
+      .rx-effect-card__title {
+        margin: 0;
+        font-size: 1.0625rem;
+        font-weight: 600;
+      }
+
+      .rx-effect-card__desc {
+        margin: 0;
+        font-size: 0.8125rem;
+        color: var(--rx-text-2);
+        line-height: 1.45;
+      }
+
+      /* Stage Box */
+      .rx-effect-stage {
+        height: 100px;
+        background: var(--rx-surface-1);
+        border: 1px solid var(--rx-border-subtle, rgba(255, 255, 255, 0.08));
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .rx-stage-element {
+        padding: 0.5rem 1rem;
+        background: var(--rx-surface-2);
+        border: 1px solid var(--rx-border-subtle, rgba(255, 255, 255, 0.15));
+        border-radius: 6px;
+        cursor: pointer;
+        user-select: none;
+        transition:
+          transform var(--rx-dur-base) var(--rx-ease-out),
+          border-color var(--rx-dur-base) var(--rx-ease-out);
+      }
+
+      .rx-stage-element:hover {
+        border-color: var(--rx-accent-cyan);
+        transform: translateY(-2px);
+      }
+
+      .rx-demo-inner {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+      }
+
+      .rx-demo-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--rx-accent-cyan);
+      }
+
+      /* Specs */
+      .rx-effect-card__specs {
+        margin-top: auto;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--rx-border-subtle, rgba(255, 255, 255, 0.06));
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        font-size: 0.75rem;
+      }
+
+      .rx-spec-item {
+        display: flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        line-height: 1.4;
+      }
+
+      .rx-spec-k {
+        color: var(--rx-text-3);
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .rx-spec-v {
+        color: var(--rx-text-2);
+      }
+
+      .rx-spec-item--budget .rx-spec-v {
+        color: var(--rx-accent-cyan);
+        font-family: var(--rx-font-mono, monospace);
+      }
+
+      /* Simulated without effects */
+      body.rx-without-effects * {
+        transition: none !important;
+        animation: none !important;
+      }
+    </style>
+
+    <script>
+      function initMotionLab() {
+        const rateBtns = document.querySelectorAll('.rx-rate-btn');
+        const reducedToggle = document.getElementById('toggle-reduced-motion') as HTMLInputElement | null;
+        const stripToggle = document.getElementById('toggle-strip-effects') as HTMLInputElement | null;
+        const replayBtns = document.querySelectorAll('.rx-replay-btn');
+
+        // Playback Rate
+        rateBtns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            rateBtns.forEach((b) => b.classList.remove('is-active'));
+            btn.classList.add('is-active');
+            const rate = parseFloat(btn.getAttribute('data-rate') || '1');
+            document.getAnimations().forEach((anim) => {
+              anim.playbackRate = rate;
+            });
+          });
+        });
+
+        // Simulated Reduced Motion
+        reducedToggle?.addEventListener('change', () => {
+          if (reducedToggle.checked) {
+            document.documentElement.dataset.motion = 'reduced';
+          } else {
+            document.documentElement.dataset.motion = 'full';
+          }
+        });
+
+        // Without Effects
+        stripToggle?.addEventListener('change', () => {
+          if (stripToggle.checked) {
+            document.body.classList.add('rx-without-effects');
+          } else {
+            document.body.classList.remove('rx-without-effects');
+          }
+        });
+
+        // Replay animations on stage cards
+        replayBtns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const effectId = btn.getAttribute('data-target');
+            const stageEl = document.querySelector(`[data-demo="${effectId}"]`);
+            if (stageEl) {
+              stageEl.animate(
+                [
+                  { transform: 'scale(0.96)', opacity: '0.6' },
+                  { transform: 'scale(1)', opacity: '1' },
+                ],
+                {
+                  duration: 260,
+                  easing: 'var(--rx-ease-spring, cubic-bezier(0.2, 0, 0, 1))',
+                },
+              );
+            }
+          });
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMotionLab);
+      } else {
+        initMotionLab();
+      }
+    </script>
+  </body>
+</html>

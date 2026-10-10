@@ -4,6 +4,7 @@ import { landingCopy } from '../../copy/landing.copy';
 import Logo from '../brand/Logo.astro';
 import Mascot from '../brand/Mascot.astro';
 import { ThemeToggle } from '../common/ThemeToggle';
+import MotionControl from '../common/MotionControl.astro';
 import Icon from '../common/Icon.astro';
 
 const currentYear = new Date().getFullYear();
@@ -62,9 +63,12 @@ const currentYear = new Date().getFullYear();
 
       <!-- Col 4: Preferences & Mascot sign-off -->
       <div class="rx-footer__col rx-footer__col--pref">
-        <h3 class="rx-footer__heading">Theme</h3>
+        <h3 class="rx-footer__heading">Preferences</h3>
         <div class="rx-footer__theme">
           <ThemeToggle client:load />
+        </div>
+        <div class="rx-footer__motion" style="margin-top: 0.75rem;">
+          <MotionControl />
         </div>
         <div class="rx-footer__mascot-cameo" title="Reqnx Mascot">
           <Mascot placement="footer" />
