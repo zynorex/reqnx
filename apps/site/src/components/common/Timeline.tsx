@@ -155,7 +155,10 @@ export function Timeline({
 
         {/* Window boundary lines and labels */}
         {windowBoundaries.map((b, idx) => (
-          <g key={`bound-${idx}`} class="rx-timeline-boundary">
+          <g
+            key={`bound-${idx}`}
+            class={`rx-timeline-boundary ${pulseEvent === 'rollover' ? 'is-rollover-flash' : ''}`}
+          >
             <line
               x1={b.x}
               y1={16}
@@ -213,17 +216,30 @@ export function Timeline({
 
               {/* Marker shape */}
               {allowed ? (
-                // Allowed: Filled circle
-                <circle
-                  cx={x}
-                  cy={markerY}
-                  r="5"
-                  fill="var(--rx-semantic-allowed)"
-                  stroke="var(--rx-surface-1)"
-                  stroke-width="1.5"
-                />
+                // Allowed: Filled circle with pop & expanding ring on latest
+                <>
+                  <circle
+                    cx={x}
+                    cy={markerY}
+                    r="5"
+                    fill="var(--rx-semantic-allowed)"
+                    stroke="var(--rx-surface-1)"
+                    stroke-width="1.5"
+                  />
+                  {isLatest && (
+                    <circle
+                      cx={x}
+                      cy={markerY}
+                      r="5"
+                      fill="none"
+                      stroke="var(--rx-semantic-allowed)"
+                      stroke-width="1.5"
+                      class="rx-allowed-ring"
+                    />
+                  )}
+                </>
               ) : (
-                // Denied: Hollow diamond with cross
+                // Denied: Hollow diamond with cross and recoil animation
                 <g transform={`translate(${x - 6}, ${markerY - 6})`}>
                   <polygon
                     points="6,0 12,6 6,12 0,6"

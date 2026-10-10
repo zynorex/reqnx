@@ -6,16 +6,39 @@
 // ──────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect, useRef, useCallback } from 'preact/hooks';
-import { createLimiter, createMemoryStore, fixedWindow } from '@reqnx/core';
+import { createLimiter, createMemoryStore, fixedWindow, tokenBucket } from '@reqnx/core';
 import type { Decision } from '@reqnx/core';
 import { createBrowserFakeClock } from '../../engine/fake-clock.js';
 import { algorithms } from '../../features.js';
 import { Timeline } from '../common/Timeline.js';
+import { rollNumber } from '../../motion/odometer.js';
 import type { PrecomputedHeroState } from '../../engine/hero-precompute.js';
 import type { ScenarioStep } from '../../engine/types.js';
 
 interface LiveConsoleProps {
   initialState?: PrecomputedHeroState;
+}
+
+function NumericValue({
+  value,
+  className = '',
+}: {
+  value: number | string;
+  className?: string;
+}) {
+  const containerRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      rollNumber(containerRef.current, value, { durationMs: 220, digitStaggerMs: 20 });
+    }
+  }, [value]);
+
+  return (
+    <span ref={containerRef} class={className}>
+      {value}
+    </span>
+  );
 }
 
 export function LiveConsole({ initialState }: LiveConsoleProps) {
@@ -35,12 +58,23 @@ export function LiveConsole({ initialState }: LiveConsoleProps) {
   );
 
   // Component state
+  const [selectedAlgo, setSelectedAlgo] = useState<'fixed-window' | 'token-bucket'>('fixed-window');
+  const [isWiping, setIsWiping] = useState(false);
+  const [nudgingTab, setNudgingTab] = useState<string | null>(null);
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const [tabIndicatorStyle, setTabIndicatorStyle] = useState<{
+    left: number;
+    width: number;
+    visible: boolean;
+  }>({ left: 0, width: 0, visible: false });
+
   const [currentMs, setCurrentMs] = useState(initialState?.currentMs ?? 3500);
   const [steps, setSteps] = useState<ScenarioStep[]>(
     initialState?.steps ? [...initialState.steps] : [],
   );
   const [isPlaying, setIsPlaying] = useState(false);
   const [pulseEvent, setPulseEvent] = useState<'denial' | 'rollover' | null>(null);
+  const [flashType, setFlashType] = useState<'allowed' | 'denied' | null>(null);
   const [showLog, setShowLog] = useState(false);
   const [liveAnnouncement, setLiveAnnouncement] = useState('');
   const lastAnnounceTimeRef = useRef(0);
@@ -55,6 +89,24 @@ export function LiveConsole({ initialState }: LiveConsoleProps) {
       lastAnnounceTimeRef.current = now;
     }
   }, []);
+
+  // Update tab indicator geometry
+  useEffect(() => {
+    if (tabsContainerRef.current) {
+      const activeBtn = tabsContainerRef.current.querySelector<HTMLButtonElement>(
+        `.rx-console__tab.is-active`,
+      );
+      if (activeBtn) {
+        const containerRect = tabsContainerRef.current.getBoundingClientRect();
+        const btnRect = activeBtn.getBoundingClientRect();
+        setTabIndicatorStyle({
+          left: btnRect.left - containerRect.left,
+          width: btnRect.width,
+          visible: true,
+        });
+      }
+    }
+  }, [selectedAlgo]);
 
   // Dispatch a single request
   const sendRequest = useCallback(async () => {
@@ -74,11 +126,20 @@ export function LiveConsole({ initialState }: LiveConsoleProps) {
 
     if (!decision.allowed) {
       setPulseEvent('denial');
+      setFlashType('denied');
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('rx-console-denial'));
+      }
       announce(
         `Request denied. Retry after ${(decision.retryAfterMs! / 1000).toFixed(1)} seconds.`,
       );
-      setTimeout(() => setPulseEvent(null), 400);
+      setTimeout(() => {
+        setPulseEvent(null);
+        setFlashType(null);
+      }, 400);
     } else {
+      setFlashType('allowed');
+      setTimeout(() => setFlashType(null), 260);
       announce(`Request allowed. ${decision.remaining} of ${decision.limit} remaining.`);
     }
   }, [steps.length, announce]);
@@ -105,26 +166,74 @@ export function LiveConsole({ initialState }: LiveConsoleProps) {
     const lastAtMs = clockRef.current.nowMs();
     setCurrentMs(lastAtMs);
     setPulseEvent('denial');
+    setFlashType('denied');
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('rx-console-denial'));
+    }
     announce(`Burst of ${burstCount} sent. Over-limit requests denied.`);
-    setTimeout(() => setPulseEvent(null), 400);
+    setTimeout(() => {
+      setPulseEvent(null);
+      setFlashType(null);
+    }, 400);
   }, [limit, steps.length, announce]);
 
   // Reset engine to initial state
   const resetEngine = useCallback(() => {
     clockRef.current = createBrowserFakeClock(0);
     storeRef.current = createMemoryStore({ clock: clockRef.current });
+    const currentAlgorithm = selectedAlgo === 'token-bucket' ? tokenBucket : fixedWindow;
+    const currentConfig =
+      selectedAlgo === 'token-bucket'
+        ? ({ capacity: limit, refillRate: 1, interval: '1s' } as any)
+        : { limit, window: `${windowMs}ms` };
+
     limiterRef.current = createLimiter({
-      algorithm: fixedWindow,
+      algorithm: currentAlgorithm,
       store: storeRef.current,
       prefix: 'live-console',
-      config: { limit, window: `${windowMs}ms` },
+      config: currentConfig,
     });
 
     setCurrentMs(0);
     setSteps([]);
     setIsPlaying(false);
     announce('Console reset to t = 0s.');
-  }, [limit, windowMs, announce]);
+  }, [limit, windowMs, selectedAlgo, announce]);
+
+  // Algorithm switch handler (E12)
+  const handleTabClick = (algoId: string, isAvailable: boolean) => {
+    if (!isAvailable) {
+      setNudgingTab(algoId);
+      setTimeout(() => setNudgingTab(null), 220);
+      return;
+    }
+
+    if (algoId === selectedAlgo) return;
+
+    setIsWiping(true);
+    const target = algoId as 'fixed-window' | 'token-bucket';
+    setSelectedAlgo(target);
+
+    clockRef.current = createBrowserFakeClock(0);
+    storeRef.current = createMemoryStore({ clock: clockRef.current });
+    const algoImpl = target === 'token-bucket' ? tokenBucket : fixedWindow;
+    const config =
+      target === 'token-bucket'
+        ? ({ capacity: limit, refillRate: 1, interval: '1s' } as any)
+        : { limit, window: `${windowMs}ms` };
+
+    limiterRef.current = createLimiter({
+      algorithm: algoImpl,
+      store: storeRef.current,
+      prefix: 'live-console',
+      config,
+    });
+
+    setCurrentMs(0);
+    setSteps([]);
+    announce(`Switched algorithm to ${target === 'token-bucket' ? 'Token Bucket' : 'Fixed Window Counter'}.`);
+    setTimeout(() => setIsWiping(false), 240);
+  };
 
   // Visibility and intersection observation
   useEffect(() => {
@@ -179,6 +288,16 @@ export function LiveConsole({ initialState }: LiveConsoleProps) {
           decision,
         };
         setSteps((prev) => [...prev, newStep]);
+        if (!decision.allowed) {
+          setFlashType('denied');
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('rx-console-denial'));
+          }
+          setTimeout(() => setFlashType(null), 260);
+        } else {
+          setFlashType('allowed');
+          setTimeout(() => setFlashType(null), 260);
+        }
       }
 
       setCurrentMs(atMs);
@@ -223,25 +342,38 @@ export function LiveConsole({ initialState }: LiveConsoleProps) {
 
       {/* Header Strip: Algorithm Tabs and Status */}
       <div class="rx-console__header">
-        <div class="rx-console__tabs" role="tablist" aria-label="Algorithms">
+        <div class="rx-console__tabs" ref={tabsContainerRef} role="tablist" aria-label="Algorithms">
+          {tabIndicatorStyle.visible && (
+            <span
+              class="rx-console__tab-indicator"
+              aria-hidden="true"
+              style={{
+                transform: `translate3d(${tabIndicatorStyle.left}px, -50%, 0)`,
+                width: `${tabIndicatorStyle.width}px`,
+              }}
+            />
+          )}
+
           {algorithms.map((algo) => {
-            const isAvailable = algo.status === 'available';
-            const isSelected = algo.id === 'fixed-window';
+            const isAvailable = algo.id === 'fixed-window' || algo.id === 'token-bucket';
+            const isSelected = algo.id === selectedAlgo;
+            const isNudging = nudgingTab === algo.id;
 
             return (
               <button
                 key={algo.id}
                 role="tab"
+                type="button"
                 aria-selected={isSelected}
                 aria-disabled={!isAvailable}
-                disabled={!isAvailable}
+                onClick={() => handleTabClick(algo.id, isAvailable)}
                 class={`rx-console__tab ${isSelected ? 'is-active' : ''} ${
                   !isAvailable ? 'is-disabled' : ''
-                }`}
+                } ${isNudging ? 'is-nudging' : ''}`}
                 title={
                   isAvailable
                     ? `${algo.name} (Active)`
-                    : `${algo.name} (Planned — Arriving Days 4-7)`
+                    : `${algo.name} (Planned — Arriving Days 5-7)`
                 }
               >
                 <span>{algo.name}</span>
@@ -263,8 +395,8 @@ export function LiveConsole({ initialState }: LiveConsoleProps) {
         </div>
       </div>
 
-      {/* Timeline Visualisation (Shared Component) */}
-      <div class="rx-console__timeline-wrapper">
+      {/* Timeline Visualisation with E12 wipe transition */}
+      <div class={`rx-console__timeline-wrapper ${isWiping ? 'is-wiping' : ''}`}>
         <Timeline
           variant="hero"
           currentMs={currentMs}
@@ -276,35 +408,43 @@ export function LiveConsole({ initialState }: LiveConsoleProps) {
         />
       </div>
 
-      {/* Readout Row (Tabular Metrics) */}
+      {/* Readout Row (Tabular Metrics with E10 Odometers and Cell Tint Flash) */}
       <div class="rx-console__readouts" aria-label="Real-time State Metrics">
-        <div class="rx-readout">
+        <div class={`rx-readout ${flashType === 'allowed' ? 'flash-allowed' : ''}`}>
           <span class="rx-readout__label">ALLOWED</span>
-          <span class="rx-readout__val rx-readout__val--allowed">{allowedCount}</span>
+          <NumericValue
+            value={allowedCount}
+            className="rx-readout__val rx-readout__val--allowed"
+          />
         </div>
-        <div class="rx-readout">
+        <div class={`rx-readout ${flashType === 'denied' ? 'flash-denied' : ''}`}>
           <span class="rx-readout__label">DENIED</span>
-          <span class="rx-readout__val rx-readout__val--denied">{deniedCount}</span>
+          <NumericValue
+            value={deniedCount}
+            className="rx-readout__val rx-readout__val--denied"
+          />
         </div>
-        <div class="rx-readout">
+        <div class={`rx-readout ${flashType === 'allowed' ? 'flash-allowed' : ''}`}>
           <span class="rx-readout__label">REMAINING</span>
           <span class="rx-readout__val">
-            {remaining} / {limit}
+            <NumericValue value={remaining} /> / {limit}
           </span>
         </div>
         <div class="rx-readout">
           <span class="rx-readout__label">RESET IN</span>
-          <span class="rx-readout__val">{resetInSec}s</span>
+          <span class="rx-readout__val">
+            <NumericValue value={`${resetInSec}s`} />
+          </span>
         </div>
         <div class="rx-readout">
           <span class="rx-readout__label">RETRY-AFTER</span>
           <span class="rx-readout__val">
-            {retryAfterMs > 0 ? `${(retryAfterMs / 1000).toFixed(1)}s` : '—'}
+            {retryAfterMs > 0 ? <NumericValue value={`${(retryAfterMs / 1000).toFixed(1)}s`} /> : '—'}
           </span>
         </div>
         <div class="rx-readout">
           <span class="rx-readout__label">PEAK (WINDOW)</span>
-          <span class="rx-readout__val">{peakInWindow}</span>
+          <NumericValue value={peakInWindow} className="rx-readout__val" />
         </div>
       </div>
 

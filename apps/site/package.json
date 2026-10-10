@@ -13,7 +13,9 @@
     "shots": "tsx scripts/take-shots.ts",
     "a11y": "tsx scripts/run-a11y.ts",
     "brand:build": "tsx scripts/brand-build.ts",
-    "lint:motion": "tsx scripts/lint-css-motion.ts"
+    "lint:motion": "tsx scripts/lint-css-motion.ts",
+    "motion:filmstrip": "tsx scripts/take-motion-filmstrip.ts",
+    "motion:tour": "tsx scripts/take-motion-tour.ts"
   },
   "dependencies": {
     "@astrojs/preact": "^4.0.0",

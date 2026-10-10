@@ -6,6 +6,7 @@
 // ──────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect, useCallback } from 'preact/hooks';
+import { isMotionReduced } from '../../motion/kill-switch.js';
 
 export type ThemeMode = 'system' | 'dark' | 'light';
 
@@ -37,7 +38,19 @@ export function ThemeToggle() {
   const cycleTheme = useCallback(() => {
     const next: ThemeMode = theme === 'system' ? 'dark' : theme === 'dark' ? 'light' : 'system';
     setTheme(next);
-    applyTheme(next);
+
+    // E4: Theme change via View Transitions when supported and motion allowed
+    if (
+      typeof document !== 'undefined' &&
+      'startViewTransition' in document &&
+      !isMotionReduced()
+    ) {
+      document.startViewTransition(() => {
+        applyTheme(next);
+      });
+    } else {
+      applyTheme(next);
+    }
   }, [theme]);
 
   const label =

@@ -11,6 +11,9 @@ const currentYear = new Date().getFullYear();
 ---
 
 <footer class="rx-footer" role="contentinfo">
+  <!-- E6: Footer Pointer Backlight -->
+  <div class="rx-footer__backlight" aria-hidden="true" id="rx-footer-backlight"></div>
+
   <div class="rx-footer__container">
     <div class="rx-footer__grid">
       <!-- Col 1: Brand & Tagline -->
@@ -94,6 +97,8 @@ const currentYear = new Date().getFullYear();
 
 <style>
   .rx-footer {
+    position: relative;
+    overflow: hidden;
     border-top: 1px solid var(--rx-border-subtle);
     background-color: var(--rx-surface-1);
     color: var(--rx-text-2);
@@ -101,7 +106,39 @@ const currentYear = new Date().getFullYear();
     font-size: 0.875rem;
   }
 
+  .rx-footer__backlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(
+      240px circle at var(--pointer-x, -999px) var(--pointer-y, -999px),
+      color-mix(in srgb, var(--rx-accent-cyan) 6%, transparent) 0%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity var(--rx-dur-base) var(--rx-ease-out);
+  }
+
+  @media (hover: hover) {
+    .rx-footer:hover .rx-footer__backlight {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rx-footer__backlight {
+      display: none;
+    }
+  }
+
+  html[data-motion="reduced"] .rx-footer__backlight {
+    display: none;
+  }
+
   .rx-footer__container {
+    position: relative;
+    z-index: 1;
     max-width: 1200px;
     margin: 0 auto;
   }
@@ -220,3 +257,15 @@ const currentYear = new Date().getFullYear();
     }
   }
 </style>
+
+<script>
+  import { trackPointer } from '../../motion/pointer.js';
+
+  const footer = document.querySelector('footer.rx-footer');
+  if (footer) {
+    trackPointer(footer as HTMLElement, (x, y) => {
+      (footer as HTMLElement).style.setProperty('--pointer-x', `${x}px`);
+      (footer as HTMLElement).style.setProperty('--pointer-y', `${y}px`);
+    });
+  }
+</script>

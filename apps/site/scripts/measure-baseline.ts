@@ -121,12 +121,25 @@ async function run() {
 
     // Inject performance observer before navigation
     await page.addInitScript(() => {
-      (window as any).__metrics = {
+      interface MetricsStore {
+        fcp: number;
+        lcp: number;
+        cls: number;
+        tbt: number;
+        longTasks: number[];
+      }
+      interface LayoutShiftEntry extends PerformanceEntry {
+        hadRecentInput?: boolean;
+        value?: number;
+      }
+
+      const win = window as unknown as { __metrics: MetricsStore };
+      win.__metrics = {
         fcp: 0,
         lcp: 0,
         cls: 0,
         tbt: 0,
-        longTasks: [] as number[],
+        longTasks: [],
       };
 
       try {
@@ -134,7 +147,7 @@ async function run() {
         new PerformanceObserver((entryList) => {
           for (const entry of entryList.getEntries()) {
             if (entry.name === 'first-contentful-paint') {
-              (window as any).__metrics.fcp = entry.startTime;
+              win.__metrics.fcp = entry.startTime;
             }
           }
         }).observe({ type: 'paint', buffered: true });
@@ -143,15 +156,15 @@ async function run() {
         new PerformanceObserver((entryList) => {
           const entries = entryList.getEntries();
           if (entries.length > 0) {
-            (window as any).__metrics.lcp = entries[entries.length - 1].startTime;
+            win.__metrics.lcp = entries[entries.length - 1].startTime;
           }
         }).observe({ type: 'largest-contentful-paint', buffered: true });
 
         // CLS
         new PerformanceObserver((entryList) => {
-          for (const entry of entryList.getEntries() as any[]) {
-            if (!entry.hadRecentInput) {
-              (window as any).__metrics.cls += entry.value;
+          for (const entry of entryList.getEntries() as LayoutShiftEntry[]) {
+            if (!entry.hadRecentInput && typeof entry.value === 'number') {
+              win.__metrics.cls += entry.value;
             }
           }
         }).observe({ type: 'layout-shift', buffered: true });
@@ -160,11 +173,11 @@ async function run() {
         new PerformanceObserver((entryList) => {
           for (const entry of entryList.getEntries()) {
             const blockingTime = Math.max(0, entry.duration - 50);
-            (window as any).__metrics.tbt += blockingTime;
-            (window as any).__metrics.longTasks.push(entry.duration);
+            win.__metrics.tbt += blockingTime;
+            win.__metrics.longTasks.push(entry.duration);
           }
         }).observe({ type: 'longtask', buffered: true });
-      } catch (e) {
+      } catch {
         // Fallback if some observer type unsupported
       }
     });
@@ -173,7 +186,16 @@ async function run() {
     // Allow any hero animations / initial island ticks to settle
     await page.waitForTimeout(2000);
 
-    const metrics = await page.evaluate(() => (window as any).__metrics);
+    const metrics = await page.evaluate(() => {
+      interface MetricsStore {
+        fcp: number;
+        lcp: number;
+        cls: number;
+        tbt: number;
+        longTasks: number[];
+      }
+      return (window as unknown as { __metrics: MetricsStore }).__metrics;
+    });
 
     const baselineData = {
       timestamp: new Date().toISOString(),

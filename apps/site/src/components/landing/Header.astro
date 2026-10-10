@@ -25,6 +25,7 @@ const navItems = [
 <div id="rx-header-sentinel" aria-hidden="true" class="rx-sentinel"></div>
 
 <header class="rx-header" id="rx-site-header">
+  <div class="rx-header__progress" aria-hidden="true" id="rx-header-progress"></div>
   <div class="rx-header__inner">
     <div class="rx-header__brand">
       <Logo size={30} showText={true} />
@@ -34,6 +35,7 @@ const navItems = [
     </div>
 
     <nav class="rx-header__nav" aria-label="Main Navigation">
+      <span class="rx-header__indicator" aria-hidden="true" id="rx-nav-indicator"></span>
       <ul class="rx-header__nav-list" role="list">
         {navItems.map((item) => {
           const isActive = currentPath === item.href || (item.href !== withBase('/') && !item.href.startsWith('#') && currentPath.startsWith(item.href));
@@ -43,6 +45,7 @@ const navItems = [
                 href={item.href}
                 class:list={['rx-header__nav-link', { 'is-active': isActive }]}
                 aria-current={isActive ? 'page' : undefined}
+                data-nav-href={item.href}
               >
                 {item.label}
               </a>
@@ -56,6 +59,7 @@ const navItems = [
             target="_blank"
             rel="noreferrer noopener"
             aria-label="GitHub Repository (opens in a new tab)"
+            data-nav-href={siteConfig.repo}
           >
             <Icon name="github" size={18} ariaHidden={true} />
             <span class="rx-header__nav-label">GitHub</span>
@@ -158,6 +162,39 @@ const navItems = [
       visibility: hidden;
     }
 
+    .rx-header__progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--rx-accent-cyan);
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+      pointer-events: none;
+      z-index: 101;
+      display: none;
+    }
+
+    @supports (animation-timeline: scroll(root)) {
+      @media (prefers-reduced-motion: no-preference) {
+        html:not([data-motion="reduced"]) .rx-header__progress {
+          display: block;
+          animation: rx-scroll-progress linear;
+          animation-timeline: scroll(root);
+        }
+      }
+    }
+
+    @keyframes rx-scroll-progress {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
     .rx-header {
       position: sticky;
       top: 0;
@@ -167,9 +204,19 @@ const navItems = [
       z-index: 100;
       background: transparent;
       border-bottom: 1px solid transparent;
-      transition: background-color var(--rx-transition-base),
-                  border-color var(--rx-transition-base),
-                  backdrop-filter var(--rx-transition-base);
+      transition:
+        background-color var(--rx-dur-base) var(--rx-ease-out),
+        border-color var(--rx-dur-base) var(--rx-ease-out),
+        backdrop-filter var(--rx-dur-base) var(--rx-ease-out);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rx-header {
+        transition: none;
+      }
+    }
+    html[data-motion="reduced"] .rx-header {
+      transition: none;
     }
 
     .rx-header.is-scrolled {
@@ -239,6 +286,7 @@ const navItems = [
 
     .rx-header__nav {
       display: none;
+      position: relative;
     }
 
     @media (min-width: 768px) {
@@ -247,7 +295,35 @@ const navItems = [
       }
     }
 
+    .rx-header__indicator {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      height: 32px;
+      border-radius: var(--rx-radius-sm);
+      background: var(--rx-surface-2);
+      border: 1px solid var(--rx-border-subtle);
+      pointer-events: none;
+      opacity: 0;
+      transition:
+        transform var(--rx-dur-panel) var(--rx-ease-spring),
+        opacity var(--rx-dur-fast) var(--rx-ease-out);
+      z-index: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rx-header__indicator {
+        transition: none;
+      }
+    }
+    html[data-motion="reduced"] .rx-header__indicator {
+      transition: none;
+    }
+
     .rx-header__nav-list {
+      position: relative;
+      z-index: 1;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -266,12 +342,12 @@ const navItems = [
       font-weight: 500;
       color: var(--rx-text-2);
       text-decoration: none;
-      transition: color var(--rx-transition-fast), background-color var(--rx-transition-fast);
+      background-color: transparent;
+      transition: color var(--rx-dur-fast) var(--rx-ease-out);
     }
 
     .rx-header__nav-link:hover {
       color: var(--rx-text-1);
-      background-color: var(--rx-surface-2);
     }
 
     .rx-header__nav-link.is-active {
@@ -300,7 +376,28 @@ const navItems = [
       background: var(--rx-accent-indigo);
       border-radius: var(--rx-radius-sm);
       text-decoration: none;
-      transition: background-color var(--rx-transition-fast), transform var(--rx-transition-fast);
+      transition:
+        background-color var(--rx-dur-fast) var(--rx-ease-out),
+        transform var(--rx-dur-instant) var(--rx-ease-out);
+    }
+
+    .rx-header__cta:active {
+      transform: scale(0.98);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rx-header__cta {
+        transition: none;
+      }
+      .rx-header__cta:active {
+        transform: none;
+      }
+    }
+    html[data-motion="reduced"] .rx-header__cta {
+      transition: none;
+    }
+    html[data-motion="reduced"] .rx-header__cta:active {
+      transform: none;
     }
 
     .rx-header__cta span {
@@ -333,7 +430,9 @@ const navItems = [
       background: var(--rx-surface-2);
       color: var(--rx-text-1);
       cursor: pointer;
-      transition: background-color var(--rx-transition-fast), border-color var(--rx-transition-fast);
+      transition:
+        background-color var(--rx-dur-fast) var(--rx-ease-out),
+        border-color var(--rx-dur-fast) var(--rx-ease-out);
     }
 
     .rx-header__menu-btn:hover {
@@ -420,7 +519,9 @@ const navItems = [
       text-decoration: none;
       background: var(--rx-surface-2);
       border: 1px solid var(--rx-border-subtle);
-      transition: background-color var(--rx-transition-fast), border-color var(--rx-transition-fast);
+      transition:
+        background-color var(--rx-dur-fast) var(--rx-ease-out),
+        border-color var(--rx-dur-fast) var(--rx-ease-out);
     }
 
     .rx-mobile-sheet__link:hover {
@@ -467,7 +568,9 @@ const navItems = [
 </style>
 
 <script>
-  // Header scroll sentinel observation
+  import { isMotionReduced } from '../../motion/kill-switch.js';
+
+  // E1: Header scroll sentinel observation
   const sentinel = document.getElementById('rx-header-sentinel');
   const header = document.getElementById('rx-site-header');
 
@@ -483,6 +586,86 @@ const navItems = [
       { rootMargin: '0px', threshold: 0 }
     );
     observer.observe(sentinel);
+  }
+
+  // E2: Nav indicator & scrollspy
+  const nav = document.querySelector<HTMLElement>('.rx-header__nav');
+  const indicator = document.getElementById('rx-nav-indicator');
+  const navLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.rx-header__nav-link'));
+
+  if (nav && indicator && navLinks.length > 0) {
+    function positionIndicator(target: HTMLElement | null) {
+      if (!target || !indicator || !nav) {
+        if (indicator) indicator.style.opacity = '0';
+        return;
+      }
+      const navRect = nav.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const left = targetRect.left - navRect.left;
+      const width = targetRect.width;
+
+      indicator.style.transform = `translate3d(${left}px, -50%, 0)`;
+      indicator.style.width = `${width}px`;
+      indicator.style.opacity = '1';
+    }
+
+    function getActiveLink(): HTMLAnchorElement | null {
+      return navLinks.find((l) => l.classList.contains('is-active')) || null;
+    }
+
+    // Set initial position to active link if present
+    const initialActive = getActiveLink();
+    if (initialActive) {
+      positionIndicator(initialActive);
+    }
+
+    navLinks.forEach((link) => {
+      link.addEventListener('mouseenter', () => positionIndicator(link));
+      link.addEventListener('focus', () => positionIndicator(link));
+    });
+
+    nav.addEventListener('mouseleave', () => {
+      const active = getActiveLink();
+      positionIndicator(active);
+    });
+
+    // Anchor smooth scrolling with header offset
+    navLinks.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        link.addEventListener('click', (e) => {
+          const target = document.querySelector(href);
+          if (target && !isMotionReduced()) {
+            e.preventDefault();
+            const headerHeight = header?.offsetHeight || 64;
+            const top = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+            window.scrollTo({ top, behavior: 'smooth' });
+            history.pushState(null, '', href);
+          }
+        });
+      }
+    });
+
+    // Scrollspy for #status section
+    const statusSection = document.getElementById('status');
+    if (statusSection && 'IntersectionObserver' in window) {
+      const spyObserver = new IntersectionObserver(
+        ([entry]) => {
+          const statusLink = navLinks.find((l) => l.getAttribute('href') === '#status');
+          if (statusLink) {
+            if (entry.isIntersecting) {
+              navLinks.forEach((l) => l.classList.remove('is-active'));
+              statusLink.classList.add('is-active');
+              positionIndicator(statusLink);
+            } else {
+              statusLink.classList.remove('is-active');
+            }
+          }
+        },
+        { rootMargin: '-20% 0px -70% 0px', threshold: 0 }
+      );
+      spyObserver.observe(statusSection);
+    }
   }
 
   // Mobile sheet drawer state management & focus trap
@@ -501,7 +684,6 @@ const navItems = [
       menuToggle?.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
 
-      // Focus first link in drawer
       const firstLink = mobileSheet?.querySelector<HTMLAnchorElement>('a');
       firstLink?.focus();
     }
@@ -526,13 +708,11 @@ const navItems = [
 
     backdrop?.addEventListener('click', closeMenu);
 
-    // Close on any nav link click inside the sheet
     const sheetLinks = mobileSheet.querySelectorAll('a');
     sheetLinks.forEach((link) => {
       link.addEventListener('click', closeMenu);
     });
 
-    // Close on ESC key and focus trap
     window.addEventListener('keydown', (e) => {
       if (!isOpen) return;
 

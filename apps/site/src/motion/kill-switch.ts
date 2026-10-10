@@ -42,11 +42,16 @@ export function getStoredMotionPreference(): MotionMode {
   }
 }
 
+interface NetworkInformationSaveData {
+  saveData?: boolean;
+}
+
 export function isMotionReduced(): boolean {
   if (typeof window === 'undefined') return false;
   if (document.documentElement.dataset.motion === 'reduced') return true;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
-  if (Boolean((navigator as any).connection?.saveData)) return true;
+  const netInfo = (navigator as unknown as { connection?: NetworkInformationSaveData }).connection;
+  if (Boolean(netInfo?.saveData)) return true;
   return false;
 }
 
@@ -59,7 +64,8 @@ export function setMotionPreference(mode: MotionMode): void {
     } else {
       localStorage.removeItem(STORAGE_KEY);
       const osReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const isSaveData = Boolean((navigator as any).connection?.saveData);
+      const netInfo = (navigator as unknown as { connection?: NetworkInformationSaveData }).connection;
+      const isSaveData = Boolean(netInfo?.saveData);
       document.documentElement.dataset.motion = osReduced || isSaveData ? 'reduced' : 'full';
     }
 

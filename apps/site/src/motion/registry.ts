@@ -33,8 +33,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Surface rendered statically with 100% opacity.',
     noJs: 'Translucent surface visible by default in static HTML.',
     fallback: 'Static header surface styling.',
-    estJsKb: 0.2,
-    estCssKb: 0.2,
+    estJsKb: 0.1,
+    estCssKb: 0.1,
   },
   {
     id: 'E2',
@@ -46,8 +46,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Indicator snaps instantly to active item without spatial interpolation.',
     noJs: 'Native anchor navigation without sliding indicator.',
     fallback: 'CSS :hover and :focus-visible border underline.',
-    estJsKb: 0.8,
-    estCssKb: 0.3,
+    estJsKb: 0.3,
+    estCssKb: 0.2,
   },
   {
     id: 'E3',
@@ -72,8 +72,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Instant theme attribute swap without clip-path wipe.',
     noJs: 'Native system color scheme matches user preference.',
     fallback: 'Synchronous attribute toggle if View Transitions API is unsupported.',
-    estJsKb: 0.4,
-    estCssKb: 0.3,
+    estJsKb: 0.2,
+    estCssKb: 0.2,
   },
   {
     id: 'E5',
@@ -86,7 +86,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     noJs: 'Final state rendered immediately in static HTML.',
     fallback: 'Static layout with full visibility.',
     estJsKb: 0.1,
-    estCssKb: 0.5,
+    estCssKb: 0.3,
   },
   {
     id: 'E6',
@@ -98,8 +98,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Backlight disabled completely.',
     noJs: 'Backlight disabled.',
     fallback: 'Static coordinate grid.',
-    estJsKb: 0.5,
-    estCssKb: 0.2,
+    estJsKb: 0.2,
+    estCssKb: 0.1,
   },
   {
     id: 'E7',
@@ -112,7 +112,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     noJs: 'Native :hover and :active CSS background tinting.',
     fallback: 'Standard CSS border-color transition.',
     estJsKb: 0.0,
-    estCssKb: 0.3,
+    estCssKb: 0.2,
   },
   {
     id: 'E8',
@@ -124,7 +124,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Instant text swap to "Copied" without icon morph.',
     noJs: 'Copy button hidden; command text remains selectable.',
     fallback: 'Standard text replacement with textarea clipboard fallback.',
-    estJsKb: 0.3,
+    estJsKb: 0.2,
     estCssKb: 0.1,
   },
   {
@@ -137,8 +137,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Markers appear instantly at cursor with zero scale or recoil.',
     noJs: 'Console displays static snapshot.',
     fallback: 'Instant CSS opacity appearance.',
-    estJsKb: 0.6,
-    estCssKb: 0.4,
+    estJsKb: 0.3,
+    estCssKb: 0.2,
   },
   {
     id: 'E10',
@@ -150,8 +150,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Instant numeric value swap; soft 120 ms cell tint.',
     noJs: 'Static numeric values.',
     fallback: 'Instant text replacement.',
-    estJsKb: 1.1,
-    estCssKb: 0.2,
+    estJsKb: 0.5,
+    estCssKb: 0.1,
   },
   {
     id: 'E11',
@@ -163,7 +163,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Instant gauge reset without stagger.',
     noJs: 'Static gauge state.',
     fallback: 'Instant reset of gauge bar width.',
-    estJsKb: 0.3,
+    estJsKb: 0.1,
     estCssKb: 0.1,
   },
   {
@@ -176,8 +176,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Instant tab indicator swap; immediate timeline rerender.',
     noJs: 'Radio input or static tab selection.',
     fallback: 'Instant panel swap.',
-    estJsKb: 0.5,
-    estCssKb: 0.2,
+    estJsKb: 0.3,
+    estCssKb: 0.1,
   },
   {
     id: 'E13',
@@ -190,7 +190,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     noJs: 'Static code snippet.',
     fallback: 'Static code snippet and Decision JSON.',
     estJsKb: 4.0,
-    estCssKb: 0.3,
+    estCssKb: 0.2,
   },
   {
     id: 'E14',
@@ -202,8 +202,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'All sections 100% visible on load with zero translation.',
     noJs: 'All sections 100% visible in static HTML.',
     fallback: 'IntersectionObserver toggles .is-visible class.',
-    estJsKb: 0.4,
-    estCssKb: 0.8,
+    estJsKb: 0.3,
+    estCssKb: 0.3,
   },
   {
     id: 'E15',
@@ -215,7 +215,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Final numbers displayed statically.',
     noJs: 'Final numbers in static HTML.',
     fallback: 'Static text numbers.',
-    estJsKb: 0.8,
+    estJsKb: 0.2,
     estCssKb: 0.1,
   },
   {
@@ -228,8 +228,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Static border color change on hover; zero card lift or icon motion.',
     noJs: 'Standard :hover border color change.',
     fallback: 'CSS border color transition.',
-    estJsKb: 0.6,
-    estCssKb: 0.5,
+    estJsKb: 0.2,
+    estCssKb: 0.2,
   },
   {
     id: 'E17',
@@ -241,8 +241,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Displays final state of the 3-frame diagram immediately.',
     noJs: 'Static 3-frame visual.',
     fallback: 'Static graphic.',
-    estJsKb: 0.4,
-    estCssKb: 0.2,
+    estJsKb: 0.2,
+    estCssKb: 0.1,
   },
   {
     id: 'E18',
@@ -254,8 +254,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Instant panel swap; static table hover.',
     noJs: 'Native tab or anchor links.',
     fallback: 'CSS table hover.',
-    estJsKb: 0.5,
-    estCssKb: 0.3,
+    estJsKb: 0.2,
+    estCssKb: 0.2,
   },
   {
     id: 'E19',
@@ -267,8 +267,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'All lines displayed at 100% opacity.',
     noJs: 'Static code blocks.',
     fallback: 'Static code block.',
-    estJsKb: 0.4,
-    estCssKb: 0.2,
+    estJsKb: 0.2,
+    estCssKb: 0.1,
   },
   {
     id: 'E20',
@@ -280,8 +280,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Static diagram with highlighted node connectors.',
     noJs: 'Static SVG architecture diagram.',
     fallback: 'Static SVG paths.',
-    estJsKb: 0.7,
-    estCssKb: 0.3,
+    estJsKb: 0.3,
+    estCssKb: 0.2,
   },
   {
     id: 'E21',
@@ -293,8 +293,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Instant native details toggle without height interpolation.',
     noJs: 'Native HTML <details>/<summary> functionality.',
     fallback: 'Native details expansion with opacity fade.',
-    estJsKb: 0.2,
-    estCssKb: 0.4,
+    estJsKb: 0.1,
+    estCssKb: 0.2,
   },
   {
     id: 'E22',
@@ -306,8 +306,8 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Static mascot position.',
     noJs: 'Static mascot image.',
     fallback: 'Static image.',
-    estJsKb: 0.2,
-    estCssKb: 0.3,
+    estJsKb: 0.1,
+    estCssKb: 0.1,
   },
   {
     id: 'E23',
@@ -320,7 +320,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     noJs: 'Full width progress bar in HTML.',
     fallback: 'Static width.',
     estJsKb: 0.1,
-    estCssKb: 0.3,
+    estCssKb: 0.1,
   },
   {
     id: 'E24',
@@ -333,7 +333,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     noJs: 'Ticks in aligned grid.',
     fallback: 'Standard repeating coordinate grid.',
     estJsKb: 0.0,
-    estCssKb: 0.4,
+    estCssKb: 0.2,
   },
   {
     id: 'E25',
@@ -346,7 +346,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     noJs: 'Native browser focus outline and underline.',
     fallback: 'CSS text-decoration: underline.',
     estJsKb: 0.0,
-    estCssKb: 0.3,
+    estCssKb: 0.1,
   },
   {
     id: 'E26',
@@ -359,7 +359,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     noJs: 'Standard browser navigation.',
     fallback: 'Standard page load.',
     estJsKb: 0.0,
-    estCssKb: 0.2,
+    estCssKb: 0.1,
   },
   {
     id: 'E27',
@@ -371,7 +371,7 @@ export const motionRegistry: readonly MotionEffect[] = [
     reducedMotion: 'Shows "Reduced" active state.',
     noJs: 'Hidden when JS is unavailable.',
     fallback: 'Relies on OS prefers-reduced-motion media query.',
-    estJsKb: 0.3,
+    estJsKb: 0.2,
     estCssKb: 0.1,
   },
   {
@@ -385,6 +385,6 @@ export const motionRegistry: readonly MotionEffect[] = [
     noJs: 'Static 404 layout in HTML.',
     fallback: 'Static illustration.',
     estJsKb: 0.0,
-    estCssKb: 0.3,
+    estCssKb: 0.1,
   },
 ];
