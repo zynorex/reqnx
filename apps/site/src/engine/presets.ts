@@ -90,12 +90,37 @@ export const fixedWindowMultiKey: ScenarioConfig = {
   ],
 };
 
+/**
+ * Token bucket burst: 12 rapid requests against capacity of 10.
+ * Demonstrates burst absorption and steady refill.
+ */
+export const tokenBucketBurst: ScenarioConfig = {
+  algorithmId: 'token-bucket',
+  algorithmConfig: { capacity: 10, refillRate: 2, interval: '1s' },
+  actions: [
+    { delayMs: 0, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+    // Exhausted capacity: these 2 are denied
+    { delayMs: 50, key: 'user-1' },
+    { delayMs: 50, key: 'user-1' },
+  ],
+};
+
 /** All built-in presets, keyed by a human-readable ID. */
 export const presets = {
   'fixed-window-burst': fixedWindowBurst,
   'fixed-window-rollover': fixedWindowRollover,
   'fixed-window-boundary-burst': fixedWindowBoundaryBurst,
   'fixed-window-multi-key': fixedWindowMultiKey,
+  'token-bucket-burst': tokenBucketBurst,
 } as const;
 
 export type PresetId = keyof typeof presets;
@@ -117,5 +142,9 @@ export const presetMeta: Record<PresetId, { name: string; description: string }>
   'fixed-window-multi-key': {
     name: 'Multi-Key Isolation',
     description: 'Two users with separate limits.',
+  },
+  'token-bucket-burst': {
+    name: 'Token Burst',
+    description: '12 rapid requests against capacity 10. Last 2 are denied.',
   },
 };

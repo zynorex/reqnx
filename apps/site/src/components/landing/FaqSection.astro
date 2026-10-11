@@ -1,0 +1,122 @@
+---
+import Section from './Section.astro';
+import { landingCopy } from '../../copy/landing.copy';
+import Icon from '../common/Icon.astro';
+
+const { faq } = landingCopy;
+---
+
+<Section
+  id="faq"
+  eyebrow={faq.eyebrow}
+  title={faq.title}
+  lede={faq.lede}
+>
+  <div class="rx-faq-categories">
+    {faq.categories.map((cat) => (
+      <div class="rx-faq-category">
+        <h3 class="rx-cat-heading">{cat.category}</h3>
+        <div class="rx-accordion">
+          {cat.items.map((item) => (
+            <details class="rx-faq-item" id={item.slug}>
+              <summary class="rx-faq-summary">
+                <span class="rx-faq-question">{item.question}</span>
+                <span class="rx-faq-chevron" aria-hidden="true">
+                  <Icon name="arrow-right" size={14} ariaHidden={true} />
+                </span>
+              </summary>
+              <div class="rx-faq-content">
+                <p>{item.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</Section>
+
+<style>
+  .rx-faq-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .rx-cat-heading {
+    font-size: 1.125rem;
+    color: var(--rx-text-1);
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--rx-border-subtle);
+  }
+
+  .rx-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rx-faq-item {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-sm);
+    overflow: hidden;
+    transition: border-color var(--rx-transition-fast);
+  }
+
+  .rx-faq-item:hover {
+    border-color: var(--rx-border-hover);
+  }
+
+  .rx-faq-item[open] {
+    border-color: var(--rx-accent-cyan);
+  }
+
+  .rx-faq-summary {
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    user-select: none;
+  }
+
+  .rx-faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .rx-faq-question {
+    font-family: var(--rx-font-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--rx-text-1);
+    line-height: 1.45;
+  }
+
+  .rx-faq-chevron {
+    color: var(--rx-text-3);
+    transition: transform var(--rx-transition-fast);
+    flex-shrink: 0;
+  }
+
+  .rx-faq-item[open] .rx-faq-chevron {
+    transform: rotate(90deg);
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-faq-content {
+    padding: 0 1.25rem 1.25rem;
+    border-top: 1px solid var(--rx-border-subtle);
+    margin-top: 0.25rem;
+  }
+
+  .rx-faq-content p {
+    font-size: 0.875rem;
+    color: var(--rx-text-2);
+    line-height: 1.6;
+    margin: 1rem 0 0;
+  }
+</style>

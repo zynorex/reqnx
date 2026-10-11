@@ -1,0 +1,45 @@
+---
+export interface SegmentedOption {
+  value: string;
+  label: string;
+  title?: string;
+}
+
+export interface Props {
+  name: string;
+  options: SegmentedOption[];
+  value: string;
+  ariaLabel: string;
+  id?: string;
+}
+
+const { name, options, value, ariaLabel, id } = Astro.props;
+---
+
+<div class="segmented-control" role="radiogroup" aria-label={ariaLabel} id={id}>
+  {
+    options.map((opt) => {
+      const inputId = `${name}-${opt.value}`;
+      const isChecked = opt.value === value;
+      return (
+        <>
+          <input
+            type="radio"
+            id={inputId}
+            name={name}
+            value={opt.value}
+            checked={isChecked}
+            class="segmented-control__input"
+          />
+          <label
+            for={inputId}
+            class="segmented-control__label"
+            title={opt.title ?? opt.label}
+          >
+            {opt.label}
+          </label>
+        </>
+      );
+    })
+  }
+</div>

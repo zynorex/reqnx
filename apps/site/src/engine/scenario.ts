@@ -6,21 +6,20 @@
 // See ADR-0012.
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { createMemoryStore, createLimiter, fixedWindow } from '@reqnx/core';
+import { createMemoryStore, createLimiter, fixedWindow, tokenBucket } from '@reqnx/core';
 import type { Algorithm } from '@reqnx/core';
 import { createBrowserFakeClock } from './fake-clock.js';
 import type { ScenarioConfig, ScenarioStep, ScenarioResult } from './types.js';
 
 /**
  * Resolve an algorithm by ID.
- *
- * Currently only fixed-window is available. As new algorithms are
- * implemented on subsequent days, add them here.
  */
 function resolveAlgorithm(algorithmId: string): Algorithm<unknown, unknown> {
   switch (algorithmId) {
     case 'fixed-window':
       return fixedWindow as Algorithm<unknown, unknown>;
+    case 'token-bucket':
+      return tokenBucket as Algorithm<unknown, unknown>;
     default:
       throw new Error(`Unknown algorithm: ${algorithmId}`);
   }

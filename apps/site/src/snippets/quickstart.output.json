@@ -1,0 +1,58 @@
+[
+  {
+    "request": 1,
+    "allowed": true,
+    "limit": 5,
+    "remaining": 4,
+    "retryAfterMs": 0,
+    "degraded": false
+  },
+  {
+    "request": 2,
+    "allowed": true,
+    "limit": 5,
+    "remaining": 3,
+    "retryAfterMs": 0,
+    "degraded": false
+  },
+  {
+    "request": 3,
+    "allowed": true,
+    "limit": 5,
+    "remaining": 2,
+    "retryAfterMs": 0,
+    "degraded": false
+  },
+  {
+    "request": 4,
+    "allowed": true,
+    "limit": 5,
+    "remaining": 1,
+    "retryAfterMs": 0,
+    "degraded": false
+  },
+  {
+    "request": 5,
+    "allowed": true,
+    "limit": 5,
+    "remaining": 0,
+    "retryAfterMs": 0,
+    "degraded": false
+  },
+  {
+    "request": 6,
+    "allowed": false,
+    "limit": 5,
+    "remaining": 0,
+    "retryAfterMs": 9000,
+    "degraded": false
+  },
+  {
+    "request": 7,
+    "allowed": false,
+    "limit": 5,
+    "remaining": 0,
+    "retryAfterMs": 9000,
+    "degraded": false
+  }
+]

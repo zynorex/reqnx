@@ -1,0 +1,337 @@
+---
+import Section from './Section.astro';
+import { landingCopy } from '../../copy/landing.copy';
+import Icon from '../common/Icon.astro';
+
+const { architecture } = landingCopy;
+
+const runtimes = [
+  'Node.js 22+',
+  'Bun',
+  'Deno',
+  'Cloudflare Workers',
+  'Modern Browsers',
+];
+
+const tiers = [
+  {
+    name: '1. Limiter Facade',
+    role: 'Interface & Resilience',
+    responsibilities: [
+      'Validates keys and capacity configs',
+      'Injects Clock (system or deterministic FakeClock)',
+      'Applies failure policy (fail-open / fail-closed / custom)',
+      'Executes onDecision and onError telemetry hooks safely',
+    ],
+  },
+  {
+    name: '2. Atomic Store',
+    role: 'State Isolation & Atomicity',
+    responsibilities: [
+      'Ensures single atomic read-modify-write transition',
+      'MemoryStore: LRU eviction, memory-bounded, zero network latency',
+      'RedisStore: Single EVALSHA script, cluster hash tags ({tag})',
+      'Guarantees zero concurrent double-spend race conditions',
+    ],
+  },
+  {
+    name: '3. Pure Algorithm Step',
+    role: 'Mathematical State Machine',
+    responsibilities: [
+      'Pure function: (state, now) -> (nextState, decision)',
+      'Zero I/O, zero network calls, zero Date.now() lookups',
+      'Deterministic floating-point safety and integer arithmetic',
+      'Ported identically to Redis Lua and browser environments',
+    ],
+  },
+];
+---
+
+<Section
+  id="architecture"
+  eyebrow={architecture.eyebrow}
+  title={architecture.title}
+  lede={architecture.lede}
+>
+  <!-- Architectural Diagram -->
+  <div class="rx-arch-diagram-card">
+    <div class="rx-diagram-header">
+      <div class="rx-diagram-badge">
+        <Icon name="diamond" size={14} ariaHidden={true} />
+        <span>Atomic Execution Flow</span>
+      </div>
+      <span class="rx-diagram-caption">Data flow across decoupled library layers</span>
+    </div>
+
+    <!-- Responsive SVG Flow -->
+    <div class="rx-svg-container" tabindex="0" role="region" aria-label="Rate limiter architecture diagram">
+      <svg
+        viewBox="0 0 900 220"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        class="rx-flow-svg"
+        aria-label="Rate Limiter Data Flow Diagram"
+        role="img"
+      >
+        <!-- Caller / App Node -->
+        <rect x="20" y="70" width="160" height="80" rx="8" class="rx-node-box" />
+        <text x="100" y="105" text-anchor="middle" class="rx-node-title">Caller / App</text>
+        <text x="100" y="125" text-anchor="middle" class="rx-node-sub">limiter.check(key)</text>
+
+        <!-- Arrow 1 -->
+        <path d="M 180 110 L 250 110" class="rx-flow-arrow" />
+        <polygon points="250,110 242,105 242,115" class="rx-flow-arrowhead" />
+        <text x="215" y="100" text-anchor="middle" class="rx-flow-text">Key, Cost</text>
+
+        <!-- Limiter Facade Node -->
+        <rect x="260" y="50" width="180" height="120" rx="8" class="rx-node-box rx-node-primary" />
+        <text x="350" y="85" text-anchor="middle" class="rx-node-title">Limiter Facade</text>
+        <text x="350" y="105" text-anchor="middle" class="rx-node-detail">• Clock Injection</text>
+        <text x="350" y="123" text-anchor="middle" class="rx-node-detail">• Failure Policies</text>
+        <text x="350" y="141" text-anchor="middle" class="rx-node-detail">• Safe Hooks</text>
+
+        <!-- Arrow 2 -->
+        <path d="M 440 110 L 510 110" class="rx-flow-arrow" />
+        <polygon points="510,110 502,105 502,115" class="rx-flow-arrowhead" />
+        <text x="475" y="100" text-anchor="middle" class="rx-flow-text">Atomic</text>
+
+        <!-- Store Node -->
+        <rect x="520" y="50" width="180" height="120" rx="8" class="rx-node-box" />
+        <text x="610" y="85" text-anchor="middle" class="rx-node-title">Atomic Store</text>
+        <text x="610" y="105" text-anchor="middle" class="rx-node-detail">Memory / Redis</text>
+        <text x="610" y="125" text-anchor="middle" class="rx-node-detail">Calls Algorithm</text>
+        <text x="610" y="143" text-anchor="middle" class="rx-node-detail">step(state, now)</text>
+
+        <!-- Arrow 3 (Return) -->
+        <path d="M 700 110 L 760 110" class="rx-flow-arrow" />
+        <polygon points="760,110 752,105 752,115" class="rx-flow-arrowhead" />
+
+        <!-- Decision Node -->
+        <rect x="770" y="70" width="110" height="80" rx="8" class="rx-node-box rx-node-decision" />
+        <text x="825" y="105" text-anchor="middle" class="rx-node-title">Decision</text>
+        <text x="825" y="125" text-anchor="middle" class="rx-node-sub">allowed: bool</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Responsibilities Breakdown -->
+  <div class="rx-tiers-grid">
+    {tiers.map((t) => (
+      <div class="rx-tier-card">
+        <span class="rx-tier-role">{t.role}</span>
+        <h3 class="rx-tier-name">{t.name}</h3>
+        <ul class="rx-tier-list">
+          {t.responsibilities.map((r) => (
+            <li class="rx-tier-item">
+              <span class="rx-tier-dot" aria-hidden="true">•</span>
+              <span>{r}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+
+  <!-- Works with Runtimes -->
+  <div class="rx-runtimes-bar">
+    <span class="rx-runtimes-label">{architecture.worksWithTitle}:</span>
+    <div class="rx-runtimes-tags">
+      {runtimes.map((rt) => (
+        <span class="rx-runtime-tag">{rt}</span>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-arch-diagram-card {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-md);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    margin-bottom: 2.5rem;
+  }
+
+  .rx-diagram-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .rx-diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--rx-accent-cyan);
+    background: rgba(20, 221, 253, 0.1);
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--rx-radius-full);
+  }
+
+  .rx-diagram-caption {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-svg-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .rx-flow-svg {
+    width: 100%;
+    min-width: 680px;
+    height: auto;
+    display: block;
+  }
+
+  /* SVG Themed Elements */
+  .rx-node-box {
+    fill: var(--rx-surface-1);
+    stroke: var(--rx-border);
+    stroke-width: 1.5px;
+  }
+
+  .rx-node-box.rx-node-primary {
+    stroke: var(--rx-accent-cyan);
+    fill: var(--rx-surface-1);
+  }
+
+  .rx-node-box.rx-node-decision {
+    stroke: var(--rx-semantic-allowed);
+    fill: var(--rx-surface-1);
+  }
+
+  .rx-node-title {
+    fill: var(--rx-text-1);
+    font-family: var(--rx-font-mono);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .rx-node-sub {
+    fill: var(--rx-accent-cyan);
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+  }
+
+  .rx-node-detail {
+    fill: var(--rx-text-3);
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+  }
+
+  .rx-flow-arrow {
+    stroke: var(--rx-border-hover);
+    stroke-width: 1.5px;
+    stroke-dasharray: 4 2;
+  }
+
+  .rx-flow-arrowhead {
+    fill: var(--rx-border-hover);
+  }
+
+  .rx-flow-text {
+    fill: var(--rx-text-3);
+    font-family: var(--rx-font-mono);
+    font-size: 10px;
+  }
+
+  /* Tiers Grid */
+  .rx-tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .rx-tier-card {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-md);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .rx-tier-role {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-tier-name {
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+    color: var(--rx-text-1);
+  }
+
+  .rx-tier-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .rx-tier-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--rx-text-2);
+    line-height: 1.45;
+  }
+
+  .rx-tier-dot {
+    color: var(--rx-text-3);
+    font-weight: bold;
+  }
+
+  /* Runtimes Bar */
+  .rx-runtimes-bar {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-sm);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .rx-runtimes-label {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--rx-text-3);
+    text-transform: uppercase;
+  }
+
+  .rx-runtimes-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .rx-runtime-tag {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    color: var(--rx-text-2);
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border);
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--rx-radius-xs);
+  }
+</style>

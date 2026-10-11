@@ -1,0 +1,14 @@
+---
+export interface Props {
+  layout?: 'spaced' | 'attached';
+  ariaLabel?: string;
+  className?: string;
+}
+
+const { layout = 'spaced', ariaLabel, className } = Astro.props;
+const classes = ['btn-group', className].filter(Boolean).join(' ');
+---
+
+<div class={classes} role="group" aria-label={ariaLabel} data-layout={layout}>
+  <slot />
+</div>

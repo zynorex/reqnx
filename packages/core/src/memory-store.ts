@@ -315,9 +315,13 @@ export function createMemoryStore(options?: MemoryStoreOptions): MemoryStore {
       // Persist the new state
       const ttlMs = algorithm.stateTtlMs(config);
       if (isReusing && existingEntry) {
-        // Update in place, promote LRU. Retain original window expiration.
+        // Update in place, promote LRU.
+        // Admitted requests refresh the TTL (idle eviction / full-refill horizon).
         existingEntry.state = result.nextState;
         existingEntry.version = algorithm.stateVersion;
+        if (result.decision.allowed) {
+          existingEntry.expiresAtMs = nowMs + ttlMs;
+        }
         lru.promote(existingEntry.lruNode);
       } else {
         // Remove stale entry if present

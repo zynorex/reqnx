@@ -1,0 +1,37 @@
+{
+  "logo.png": {
+    "role": "logo",
+    "checksum": "c71637396f8b354b4563896bbab7722fe3e336d8da826e8ccd8adcdda075d47f",
+    "byteSize": 942677,
+    "width": 1254,
+    "height": 1254
+  },
+  "mascot.png": {
+    "role": "mascot",
+    "checksum": "c8855876461d030ebd243baf3870ea1e8b25777b563291868941ec6dfa2e1855",
+    "byteSize": 573527,
+    "width": 1254,
+    "height": 1254
+  },
+  "404.png": {
+    "role": "404",
+    "checksum": "62ba41ce2d693394293e69d219cf98fb15c63a675a6fb9184fb26c90a873d03a",
+    "byteSize": 1372809,
+    "width": 1536,
+    "height": 1024
+  },
+  "favicon.png": {
+    "role": "favicon",
+    "checksum": "dead0d2b3345cb7f9068f94065c5942e4e8ca2ed2f7b0f5bec785f8f59f816d0",
+    "byteSize": 986013,
+    "width": 1254,
+    "height": 1254
+  },
+  "banner.png": {
+    "role": "banner",
+    "checksum": "5e19bb6793dba0d36b04d2b04b5afcfe45a2040014cace0aae63785a69241390",
+    "byteSize": 1089308,
+    "width": 2172,
+    "height": 724
+  }
+}

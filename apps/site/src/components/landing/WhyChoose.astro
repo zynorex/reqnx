@@ -1,0 +1,406 @@
+---
+import Section from './Section.astro';
+import { landingCopy } from '../../copy/landing.copy';
+import Icon from '../common/Icon.astro';
+
+const { whyChoose } = landingCopy;
+
+const guarantees = [
+  {
+    title: 'Zero dependencies in @reqnx/core',
+    description: 'No external node_modules at runtime. Zero supply-chain attack vectors in your critical rate-limiting path.',
+    metric: '0',
+    metricLabel: 'deps',
+    badge: 'Supply Chain',
+    link: 'packages/core/package.json',
+  },
+  {
+    title: 'Pure state machine transitions',
+    description: 'Algorithms compute (state, now) -> (nextState, decision). Absolutely no I/O, timers, or hidden side effects.',
+    metric: '100%',
+    metricLabel: 'pure',
+    badge: 'Correctness',
+    link: 'packages/core/src/algorithms/fixed-window.ts',
+  },
+  {
+    title: 'Pluggable storage abstraction',
+    description: 'A single unified contract covers in-memory LRU stores and distributed Redis clusters with atomic guarantees.',
+    metric: '1',
+    metricLabel: 'contract',
+    badge: 'Architecture',
+    link: 'docs/adr/0002-algorithm-contract-and-atomicity.md',
+  },
+  {
+    title: 'Explicit injected clocks',
+    description: 'Time is an integer passed to every check. Run complex multi-minute rate limit test scenarios in under 10ms without sleeping.',
+    metric: '0ms',
+    metricLabel: 'sleep',
+    badge: 'Testing',
+    link: 'packages/core/src/clock.ts',
+  },
+  {
+    title: 'Strict key formatting & hash tags',
+    description: 'Enforces key length limits and automatic Redis Cluster hash tags ({user:id}) to prevent multi-slot cluster cross-slot errors.',
+    metric: '{tag}',
+    metricLabel: 'slots',
+    badge: 'Distributed',
+    link: 'packages/core/src/keys.ts',
+  },
+  {
+    title: 'Isolated failure semantics',
+    description: 'Configurable fail-open, fail-closed, or custom degraded decision handling. Store outages never crash your HTTP server.',
+    metric: '3',
+    metricLabel: 'policies',
+    badge: 'Resilience',
+    link: 'docs/adr/0004-failure-semantics.md',
+  },
+];
+
+const layers = [
+  {
+    level: 'Layer 1',
+    name: 'Edge / CDN / WAF',
+    examples: 'Cloudflare, Fastly, AWS Shield',
+    purpose: 'Coarse network-level defense, volumetric DDoS mitigation, bot scraping, geo-blocking.',
+    isReqnx: false,
+  },
+  {
+    level: 'Layer 2',
+    name: 'API Gateway / Reverse Proxy',
+    examples: 'Envoy, NGINX, Traefik',
+    purpose: 'Route-level connection limits, TLS termination, global host IP rate limiting.',
+    isReqnx: false,
+  },
+  {
+    level: 'Layer 3',
+    name: 'Application Service Layer',
+    examples: 'Reqnx (@reqnx/core, @reqnx/redis)',
+    purpose: 'Fine-grained domain rate limiting: authenticated user tiers, per-tenant quotas, login protection, and custom business rules.',
+    isReqnx: true,
+  },
+];
+---
+
+<Section
+  id="why-choose"
+  eyebrow={whyChoose.eyebrow}
+  title={whyChoose.title}
+  lede={whyChoose.lede}
+  alt={true}
+>
+  <!-- 1. 12-Column Bento Grid of Guarantees -->
+  <div class="rx-bento-grid">
+    {guarantees.map((g, idx) => (
+      <div class={`rx-bento-card rx-bento-card--${idx}`}>
+        <div class="rx-bento-top">
+          <span class="rx-bento-badge">{g.badge}</span>
+          <div class="rx-bento-stat">
+            <span class="rx-bento-metric">{g.metric}</span>
+            <span class="rx-bento-metric-label">{g.metricLabel}</span>
+          </div>
+        </div>
+        <h3 class="rx-bento-title">{g.title}</h3>
+        <p class="rx-bento-desc">{g.description}</p>
+        <a href={`https://github.com/zynorex/reqnx/blob/main/${g.link}`} class="rx-bento-link" target="_blank" rel="noopener noreferrer">
+          <span>Inspect source</span>
+          <Icon name="external" size={12} ariaHidden={true} />
+        </a>
+      </div>
+    ))}
+  </div>
+
+  <!-- 2. Where it fits: 3-Layer Category Diagram -->
+  <div class="rx-where-fits-block">
+    <div class="rx-fits-header">
+      <h3 class="rx-subheading">{whyChoose.whereItFitsTitle}</h3>
+      <p class="rx-fits-lede">{whyChoose.whereItFitsLede}</p>
+    </div>
+
+    <div class="rx-layers-stack">
+      {layers.map((l) => (
+        <div class={`rx-layer-row ${l.isReqnx ? 'is-reqnx' : ''}`}>
+          <div class="rx-layer-level">
+            <span class="rx-level-tag">{l.level}</span>
+            <strong class="rx-level-name">{l.name}</strong>
+            <span class="rx-level-examples">{l.examples}</span>
+          </div>
+          <div class="rx-layer-purpose">
+            <p>{l.purpose}</p>
+          </div>
+          {l.isReqnx && (
+            <div class="rx-layer-badge">
+              <span>Reqnx Fits Here</span>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- 3. Honest: Not the right tool if -->
+  <div class="rx-not-right-block">
+    <div class="rx-not-right-header">
+      <div class="rx-not-right-chip">
+        <Icon name="cross" size={14} ariaHidden={true} />
+        <span>Honest scoping</span>
+      </div>
+      <h3 class="rx-subheading">{whyChoose.notTheRightToolTitle}</h3>
+    </div>
+    <ul class="rx-not-right-list">
+      {whyChoose.notTheRightToolPoints.map((point) => (
+        <li class="rx-not-right-item">
+          <span class="rx-not-right-icon" aria-hidden="true">
+            <Icon name="cross" size={12} ariaHidden={true} />
+          </span>
+          <span>{point}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Section>
+
+<style>
+  /* Bento Grid */
+  .rx-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 4rem;
+  }
+
+  .rx-bento-card {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-md);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    grid-column: span 4;
+    transition: border-color var(--rx-transition-fast), transform var(--rx-transition-fast);
+  }
+
+  .rx-bento-card:hover {
+    border-color: var(--rx-border-hover);
+  }
+
+  @media (max-width: 960px) {
+    .rx-bento-card {
+      grid-column: span 6;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .rx-bento-card {
+      grid-column: span 12;
+    }
+  }
+
+  .rx-bento-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+  }
+
+  .rx-bento-badge {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--rx-text-3);
+    background: var(--rx-surface-3);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--rx-radius-xs);
+  }
+
+  .rx-bento-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    font-family: var(--rx-font-mono);
+  }
+
+  .rx-bento-metric {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-bento-metric-label {
+    font-size: 0.75rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-bento-title {
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+    color: var(--rx-text-1);
+  }
+
+  .rx-bento-desc {
+    font-size: 0.8125rem;
+    color: var(--rx-text-2);
+    line-height: 1.5;
+    margin: 0 0 1rem;
+  }
+
+  .rx-bento-link {
+    margin-top: auto;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-bento-link:hover {
+    color: var(--rx-accent-cyan);
+  }
+
+  /* Where it fits 3-layer diagram */
+  .rx-where-fits-block {
+    margin-bottom: 4rem;
+  }
+
+  .rx-subheading {
+    font-size: var(--rx-font-h3);
+    margin-bottom: 0.5rem;
+  }
+
+  .rx-fits-lede {
+    font-size: 0.9375rem;
+    color: var(--rx-text-3);
+    margin-bottom: 1.5rem;
+  }
+
+  .rx-layers-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rx-layer-row {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-sm);
+    padding: 1.25rem 1.5rem;
+    display: grid;
+    grid-template-columns: 240px 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .rx-layer-row {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+  }
+
+  .rx-layer-row.is-reqnx {
+    border-color: var(--rx-accent-cyan);
+    background: linear-gradient(90deg, rgba(20, 221, 253, 0.05) 0%, var(--rx-surface-1) 100%);
+    box-shadow: 0 0 15px rgba(20, 221, 253, 0.08);
+  }
+
+  .rx-layer-level {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .rx-level-tag {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--rx-text-3);
+    text-transform: uppercase;
+  }
+
+  .rx-level-name {
+    font-size: 0.9375rem;
+    color: var(--rx-text-1);
+  }
+
+  .rx-level-examples {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-layer-purpose p {
+    font-size: 0.8125rem;
+    color: var(--rx-text-2);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .rx-layer-badge span {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--rx-accent-cyan);
+    background: rgba(20, 221, 253, 0.1);
+    border: 1px solid rgba(20, 221, 253, 0.3);
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--rx-radius-xs);
+    white-space: nowrap;
+  }
+
+  /* Not the right tool if */
+  .rx-not-right-block {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-md);
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .rx-not-right-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .rx-not-right-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--rx-semantic-denied);
+    margin-bottom: 0.5rem;
+  }
+
+  .rx-not-right-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rx-not-right-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--rx-text-2);
+    line-height: 1.5;
+  }
+
+  .rx-not-right-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--rx-semantic-denied-surface);
+    color: var(--rx-semantic-denied);
+    flex-shrink: 0;
+    margin-top: 0.1875rem;
+  }
+</style>

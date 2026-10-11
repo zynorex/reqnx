@@ -1,311 +1,591 @@
 /* ──────────────────────────────────────────────────────────────────────────────
- * REQNX Site — Global Design System
+ * REQNX Site — Design System & Global Styles
  *
- * Visual direction: "Engineering Blueprint"
- * Base: dark navy-charcoal (#0f1117)
- * Accents: electric indigo (#6366f1), cool cyan (#06b6d4)
- * Typography: JetBrains Mono (headers/code) + Inter (body)
+ * Visual Direction: "The Instrument" (Engineering Blueprint)
+ * Layers: reset, tokens, base, layout, components, utilities
  * ────────────────────────────────────────────────────────────────────────────── */
 
-/* ─── Custom Properties ──────────────────────────────────────────────────── */
+@layer reset, tokens, base, layout, components, utilities;
 
-:root {
-  /* Palette */
-  --rx-bg-primary: #0f1117;
-  --rx-bg-secondary: #161922;
-  --rx-bg-card: rgba(22, 25, 34, 0.7);
-  --rx-bg-card-hover: rgba(30, 34, 48, 0.8);
+@import './buttons.css';
 
-  --rx-accent-indigo: #6366f1;
-  --rx-accent-indigo-dim: #4f46e5;
-  --rx-accent-indigo-glow: rgba(99, 102, 241, 0.25);
-  --rx-accent-cyan: #06b6d4;
-  --rx-accent-cyan-dim: #0891b2;
+@layer tokens {
+  :root {
+    /* ─── Button System Base Geometry ────────────────────────────── */
+    --rx-btn-font: var(--rx-font-sans);
+    --rx-btn-weight: 550;
+    --rx-btn-line-height: 1.25;
+    --rx-btn-radius: var(--rx-radius-sm);
+    --rx-btn-gap: 8px;
 
-  --rx-text-primary: #e2e8f0;
-  --rx-text-secondary: #94a3b8;
-  --rx-text-muted: #64748b;
+    /* Sizes (min-height, padding, font-size, icon-grid) */
+    --rx-btn-h-sm: 32px;
+    --rx-btn-px-sm: 12px;
+    --rx-btn-font-sm: 0.8125rem;
+    --rx-btn-icon-sm: 16px;
 
-  --rx-allowed: #22c55e;
-  --rx-allowed-bg: rgba(34, 197, 94, 0.1);
-  --rx-denied: #ef4444;
-  --rx-denied-bg: rgba(239, 68, 68, 0.1);
-  --rx-degraded: #f59e0b;
+    --rx-btn-h-md: 40px;
+    --rx-btn-px-md: 16px;
+    --rx-btn-font-md: 0.875rem;
+    --rx-btn-icon-md: 18px;
 
-  --rx-border: rgba(99, 102, 241, 0.15);
-  --rx-border-hover: rgba(99, 102, 241, 0.35);
+    --rx-btn-h-lg: 48px;
+    --rx-btn-px-lg: 20px;
+    --rx-btn-font-lg: 1rem;
+    --rx-btn-icon-lg: 20px;
 
-  /* Typography */
-  --rx-font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
-  --rx-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Focus Ring */
+    --rx-btn-focus-ring: 2px solid var(--rx-accent-indigo);
+    --rx-btn-focus-offset: 2px;
 
-  /* Spacing */
-  --rx-radius-sm: 6px;
-  --rx-radius-md: 10px;
-  --rx-radius-lg: 16px;
+    /* Primary Variant (Dark Canvas) */
+    --rx-btn-primary-bg: var(--rx-accent-indigo);
+    --rx-btn-primary-text: #ffffff;
+    --rx-btn-primary-border: transparent;
+    --rx-btn-primary-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    --rx-btn-primary-hover-bg: color-mix(in srgb, var(--rx-accent-indigo) 88%, #ffffff);
+    --rx-btn-primary-active-bg: color-mix(in srgb, var(--rx-accent-indigo) 80%, #000000);
 
-  /* Transitions */
-  --rx-transition-fast: 150ms ease;
-  --rx-transition-base: 250ms ease;
+    /* Secondary Variant (Dark Canvas) */
+    --rx-btn-secondary-bg: var(--rx-surface-2);
+    --rx-btn-secondary-text: var(--rx-text-1);
+    --rx-btn-secondary-border: var(--rx-border-subtle);
+    --rx-btn-secondary-hover-bg: var(--rx-surface-3);
+    --rx-btn-secondary-hover-border: var(--rx-border-hover);
+    --rx-btn-secondary-active-bg: var(--rx-surface-4);
+
+    /* Tertiary (Ghost) Variant */
+    --rx-btn-tertiary-bg: transparent;
+    --rx-btn-tertiary-text: var(--rx-text-2);
+    --rx-btn-tertiary-border: transparent;
+    --rx-btn-tertiary-hover-bg: var(--rx-surface-3);
+    --rx-btn-tertiary-hover-text: var(--rx-text-1);
+    --rx-btn-tertiary-active-bg: var(--rx-surface-4);
+
+    /* Link Variant */
+    --rx-btn-link-text: var(--rx-accent-cyan);
+    --rx-btn-link-hover-text: var(--rx-text-1);
+
+    /* On-Accent Variant */
+    --rx-btn-on-accent-primary-bg: #ffffff;
+    --rx-btn-on-accent-primary-text: #0f172a;
+    --rx-btn-on-accent-secondary-bg: rgba(255, 255, 255, 0.12);
+    --rx-btn-on-accent-secondary-text: #ffffff;
+    --rx-btn-on-accent-secondary-border: rgba(255, 255, 255, 0.24);
+
+    /* Disabled */
+    --rx-btn-disabled-bg: var(--rx-surface-2);
+    --rx-btn-disabled-text: var(--rx-text-3);
+    --rx-btn-disabled-border: var(--rx-border-subtle);
+
+    /* ─── 4 Surface Levels (Dark Canvas default) ─────────────────────────── */
+    --rx-surface-1: #0f1117; /* Canvas base */
+    --rx-surface-2: #161923; /* Panel & card surfaces */
+    --rx-surface-3: #1e2230; /* Raised widgets & stage */
+    --rx-surface-4: #282d40; /* Interactive hover & active states */
+
+    /* Legacy aliases for backward compatibility */
+    --rx-bg-primary: var(--rx-surface-1);
+    --rx-bg-secondary: var(--rx-surface-2);
+    --rx-bg-card: rgba(22, 25, 35, 0.75);
+    --rx-bg-card-hover: rgba(30, 34, 48, 0.85);
+
+    /* ─── 3 Text Levels ─────────────────────────────────────────────────── */
+    --rx-text-1: #f8fafc; /* Headings, high-emphasis metrics */
+    --rx-text-2: #cbd5e1; /* Prose descriptions, secondary labels */
+    --rx-text-3: #94a3b8; /* Timestamps, captions, subtle metadata */
+
+    --rx-text-primary: var(--rx-text-1);
+    --rx-text-secondary: var(--rx-text-2);
+    --rx-text-muted: var(--rx-text-3);
+
+    /* ─── Accents ────────────────────────────────────────────────────────── */
+    --rx-accent-indigo: #4f46e5;
+    --rx-accent-indigo-dim: #4338ca;
+    --rx-accent-indigo-glow: rgba(79, 70, 229, 0.25);
+    --rx-accent-cyan: #14ddfd;
+    --rx-accent-cyan-dim: #0284c7;
+    --rx-accent-cyan-glow: rgba(20, 221, 253, 0.22);
+
+    /* ─── Brand Specific Tokens ─────────────────────────────────────────── */
+    --rx-brand-cyan: #14ddfd;
+    --rx-brand-cyan-dim: #0284c7;
+    --rx-brand-gold: #fcb020;
+    --rx-brand-charcoal: #111319;
+    --rx-motif-tick: rgba(255, 255, 255, 0.06);
+    --rx-motif-tick-major: rgba(20, 221, 253, 0.22);
+    --rx-console-border: rgba(255, 255, 255, 0.12);
+    --rx-console-bg: #0d0f14;
+    --rx-console-header: #131720;
+    /* ─── Motion Durations ─────────────────────────────────────────── */
+    --rx-dur-instant: 90ms;
+    --rx-dur-fast: 140ms;
+    --rx-dur-base: 200ms;
+    --rx-dur-panel: 260ms;
+    --rx-dur-wipe: 450ms;
+    --rx-dur-reveal: 480ms;
+    --rx-dur-hairline: 600ms;
+    --rx-dur-hero: 900ms;
+    --rx-dur-page: 180ms;
+    --rx-dur-slow: 400ms;
+
+    /* ─── Motion Distances ─────────────────────────────────────────── */
+    --rx-dist-xs: 4px;
+    --rx-dist-sm: 8px;
+    --rx-dist-md: 12px;
+    --rx-dist-lg: 16px;
+    --rx-dist-xl: 24px;
+
+    /* ─── Motion Easings ───────────────────────────────────────────── */
+    --rx-ease-out: cubic-bezier(0.2, 0, 0, 1);
+    --rx-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --rx-ease-snap: cubic-bezier(0.25, 1, 0.5, 1);
+    --rx-ease-spring: linear(
+      0,
+      0.0398,
+      0.1348,
+      0.2567,
+      0.386,
+      0.5104,
+      0.6227,
+      0.7192,
+      0.799,
+      0.8626,
+      0.9118,
+      0.9483,
+      0.9745,
+      0.9925,
+      1.004,
+      1.0108,
+      1.0141,
+      1.0152,
+      1.0147,
+      1.0133,
+      1.0115,
+      1.0095,
+      1.0076,
+      1.0059,
+      1.0044,
+      1.0032,
+      1.0022,
+      1.0014,
+      1.0008,
+      1.0004,
+      1.0001,
+      1,
+      1
+    );
+
+    /* ─── Motion Stagger Caps ──────────────────────────────────────── */
+    --rx-stagger-step: 40ms;
+    --rx-stagger-cap: 400ms;
+
+    /* ─── Semantic Dual-Coded Roles (Color + Shape/Text) ─────────────────── */
+    --rx-semantic-allowed: #10b981;
+    --rx-semantic-allowed-surface: rgba(16, 185, 129, 0.12);
+    --rx-semantic-denied: #fb7185;
+    --rx-semantic-denied-surface: rgba(251, 113, 133, 0.14);
+    --rx-semantic-neutral: #64748b;
+    --rx-semantic-neutral-surface: rgba(100, 116, 139, 0.12);
+    --rx-semantic-warn: #f59e0b;
+    --rx-semantic-warn-surface: rgba(245, 158, 11, 0.12);
+
+    --rx-allowed: var(--rx-semantic-allowed);
+    --rx-allowed-bg: var(--rx-semantic-allowed-surface);
+    --rx-denied: var(--rx-semantic-denied);
+    --rx-denied-bg: var(--rx-semantic-denied-surface);
+    --rx-degraded: var(--rx-semantic-warn);
+
+    /* ─── Borders & Dividers ─────────────────────────────────────────────── */
+    --rx-border: rgba(99, 102, 241, 0.16);
+    --rx-border-subtle: rgba(255, 255, 255, 0.08);
+    --rx-border-hover: rgba(99, 102, 241, 0.38);
+    --rx-border-active: var(--rx-accent-cyan);
+
+    /* ─── Typography & Scales ────────────────────────────────────────────── */
+    --rx-font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+    --rx-font-sans:
+      'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    --rx-font-display: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+    --rx-font-h2: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
+    --rx-font-h3: clamp(1.25rem, 1.5vw + 0.5rem, 1.65rem);
+    --rx-font-lede: clamp(1.05rem, 1vw + 0.25rem, 1.25rem);
+    --rx-font-body: 1rem;
+    --rx-font-small: 0.8125rem;
+    --rx-font-mono-data: 0.875rem;
+
+    /* ─── Window-Tick Motif Grid ─────────────────────────────────────────── */
+    --rx-tick-interval: 40px;
+    --rx-tick-major-interval: 200px;
+    --rx-tick-color: rgba(99, 102, 241, 0.07);
+    --rx-tick-major-color: rgba(99, 102, 241, 0.2);
+
+    /* ─── Spacing & Radius Scale ─────────────────────────────────────────── */
+    --rx-radius-xs: 4px;
+    --rx-radius-sm: 6px;
+    --rx-radius-md: 10px;
+    --rx-radius-lg: 16px;
+    --rx-radius-full: 9999px;
+
+    /* ─── Motion Language ────────────────────────────────────────────────── */
+    --rx-motion-fast: 120ms;
+    --rx-motion-base: 200ms;
+    --rx-motion-slow: 400ms;
+    --rx-motion-reveal: 600ms;
+    --rx-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+    --rx-transition-fast: var(--rx-motion-fast) var(--rx-ease-standard);
+    --rx-transition-base: var(--rx-motion-base) var(--rx-ease-standard);
+
+    /* ─── Focus Ring ─────────────────────────────────────────────────────── */
+    --rx-focus-ring: 0 0 0 2px var(--rx-surface-1), 0 0 0 4px var(--rx-accent-indigo);
+  }
+
+  /* ─── Light Mode Definitions ───────────────────────────────────────────── */
+  :root[data-theme='light'] {
+    --rx-surface-1: #f8fafc; /* Slate-50 canvas */
+    --rx-surface-2: #ffffff; /* White panel */
+    --rx-surface-3: #f1f5f9; /* Slate-100 raised */
+    --rx-surface-4: #e2e8f0; /* Slate-200 hover */
+
+    --rx-bg-primary: var(--rx-surface-1);
+    --rx-bg-secondary: var(--rx-surface-2);
+    --rx-bg-card: rgba(255, 255, 255, 0.95);
+    --rx-bg-card-hover: #f8fafc;
+
+    --rx-text-1: #0f172a; /* Slate-900 */
+    --rx-text-2: #334155; /* Slate-700 */
+    --rx-text-3: #475569; /* Slate-600 */
+
+    /* Accessible light mode accents (>= 4.5:1 on white/slate-50) */
+    --rx-accent-cyan: #0369a1; /* Sky-700, 5.12:1 contrast against #f8fafc */
+    --rx-brand-cyan: #0369a1;
+    --rx-accent-indigo: #4338ca; /* Indigo-700, 7.1:1 contrast */
+    --rx-semantic-allowed: #065f46; /* Emerald-800, > 5.5:1 on light surfaces */
+    --rx-semantic-allowed-surface: rgba(6, 95, 70, 0.1);
+    --rx-semantic-denied: #be123c; /* Rose-700, 5.5:1 on white */
+    --rx-semantic-denied-surface: rgba(190, 18, 60, 0.08);
+
+    --rx-border: rgba(99, 102, 241, 0.2);
+    --rx-border-subtle: rgba(15, 23, 42, 0.08);
+    --rx-border-hover: rgba(99, 102, 241, 0.45);
+
+    --rx-tick-color: rgba(99, 102, 241, 0.05);
+    --rx-tick-major-color: rgba(99, 102, 241, 0.15);
+
+    --rx-focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px var(--rx-accent-indigo);
+
+    /* Button Tokens (Light Mode) */
+    --rx-btn-focus-ring: 2px solid var(--rx-accent-indigo);
+    --rx-btn-primary-bg: var(--rx-accent-indigo);
+    --rx-btn-primary-text: #ffffff;
+    --rx-btn-primary-border: transparent;
+    --rx-btn-primary-hover-bg: color-mix(in srgb, var(--rx-accent-indigo) 90%, #000000);
+    --rx-btn-primary-active-bg: color-mix(in srgb, var(--rx-accent-indigo) 80%, #000000);
+    --rx-btn-secondary-bg: var(--rx-surface-2);
+    --rx-btn-secondary-text: var(--rx-text-1);
+    --rx-btn-secondary-border: var(--rx-border-subtle);
+    --rx-btn-secondary-hover-bg: var(--rx-surface-3);
+    --rx-btn-secondary-hover-border: var(--rx-border-hover);
+    --rx-btn-secondary-active-bg: var(--rx-surface-4);
+    --rx-btn-tertiary-bg: transparent;
+    --rx-btn-tertiary-text: var(--rx-text-2);
+    --rx-btn-tertiary-hover-bg: var(--rx-surface-3);
+    --rx-btn-tertiary-hover-text: var(--rx-text-1);
+    --rx-btn-link-text: var(--rx-accent-cyan);
+    --rx-btn-link-hover-text: var(--rx-text-1);
+    --rx-btn-disabled-bg: var(--rx-surface-3);
+    --rx-btn-disabled-text: var(--rx-text-3);
+    --rx-btn-disabled-border: var(--rx-border-subtle);
+  }
 }
 
-/* ─── Starlight Theme Overrides ──────────────────────────────────────────── */
+@layer base {
+  /* ─── Base Styles ──────────────────────────────────────────────────────── */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    font-size: 16px;
+    color-scheme: dark light;
+  }
 
-:root {
-  --sl-color-accent-low: #1e1b4b;
-  --sl-color-accent: #6366f1;
-  --sl-color-accent-high: #a5b4fc;
+  body {
+    font-family: var(--rx-font-sans);
+    background-color: var(--rx-surface-1);
+    color: var(--rx-text-2);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-  --sl-color-white: #e2e8f0;
-  --sl-color-gray-1: #cbd5e1;
-  --sl-color-gray-2: #94a3b8;
-  --sl-color-gray-3: #64748b;
-  --sl-color-gray-4: #334155;
-  --sl-color-gray-5: #1e293b;
-  --sl-color-gray-6: #161922;
-  --sl-color-black: #0f1117;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--rx-text-1);
+    font-family: var(--rx-font-mono);
+    text-wrap: balance;
+    margin-top: 0;
+    line-height: 1.25;
+  }
 
-  --sl-font: var(--rx-font-sans);
-  --sl-font-mono: var(--rx-font-mono);
+  p {
+    text-wrap: pretty;
+  }
+
+  a:not(.btn) {
+    color: var(--rx-accent-cyan);
+    text-decoration: none;
+    transition: color var(--rx-transition-fast);
+  }
+
+  a:not(.btn):hover {
+    color: var(--rx-accent-indigo);
+  }
+
+  a:not(.btn):focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: none;
+    box-shadow: var(--rx-focus-ring);
+  }
+
+  /* Tabular figures across all numbers in technical contexts */
+  .rx-tabular,
+  .rx-stat,
+  .rx-number,
+  code,
+  table {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
-/* ─── Base Styles ────────────────────────────────────────────────────────── */
+@layer layout {
+  /* ─── Layout Primitives ────────────────────────────────────────────────── */
+  .rx-container {
+    width: 100%;
+    max-width: 1240px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(1rem, 4vw, 2.5rem);
+    padding-right: clamp(1rem, 4vw, 2.5rem);
+    box-sizing: border-box;
+  }
 
-html {
-  scroll-behavior: smooth;
+  .rx-container-wide {
+    width: 100%;
+    max-width: 1360px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(1rem, 4vw, 2.5rem);
+    padding-right: clamp(1rem, 4vw, 2.5rem);
+    box-sizing: border-box;
+  }
+
+  .rx-section {
+    padding-top: clamp(4.5rem, 8vw, 8.5rem);
+    padding-bottom: clamp(4.5rem, 8vw, 8.5rem);
+    position: relative;
+    border-top: 1px solid var(--rx-border-subtle);
+  }
+
+  .rx-section-alt {
+    background-color: var(--rx-surface-2);
+  }
+
+  .rx-section-header {
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .rx-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--rx-accent-cyan);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+
+  .rx-section-title {
+    font-size: var(--rx-font-h2);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  .rx-section-lede {
+    font-size: var(--rx-font-lede);
+    color: var(--rx-text-2);
+    max-width: 62ch;
+    margin: 0;
+    line-height: 1.6;
+  }
 }
 
-body {
-  font-family: var(--rx-font-sans);
-  background: var(--rx-bg-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer components {
+  /* ─── Window-Tick Motif Background ─────────────────────────────────────── */
+  .rx-window-tick-bg {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rx-window-tick-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(90deg, var(--rx-tick-major-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--rx-tick-color) 1px, transparent 1px);
+    background-size:
+      var(--rx-tick-major-interval) 100%,
+      var(--rx-tick-interval) 100%;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 25%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 25%, transparent 75%);
+  }
+
+  /* ─── Cards & Panels ───────────────────────────────────────────────────── */
+  .rx-panel {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-md);
+    box-sizing: border-box;
+    transition:
+      border-color var(--rx-transition-fast),
+      transform var(--rx-transition-fast);
+  }
+
+  .rx-panel:hover {
+    border-color: var(--rx-border-hover);
+  }
+
+  /* ─── Status Chips (Dual-coded: Icon + Text) ───────────────────────────── */
+  .rx-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--rx-radius-full);
+    border: 1px solid transparent;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .rx-chip-available {
+    background: var(--rx-semantic-allowed-surface);
+    color: var(--rx-semantic-allowed);
+    border-color: rgba(16, 185, 129, 0.25);
+  }
+
+  .rx-chip-planned {
+    background: var(--rx-semantic-neutral-surface);
+    color: var(--rx-text-3);
+    border-color: rgba(100, 116, 139, 0.2);
+  }
+
+  .rx-chip-in-progress {
+    background: var(--rx-semantic-warn-surface);
+    color: var(--rx-semantic-warn);
+    border-color: rgba(245, 158, 11, 0.25);
+  }
+
+
+
+  /* ─── Theme Toggle ──────────────────────────────────────────────────────── */
+  .rx-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border);
+    color: var(--rx-text-2);
+    padding: 0.35rem 0.65rem;
+    border-radius: var(--rx-radius-sm);
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      color var(--rx-dur-fast) var(--rx-ease-out);
+    min-height: 36px;
+  }
+
+  .rx-theme-toggle:hover {
+    background: var(--rx-surface-3);
+    color: var(--rx-text-1);
+    border-color: var(--rx-border-hover);
+  }
+
+  .rx-theme-icon {
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  .rx-theme-text {
+    text-transform: capitalize;
+  }
 }
 
-/* ─── Blueprint Grid Background ─────────────────────────────────────────── */
+@layer utilities {
+  .rx-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
 
-.rx-blueprint-bg {
-  position: relative;
+  .rx-text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
-.rx-blueprint-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--rx-border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--rx-border) 1px, transparent 1px);
-  background-size: 60px 60px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 80%);
-  pointer-events: none;
-  z-index: 0;
+/* ─── Accessibility Overrides ────────────────────────────────────────────── */
+
+/* Forced Colors (High Contrast mode) */
+@media (forced-colors: active) {
+  .rx-chip,
+  .rx-btn,
+  .rx-panel {
+    border: 1px solid ButtonText;
+  }
+  .rx-window-tick-bg::before {
+    display: none;
+  }
+  :focus-visible {
+    outline: 2px solid Highlight;
+  }
 }
 
-/* ─── Glassmorphic Card ──────────────────────────────────────────────────── */
-
-.rx-card {
-  background: var(--rx-bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--rx-border);
-  border-radius: var(--rx-radius-lg);
-  padding: 1.5rem;
-  transition:
-    border-color var(--rx-transition-base),
-    box-shadow var(--rx-transition-base);
-}
-
-.rx-card:hover {
-  border-color: var(--rx-border-hover);
-  box-shadow: 0 0 24px var(--rx-accent-indigo-glow);
-}
-
-/* ─── Buttons ────────────────────────────────────────────────────────────── */
-
-.rx-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
-  border-radius: var(--rx-radius-sm);
-  font-family: var(--rx-font-sans);
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all var(--rx-transition-fast);
-  border: 1px solid transparent;
-}
-
-.rx-btn-primary {
-  background: var(--rx-accent-indigo);
-  color: #fff;
-  border-color: var(--rx-accent-indigo);
-}
-
-.rx-btn-primary:hover {
-  background: var(--rx-accent-indigo-dim);
-  box-shadow: 0 0 16px var(--rx-accent-indigo-glow);
-}
-
-.rx-btn-outline {
-  background: transparent;
-  color: var(--rx-text-primary);
-  border-color: var(--rx-border-hover);
-}
-
-.rx-btn-outline:hover {
-  border-color: var(--rx-accent-indigo);
-  color: var(--rx-accent-indigo);
-}
-
-/* ─── Decision Badges ────────────────────────────────────────────────────── */
-
-.rx-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.125rem 0.5rem;
-  border-radius: 999px;
-  font-family: var(--rx-font-mono);
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1.5;
-}
-
-.rx-badge-allowed {
-  color: var(--rx-allowed);
-  background: var(--rx-allowed-bg);
-  border: 1px solid rgba(34, 197, 94, 0.2);
-}
-
-.rx-badge-denied {
-  color: var(--rx-denied);
-  background: var(--rx-denied-bg);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.rx-badge-coming-soon {
-  color: var(--rx-text-muted);
-  background: rgba(100, 116, 139, 0.1);
-  border: 1px solid rgba(100, 116, 139, 0.2);
-}
-
-/* ─── Terminal Block ─────────────────────────────────────────────────────── */
-
-.rx-terminal {
-  background: #1a1d2e;
-  border: 1px solid var(--rx-border);
-  border-radius: var(--rx-radius-md);
-  overflow: hidden;
-}
-
-.rx-terminal-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.625rem 1rem;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.rx-terminal-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.rx-terminal-dot--red {
-  background: #ff5f57;
-}
-.rx-terminal-dot--yellow {
-  background: #febc2e;
-}
-.rx-terminal-dot--green {
-  background: #28c840;
-}
-
-.rx-terminal-body {
-  padding: 1rem 1.25rem;
-  font-family: var(--rx-font-mono);
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--rx-text-primary);
-}
-
-.rx-terminal-prompt {
-  color: var(--rx-accent-cyan);
-  user-select: none;
-}
-
-.rx-terminal-cmd {
-  color: var(--rx-accent-indigo);
-  font-weight: 500;
-}
-
-.rx-terminal-arg {
-  color: var(--rx-text-primary);
-}
-
-/* ─── Gauge Bar ──────────────────────────────────────────────────────────── */
-
-.rx-gauge {
-  width: 100%;
-  height: 8px;
-  background: var(--rx-bg-secondary);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.rx-gauge-fill {
-  height: 100%;
-  border-radius: 4px;
-  transition:
-    width var(--rx-transition-base),
-    background-color var(--rx-transition-base);
-}
-
-.rx-gauge-fill--ok {
-  background: linear-gradient(90deg, var(--rx-accent-indigo), var(--rx-accent-cyan));
-}
-
-.rx-gauge-fill--warn {
-  background: var(--rx-degraded);
-}
-
-.rx-gauge-fill--critical {
-  background: var(--rx-denied);
-}
-
-/* ─── Prefers Reduced Motion ─────────────────────────────────────────────── */
-
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
-}
-
-/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--rx-bg-primary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--rx-text-muted);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--rx-text-secondary);
 }

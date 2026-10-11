@@ -1,0 +1,52 @@
+---
+/**
+ * Shared section container enforcing consistent vertical rhythm,
+ * typography hierarchy, eyebrow chips, and content-visibility optimizations.
+ */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  id?: string;
+  alt?: boolean;
+  wide?: boolean;
+  contentVisibility?: boolean;
+}
+
+const {
+  eyebrow,
+  title,
+  lede,
+  id,
+  alt = false,
+  wide = false,
+  contentVisibility = true,
+} = Astro.props;
+
+const containerClass = wide ? 'rx-container-wide' : 'rx-container';
+const sectionClasses = [
+  'rx-section',
+  alt ? 'rx-section-alt' : '',
+  contentVisibility ? 'rx-cv-auto' : '',
+].filter(Boolean).join(' ');
+---
+
+<section id={id} class={sectionClasses}>
+  <div class={containerClass}>
+    <header class="rx-section-header">
+      {eyebrow && <span class="rx-eyebrow">{eyebrow}</span>}
+      <h2 class="rx-section-title">{title}</h2>
+      {lede && <p class="rx-section-lede">{lede}</p>}
+    </header>
+    <div class="rx-section-body">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .rx-cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 700px;
+  }
+</style>

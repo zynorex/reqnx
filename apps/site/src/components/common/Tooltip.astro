@@ -1,0 +1,28 @@
+---
+export interface Props {
+  text: string;
+  id?: string;
+}
+
+const { text, id } = Astro.props;
+---
+
+<span class="btn-tooltip-wrapper">
+  <slot />
+  <span class="btn-tooltip" role="tooltip" id={id} aria-hidden="true">
+    {text}
+  </span>
+</span>
+
+<script>
+  // Dismiss tooltips on Escape key (WCAG 1.4.13)
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const activeTooltip = document.querySelector<HTMLElement>('.btn-tooltip-wrapper:hover .btn-tooltip, .btn-tooltip-wrapper:focus-within .btn-tooltip');
+      if (activeTooltip) {
+        activeTooltip.style.opacity = '0';
+        activeTooltip.style.visibility = 'hidden';
+      }
+    }
+  });
+</script>

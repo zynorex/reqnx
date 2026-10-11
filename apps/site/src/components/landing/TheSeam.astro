@@ -1,0 +1,355 @@
+---
+import Section from './Section.astro';
+import { landingCopy } from '../../copy/landing.copy';
+import Icon from '../common/Icon.astro';
+
+const { theSeam } = landingCopy;
+
+const frame1Requests = [
+  { time: '9.92s', allowed: true },
+  { time: '9.94s', allowed: true },
+  { time: '9.96s', allowed: true },
+  { time: '9.97s', allowed: true },
+  { time: '9.98s', allowed: true },
+];
+
+const frame2Requests = [
+  { time: '10.01s', allowed: true },
+  { time: '10.02s', allowed: true },
+  { time: '10.03s', allowed: true },
+  { time: '10.05s', allowed: true },
+  { time: '10.06s', allowed: true },
+];
+---
+
+<Section
+  id="the-seam"
+  eyebrow={theSeam.eyebrow}
+  title={theSeam.title}
+  lede={theSeam.lede}
+>
+  <div class="rx-seam-card">
+    <div class="rx-seam-top">
+      <div class="rx-seam-metric-badge">
+        <span class="rx-seam-metric-number">10</span>
+        <span class="rx-seam-metric-label">requests allowed in 80ms</span>
+      </div>
+      <div class="rx-seam-config">
+        <span>Config: <code>limit: 5</code>, <code>window: 10s</code></span>
+      </div>
+    </div>
+
+    <!-- 3-Frame Visual Diagram -->
+    <div class="rx-frames-grid">
+      <!-- Frame 1 -->
+      <div class="rx-frame">
+        <div class="rx-frame-header">
+          <span class="rx-frame-step">Frame 1</span>
+          <span class="rx-frame-time">Window 1 (t = 0.0s → 10.0s)</span>
+        </div>
+        <div class="rx-frame-timeline">
+          <div class="rx-timeline-track">
+            <span class="rx-track-label">End of W1</span>
+            <div class="rx-dots-group">
+              {frame1Requests.map((r) => (
+                <span class="rx-req-dot" title={`Allowed at ${r.time}`}></span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div class="rx-frame-footer">
+          <span class="rx-frame-status">5 of 5 allowed</span>
+          <span class="rx-frame-quota">Remaining: 0</span>
+        </div>
+      </div>
+
+      <!-- Frame 2: The Seam Boundary -->
+      <div class="rx-frame rx-frame--boundary">
+        <div class="rx-boundary-line" aria-hidden="true"></div>
+        <div class="rx-boundary-badge">
+          <Icon name="diamond" size={14} ariaHidden={true} />
+          <span>The Seam (10.0s)</span>
+        </div>
+        <p class="rx-boundary-desc">Epoch window boundary resets counter to zero instantaneously.</p>
+        <span class="rx-boundary-delta">Δt = 20ms</span>
+      </div>
+
+      <!-- Frame 3 -->
+      <div class="rx-frame">
+        <div class="rx-frame-header">
+          <span class="rx-frame-step">Frame 2</span>
+          <span class="rx-frame-time">Window 2 (t = 10.0s → 20.0s)</span>
+        </div>
+        <div class="rx-frame-timeline">
+          <div class="rx-timeline-track">
+            <span class="rx-track-label">Start of W2</span>
+            <div class="rx-dots-group">
+              {frame2Requests.map((r) => (
+                <span class="rx-req-dot" title={`Allowed at ${r.time}`}></span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div class="rx-frame-footer">
+          <span class="rx-frame-status">5 of 5 allowed</span>
+          <span class="rx-frame-quota">Remaining: 0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Figure Caption -->
+    <div class="rx-seam-caption-box">
+      <p class="rx-seam-caption">
+        <strong>Observation:</strong> {theSeam.figureCaption}
+      </p>
+      <div class="rx-seam-mitigation">
+        <span class="rx-mitigation-tag">Mitigation</span>
+        <p>{theSeam.mitigation}</p>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-seam-card {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-md);
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .rx-seam-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--rx-border-subtle);
+  }
+
+  .rx-seam-metric-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .rx-seam-metric-number {
+    font-family: var(--rx-font-mono);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--rx-semantic-denied);
+    line-height: 1;
+  }
+
+  .rx-seam-metric-label {
+    font-family: var(--rx-font-mono);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--rx-text-1);
+  }
+
+  .rx-seam-config {
+    font-family: var(--rx-font-mono);
+    font-size: 0.8125rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-seam-config code {
+    color: var(--rx-accent-cyan);
+    background: var(--rx-surface-3);
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--rx-radius-xs);
+  }
+
+  /* 3-frame visual grid */
+  .rx-frames-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 860px) {
+    .rx-frames-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .rx-frame {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-sm);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .rx-frame-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+  }
+
+  .rx-frame-step {
+    font-weight: 700;
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-frame-time {
+    color: var(--rx-text-3);
+  }
+
+  .rx-frame-timeline {
+    height: 48px;
+    background: var(--rx-surface-2);
+    border: 1px dashed var(--rx-border);
+    border-radius: var(--rx-radius-xs);
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+  }
+
+  .rx-track-label {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-dots-group {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .rx-req-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--rx-semantic-allowed);
+    box-shadow: 0 0 6px var(--rx-semantic-allowed-glow);
+  }
+
+  .rx-frame-footer {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+  }
+
+  .rx-frame-status {
+    color: var(--rx-semantic-allowed);
+    font-weight: 600;
+  }
+
+  .rx-frame-quota {
+    color: var(--rx-text-3);
+  }
+
+  /* Boundary frame */
+  .rx-frame--boundary {
+    background: transparent;
+    border: none;
+    padding: 0 0.5rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .rx-boundary-line {
+    width: 2px;
+    height: 40px;
+    background: var(--rx-semantic-denied);
+    box-shadow: 0 0 8px rgba(255, 68, 68, 0.4);
+    margin: 0 auto;
+  }
+
+  .rx-boundary-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--rx-semantic-denied);
+    background: var(--rx-semantic-denied-surface);
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--rx-radius-full);
+    margin-top: 0.5rem;
+  }
+
+  .rx-boundary-desc {
+    font-size: 0.75rem;
+    color: var(--rx-text-3);
+    margin: 0.375rem 0 0;
+    max-width: 180px;
+    line-height: 1.35;
+  }
+
+  .rx-boundary-delta {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    color: var(--rx-text-3);
+    margin-top: 0.25rem;
+  }
+
+  /* Caption box */
+  .rx-seam-caption-box {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-sm);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rx-seam-caption {
+    font-size: 0.875rem;
+    color: var(--rx-text-2);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .rx-seam-caption strong {
+    color: var(--rx-text-1);
+  }
+
+  .rx-seam-mitigation {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--rx-text-3);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 640px) {
+    .rx-seam-mitigation {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+
+  .rx-mitigation-tag {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--rx-accent-cyan);
+    background: rgba(20, 221, 253, 0.1);
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--rx-radius-xs);
+    flex-shrink: 0;
+  }
+
+  .rx-seam-mitigation p {
+    margin: 0;
+  }
+</style>

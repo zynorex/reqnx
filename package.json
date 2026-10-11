@@ -7,6 +7,7 @@
   },
   "scripts": {
     "build": "pnpm -r run build",
+    "baby": "pnpm --filter @reqnx/site dev",
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

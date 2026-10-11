@@ -221,11 +221,7 @@ export const fixedWindow: Algorithm<FixedWindowConfig, FixedWindowState> = {
     };
   },
 
-  peek(
-    state: FixedWindowState | undefined,
-    config: FixedWindowConfig,
-    nowMs: number,
-  ): Decision {
+  peek(state: FixedWindowState | undefined, config: FixedWindowConfig, nowMs: number): Decision {
     const { windowStart, count } = resolveWindow(state, nowMs, config.windowMs);
 
     // allowed means a cost-1 request would succeed now

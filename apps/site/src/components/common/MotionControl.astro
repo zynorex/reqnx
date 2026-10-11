@@ -1,0 +1,97 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/common/MotionControl.astro
+//
+// E27 Motion preference control for footer:
+// Allows visitors to toggle between OS System default and explicitly Reduced motion.
+// Composes the unified SegmentedControl primitive with native radio inputs.
+// ──────────────────────────────────────────────────────────────────────────────
+
+import SegmentedControl from './SegmentedControl.astro';
+
+const options = [
+  { value: 'system', label: 'System', title: 'Follow operating system preference' },
+  { value: 'reduced', label: 'Reduced', title: 'Reduce animations and transitions' },
+];
+---
+
+<div class="rx-motion-control" id="rx-motion-control">
+  <span class="rx-motion-label">Motion</span>
+  <SegmentedControl
+    name="rx-motion-pref"
+    options={options}
+    value="system"
+    ariaLabel="Motion preference"
+    id="rx-motion-segmented"
+  />
+  <span id="rx-motion-status" class="rx-sr-only" aria-live="polite">Motion preference: System</span>
+</div>
+
+<style>
+  .rx-motion-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-motion-label {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+</style>
+
+<script>
+  import {
+    getStoredMotionPreference,
+    setMotionPreference,
+    isMotionReduced,
+  } from '../../motion/kill-switch.js';
+
+  function setupMotionControl() {
+    const inputs = document.querySelectorAll<HTMLInputElement>(
+      'input[name="rx-motion-pref"]',
+    );
+    const statusEl = document.getElementById('rx-motion-status');
+
+    if (!inputs.length) return;
+
+    function updateUi() {
+      const stored = getStoredMotionPreference();
+      const isRed = stored === 'reduced' || isMotionReduced();
+
+      inputs.forEach((input) => {
+        input.checked = input.value === (stored === 'reduced' ? 'reduced' : 'system');
+      });
+
+      if (statusEl) {
+        if (stored === 'reduced') {
+          statusEl.textContent = 'Motion preference set to Reduced.';
+        } else {
+          statusEl.textContent = isRed
+            ? 'Motion preference: System (OS prefers reduced).'
+            : 'Motion preference: System (Full motion allowed).';
+        }
+      }
+    }
+
+    inputs.forEach((input) => {
+      input.addEventListener('change', () => {
+        if (input.checked) {
+          setMotionPreference(input.value as 'system' | 'reduced');
+          updateUi();
+        }
+      });
+    });
+
+    window.addEventListener('rx-motion-change', updateUi);
+    updateUi();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupMotionControl);
+  } else {
+    setupMotionControl();
+  }
+</script>

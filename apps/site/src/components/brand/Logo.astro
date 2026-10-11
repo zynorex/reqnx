@@ -1,0 +1,93 @@
+---
+import { siteConfig, withBase } from '../../site.config';
+import { brandAssets } from '../../brand';
+import { Image } from 'astro:assets';
+
+interface Props {
+  size?: number;
+  showText?: boolean;
+  class?: string;
+}
+
+const { size = 32, showText = true, class: className = '' } = Astro.props;
+---
+
+<a
+  href={withBase('/')}
+  class:list={['rx-brand-logo', className]}
+  aria-label={`${siteConfig.name} home`}
+>
+  <div class="rx-logo-icon-wrapper" style={`--rx-logo-size: ${size}px;`}>
+    <Image
+      src={brandAssets.logo.src}
+      alt=""
+      width={size}
+      height={size}
+      class="rx-logo-img"
+      loading="eager"
+      decoding="async"
+    />
+  </div>
+  {
+    showText && (
+      <span class="rx-logo-wordmark">
+        <span class="rx-wordmark-main">{siteConfig.name.slice(0, -1)}</span>
+        <span class="rx-wordmark-accent">{siteConfig.name.slice(-1)}</span>
+      </span>
+    )
+  }
+</a>
+
+<style>
+  .rx-brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    text-decoration: none;
+    color: var(--rx-text-1);
+    font-weight: 700;
+    transition: opacity var(--rx-dur-fast) ease;
+    user-select: none;
+  }
+
+  .rx-brand-logo:hover {
+    opacity: 0.9;
+  }
+
+  .rx-logo-icon-wrapper {
+    width: var(--rx-logo-size, 32px);
+    height: var(--rx-logo-size, 32px);
+    border-radius: var(--rx-radius-sm);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--rx-brand-charcoal, #111319);
+    border: 1px solid var(--rx-border-subtle);
+    flex-shrink: 0;
+  }
+
+  .rx-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .rx-logo-wordmark {
+    font-family: var(--rx-font-mono);
+    font-size: 1.1875rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .rx-wordmark-main {
+    color: var(--rx-text-1);
+  }
+
+  .rx-wordmark-accent {
+    color: var(--rx-brand-gold, #fcb020);
+  }
+</style>

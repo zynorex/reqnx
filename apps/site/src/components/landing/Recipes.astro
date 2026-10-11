@@ -1,0 +1,294 @@
+---
+import Section from './Section.astro';
+import { landingCopy } from '../../copy/landing.copy';
+import Icon from '../common/Icon.astro';
+
+const { recipes } = landingCopy;
+
+const recipeCards = [
+  {
+    title: 'Login Endpoint Brute-Force Protection',
+    description: 'Strict limit on authentication endpoints. Rejects rapid password guessing, fail-closed on store disconnect.',
+    algorithm: 'Fixed Window Counter',
+    config: `{
+  algorithm: fixedWindow,
+  config: { limit: 5, window: '15m' },
+  policy: 'fail-closed'
+}`,
+    keyExample: "'auth:login:' + clientIp",
+    decision: {
+      allowed: true,
+      remaining: 4,
+      limit: 5,
+      resetIn: '14m 58s',
+      retryAfterMs: 0,
+      degraded: false,
+    },
+  },
+  {
+    title: 'Public API Tenant Quota Tier',
+    description: 'Steady rolling rate limit for paying API tenants. Fail-open ensures third-party store issues do not drop traffic.',
+    algorithm: 'Fixed Window Counter',
+    config: `{
+  algorithm: fixedWindow,
+  config: { limit: 100, window: '1m' },
+  policy: 'fail-open'
+}`,
+    keyExample: "'api:tier:' + apiKey",
+    decision: {
+      allowed: true,
+      remaining: 99,
+      limit: 100,
+      resetIn: '58s',
+      retryAfterMs: 0,
+      degraded: false,
+    },
+  },
+  {
+    title: 'Webhook & Traffic Burst Absorption',
+    description: 'Absorbs spiky burst events up to 20 requests while replenishing steadily at 5 tokens per second.',
+    algorithm: 'Token Bucket',
+    config: `{
+  algorithm: tokenBucket,
+  config: { capacity: 20, refillRate: 5, interval: '1s' },
+  policy: 'fail-open'
+}`,
+    keyExample: "'webhook:inbound:' + customerId",
+    decision: {
+      allowed: true,
+      remaining: 19,
+      limit: 20,
+      resetIn: '200ms',
+      retryAfterMs: 0,
+      degraded: false,
+    },
+  },
+];
+---
+
+<Section
+  id="recipes"
+  eyebrow={recipes.eyebrow}
+  title={recipes.title}
+  lede={recipes.lede}
+  alt={true}
+>
+  <div class="rx-recipes-grid">
+    {recipeCards.map((r) => (
+      <div class="rx-recipe-card">
+        <div class="rx-recipe-top">
+          <span class="rx-recipe-algo">{r.algorithm}</span>
+          <h3 class="rx-recipe-title">{r.title}</h3>
+          <p class="rx-recipe-desc">{r.description}</p>
+        </div>
+
+        <div class="rx-recipe-code-box">
+          <div class="rx-code-meta">
+            <span>Configuration</span>
+            <code>Key: {r.keyExample}</code>
+          </div>
+          <pre class="rx-code-block" tabindex="0" role="region" aria-label={`Configuration for ${r.title}`}><code>{r.config}</code></pre>
+        </div>
+
+        <div class="rx-recipe-decision">
+          <div class="rx-decision-header">
+            <span class="rx-decision-tag">Decision Output</span>
+            <span class="rx-decision-status is-allowed">ALLOWED</span>
+          </div>
+          <div class="rx-decision-metrics">
+            <div class="rx-metric-item">
+              <span class="rx-metric-label">Remaining</span>
+              <span class="rx-metric-val">{r.decision.remaining} / {r.decision.limit}</span>
+            </div>
+            <div class="rx-metric-item">
+              <span class="rx-metric-label">Reset In</span>
+              <span class="rx-metric-val">{r.decision.resetIn}</span>
+            </div>
+            <div class="rx-metric-item">
+              <span class="rx-metric-label">Degraded</span>
+              <span class="rx-metric-val">{r.decision.degraded ? 'true' : 'false'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Security note about IP headers -->
+  <div class="rx-key-note-card">
+    <div class="rx-key-note-icon" aria-hidden="true">
+      <Icon name="diamond" size={16} ariaHidden={true} />
+    </div>
+    <div class="rx-key-note-content">
+      <strong>Security note on key selection:</strong>
+      <p>{recipes.keyChoiceNote}</p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-recipes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .rx-recipe-card {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-md);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .rx-recipe-algo {
+    display: inline-block;
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--rx-accent-cyan);
+    margin-bottom: 0.5rem;
+  }
+
+  .rx-recipe-title {
+    font-size: 1.0625rem;
+    margin: 0 0 0.5rem;
+    color: var(--rx-text-1);
+  }
+
+  .rx-recipe-desc {
+    font-size: 0.8125rem;
+    color: var(--rx-text-2);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .rx-recipe-code-box {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-sm);
+    overflow: hidden;
+  }
+
+  .rx-code-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    background: var(--rx-surface-3);
+    border-bottom: 1px solid var(--rx-border-subtle);
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-code-meta code {
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-code-block {
+    margin: 0;
+    padding: 0.875rem;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--rx-text-2);
+    overflow-x: auto;
+  }
+
+  /* Decision Output Box */
+  .rx-recipe-decision {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-sm);
+    padding: 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rx-decision-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .rx-decision-tag {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--rx-text-3);
+  }
+
+  .rx-decision-status {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--rx-radius-xs);
+  }
+
+  .rx-decision-status.is-allowed {
+    color: var(--rx-semantic-allowed);
+    background: var(--rx-semantic-allowed-surface);
+  }
+
+  .rx-decision-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .rx-metric-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .rx-metric-label {
+    font-family: var(--rx-font-mono);
+    font-size: 0.625rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-metric-val {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--rx-text-1);
+  }
+
+  /* Key Note Card */
+  .rx-key-note-card {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-md);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .rx-key-note-icon {
+    color: var(--rx-brand-gold);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .rx-key-note-content strong {
+    color: var(--rx-text-1);
+    font-size: 0.875rem;
+  }
+
+  .rx-key-note-content p {
+    font-size: 0.8125rem;
+    color: var(--rx-text-2);
+    margin: 0.25rem 0 0;
+    line-height: 1.5;
+  }
+</style>

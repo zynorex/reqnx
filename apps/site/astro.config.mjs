@@ -21,6 +21,7 @@ export default defineConfig({
       title: 'REQNX',
       description: 'Predictable rate limiting for Node.js',
       favicon: '/favicon.svg',
+      disable404Route: true,
       head: [
         {
           tag: 'meta',

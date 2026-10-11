@@ -47,12 +47,52 @@
 - ADR-0011 (Website Technology Stack), ADR-0012 (Browser Demo Architecture), ADR-0013 (Base-Path & SEO Guardrails)
 - Multi-project Vitest integration and build pipeline validation
 
-## Day 4 — Token Bucket Algorithm
+## Day 3C — Landing Page v2 & Branded 404 ✅
 
-- Pure TS `step()` implementation
-- Continuous refill model
-- Conformance test cases
-- Unit tests + property-based tests
+- Production landing page at `/` featuring 14 developer-focused sections in exact spec sequence:
+  - Header & Brand Navigation with live theme toggle and responsive layout
+  - Hero with dual live browser rate limiter console (`LiveConsole` Preact island for Fixed Window & Token Bucket)
+  - Social proof & technical verification strip (257 passing tests, 8 packages, 0 deps, strictly typed)
+  - What It Is & Core Decision shape breakdown
+  - Why Choose Reqnx: 12-column Bento grid of 6 core guarantees, 3-layer architecture, and honest "When NOT to use" section
+  - The Seam: 3-frame animated window boundary burst engine (proving $2\times$ burst phenomena)
+  - Algorithm selection matrix & ARIA-compliant tabbed traits comparison
+  - Interactive Quickstart with verified runtime output table for Core, Express, Fastify, and Redis
+  - Tested production recipe cards (tiering, burst buffer, cost-weighted AI tokens) with real Decision outputs
+  - Architecture interactive execution flow with runtime compatibility matrix (Node, Bun, Deno, Edge)
+  - Real-time project maturity status meter backed by `features.ts` and repository evidence paths
+  - Deep technical FAQ with 14 detailed answers across 4 categories
+  - Open Source & Community governance with MIT terms and recent 5 ADRs log
+  - Final CTA with coordinate grid tick motif, companion mascot, and one-click copyable install snippet
+  - Footer with site-wide navigation, GitHub links, and subtle brand badge
+- Custom branded 404 page (`/404.astro`) emitting standalone `dist/404.html` via Starlight override:
+  - Official distressed mascot artwork (`brand/404.png`)
+  - Client-side fuzzy path recovery with Levenshtein route matching against known documentation paths
+- Brand asset pipeline (`scripts/brand-build.ts`) generating responsive WebP/PNG derivatives, multi-resolution `favicon.ico`, and `site.webmanifest` verified by SHA-256 manifest
+- Zero marketing hype words, strictly adhering to claims ledger (`docs/site/claims.md`)
+- Unified button system across Astro and Preact (`apps/site/src/components/common/Button.*`):
+  - Option A visual hierarchy with top edge highlight (`box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22)`)
+  - Strict semantic contracts (`<a>` navigates, `<button type="button">` acts, no `role="button"` on anchors)
+  - Three standardized heights (sm: 32px, md: 40px default, lg: 48px) with 6px border radius
+  - Automatic touch target expansion ($\ge 44 \times 44\text{ px}$) on coarse pointer devices
+  - Two-tone focus indicators (2px outline + 2px offset) meeting WCAG 2.2 AA
+  - Automated verification pipeline: `lint:buttons`, `audit:buttons`, `buttons:targets`, `buttons:contrast`, `buttons:a11y`, `buttons:shots`
+- 100% WCAG AA compliant with Axe accessibility audit passing with 0 serious/critical violations
+- ADR-0015 (Landing Architecture & Art Direction), ADR-0016 (Brand Asset Pipeline & Usage Rules), ADR-0017 (Not Found Page & Route Manifest), ADR-0018 (Content System & Claims Ledger), ADR-0019 (Unified Button System Architecture)
+
+## Day 4 — Token Bucket Algorithm ✅
+
+- Pure TS `step()` implementation with exact rational fixed-point arithmetic (`a/b` coprime integers)
+- Continuous refill model with integer GCD normalisation and zero floating-point drift
+- Strict `parseConfig()` validation (`capacity`, `refillTokens`, `refillInterval`, capacityUnits <= 2^51, 366-day cap)
+- `peek()` read-only capacity check and `stateTtlMs()` matching full refill duration
+- Comprehensive unit tests: Golden Examples A, B, C, backwards clock, dynamic config changes, bounds, exactness
+- Model-based oracle test suite (1,000 runs against discrete 1-ms reference simulator)
+- Property-based tests (7 invariants via fast-check): rate envelope, idempotence, monotonicity, backwards clock
+- High-concurrency integration tests: 1,000 concurrent requests, sustained load at 2x rate, key isolation
+- Full mutation pass (15 mutations, zero survivors)
+- Benchmarks: pure `step()` throughput (>17M ops/s), Limiter MemoryStore (>800k ops/s), memory footprint (~295.8 B/key)
+- Docs: user-facing guide (`docs/algorithms/token-bucket.md`), Redis port spec (`docs/algorithms/token-bucket.redis-port.md`), and ADR-0014
 
 ## Day 5 — Sliding Window Algorithms
 

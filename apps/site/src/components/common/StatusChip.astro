@@ -1,0 +1,37 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  status: 'available' | 'in-progress' | 'planned' | 'coming-soon';
+  label?: string;
+}
+
+const { status, label } = Astro.props;
+
+const normalizedStatus = status === 'coming-soon' ? 'planned' : status;
+
+const config = {
+  available: {
+    iconName: 'check' as const,
+    defaultLabel: 'Available',
+    chipClass: 'rx-chip-available',
+  },
+  'in-progress': {
+    iconName: 'half-circle' as const,
+    defaultLabel: 'In progress',
+    chipClass: 'rx-chip-in-progress',
+  },
+  planned: {
+    iconName: 'dashed-circle' as const,
+    defaultLabel: 'Planned',
+    chipClass: 'rx-chip-planned',
+  },
+}[normalizedStatus];
+
+const text = label ?? config.defaultLabel;
+---
+
+<span class={`rx-chip ${config.chipClass}`}>
+  <Icon name={config.iconName} size={12} />
+  <span>{text}</span>
+</span>

@@ -1,0 +1,264 @@
+---
+/**
+ * apps/site/src/pages/dev/styleguide/buttons/[...slug].astro
+ *
+ * Dedicated Button System Visual Matrix and Styleguide.
+ * CRITICAL REQUIREMENT:
+ * Gated by getStaticPaths returning [] in production (import.meta.env.PROD),
+ * producing 0 pages in production output.
+ */
+import Button from '../../../../components/common/Button.astro';
+import IconButton from '../../../../components/common/IconButton.astro';
+import ButtonGroup from '../../../../components/common/ButtonGroup.astro';
+import SegmentedControl from '../../../../components/common/SegmentedControl.astro';
+import Tooltip from '../../../../components/common/Tooltip.astro';
+import ThemeToggle from '../../../../components/common/ThemeToggle';
+import '../../../../styles/global.css';
+
+export function getStaticPaths() {
+  if (import.meta.env.PROD && !process.env.BUILD_DEV_STYLEGUIDE) {
+    return [];
+  }
+  return [{ params: { slug: undefined } }];
+}
+
+const variants = [
+  'primary',
+  'secondary',
+  'tertiary',
+  'link',
+  'on-accent-primary',
+  'on-accent-secondary',
+] as const;
+
+const sizes = ['sm', 'md', 'lg'] as const;
+
+const segmentedOptions = [
+  { value: 'system', label: 'System' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'light', label: 'Light' },
+];
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REQNX — Button System Matrix (Dev Only)</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <style>
+      .matrix-section {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--rx-border);
+      }
+      .matrix-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+      .matrix-card {
+        background: var(--rx-surface-2);
+        border: 1px solid var(--rx-border);
+        border-radius: var(--rx-radius-md);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .matrix-card--accent {
+        background: linear-gradient(135deg, var(--rx-accent-indigo) 0%, var(--rx-accent-cyan) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+      }
+      .matrix-label {
+        font-family: var(--rx-font-mono);
+        font-size: 0.75rem;
+        color: var(--rx-text-3);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .matrix-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body style="padding: 2rem 0; min-height: 100vh;">
+    <main class="rx-container">
+      <header style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem; border-bottom: 1px solid var(--rx-border); padding-bottom: 1.5rem;">
+        <div>
+          <span class="rx-eyebrow">Design System Primitive</span>
+          <h1 style="font-size: var(--rx-font-h2); margin: 0.25rem 0 0.5rem;">Unified Button System Matrix</h1>
+          <p style="color: var(--rx-text-3); font-size: var(--rx-font-small); margin: 0; max-width: 60ch;">
+            Exhaustive visual specimen covering all 6 variants, 3 heights, icon positions, keyboard focus,
+            forced colors, high contrast, and accessibility contracts.
+          </p>
+        </div>
+        <div>
+          <ThemeToggle client:load />
+        </div>
+      </header>
+
+      <!-- 1. Variants × Sizes Matrix -->
+      <section class="matrix-section">
+        <h2 style="font-size: var(--rx-font-h3); margin: 0;">1. Variants × Sizes (sm: 32px, md: 40px, lg: 48px)</h2>
+        <div class="matrix-grid">
+          {variants.map((v) => {
+            const isAccent = v.startsWith('on-accent');
+            return (
+              <div class={`matrix-card ${isAccent ? 'matrix-card--accent' : ''}`}>
+                <span class="matrix-label">{v}</span>
+                <div class="matrix-row">
+                  {sizes.map((s) => (
+                    <Button variant={v} size={s}>
+                      {s.toUpperCase()} Button
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <!-- 2. Interactive States Matrix -->
+      <section class="matrix-section">
+        <h2 style="font-size: var(--rx-font-h3); margin: 0 0 1rem;">2. Interactive & Disability States</h2>
+        <div class="matrix-grid">
+          <div class="matrix-card">
+            <span class="matrix-label">Native Disabled (&lt;button disabled&gt;)</span>
+            <div class="matrix-row">
+              <Button variant="primary" disabled>Primary Disabled</Button>
+              <Button variant="secondary" disabled>Secondary Disabled</Button>
+              <Button variant="tertiary" disabled>Tertiary Disabled</Button>
+            </div>
+          </div>
+          <div class="matrix-card">
+            <span class="matrix-label">Accessible Anchor Disabled (aria-disabled + no href)</span>
+            <div class="matrix-row">
+              <Button href="/test" variant="primary" disabled>Anchor Disabled</Button>
+              <Button href="/test" variant="secondary" disabled>Anchor Disabled</Button>
+            </div>
+          </div>
+          <div class="matrix-card">
+            <span class="matrix-label">Loading State (aria-busy="true")</span>
+            <div class="matrix-row">
+              <Button variant="primary" loading>Saving</Button>
+              <Button variant="secondary" loading>Loading</Button>
+              <Button variant="tertiary" loading>Processing</Button>
+            </div>
+          </div>
+          <div class="matrix-card">
+            <span class="matrix-label">Block Full-Width (data-block="true")</span>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+              <Button variant="primary" block>Full Width Primary Action</Button>
+              <Button variant="secondary" block>Full Width Secondary Action</Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Icon Slots & Micro-Interactions -->
+      <section class="matrix-section">
+        <h2 style="font-size: var(--rx-font-h3); margin: 0 0 1rem;">3. Icon Slots, Micro-Nudge & Shortcuts</h2>
+        <div class="matrix-grid">
+          <div class="matrix-card">
+            <span class="matrix-label">Leading Icons</span>
+            <div class="matrix-row">
+              <Button variant="primary" leadingIcon="play">Run benchmark</Button>
+              <Button variant="secondary" leadingIcon="terminal">npm install</Button>
+              <Button variant="tertiary" leadingIcon="copy">Copy token</Button>
+            </div>
+          </div>
+          <div class="matrix-card">
+            <span class="matrix-label">Trailing Icons & Arrow Micro-Nudge</span>
+            <div class="matrix-row">
+              <Button variant="primary" trailingIcon="arrow-right">Get started</Button>
+              <Button variant="secondary" trailingIcon="arrow-right">Explore docs</Button>
+            </div>
+          </div>
+          <div class="matrix-card">
+            <span class="matrix-label">Keyboard Shortcut Chips</span>
+            <div class="matrix-row">
+              <Button variant="secondary" kbd="Ctrl K" leadingIcon="terminal">
+                Search docs
+              </Button>
+              <Button variant="secondary" kbd="Esc">
+                Close
+              </Button>
+            </div>
+          </div>
+          <div class="matrix-card">
+            <span class="matrix-label">External Destination Links</span>
+            <div class="matrix-row">
+              <Button href="https://github.com/zynorex/reqnx" variant="secondary" leadingIcon="github">
+                GitHub Repository
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Square Icon Buttons & Tooltips -->
+      <section class="matrix-section">
+        <h2 style="font-size: var(--rx-font-h3); margin: 0 0 1rem;">4. Square Icon Buttons & Tooltips (WCAG 1.4.13)</h2>
+        <div class="matrix-grid">
+          <div class="matrix-card">
+            <span class="matrix-label">Icon Buttons (sm: 32px, md: 40px, lg: 48px)</span>
+            <div class="matrix-row">
+              <IconButton name="copy" ariaLabel="Copy to clipboard" size="sm" />
+              <IconButton name="play" ariaLabel="Run simulation" size="md" variant="primary" />
+              <IconButton name="terminal" ariaLabel="Open terminal" size="lg" variant="secondary" />
+              <IconButton name="github" ariaLabel="View GitHub repository" variant="tertiary" href="https://github.com/zynorex/reqnx" />
+            </div>
+          </div>
+          <div class="matrix-card">
+            <span class="matrix-label">Icon Buttons with Dismissible Tooltips</span>
+            <div class="matrix-row">
+              <IconButton name="moon" ariaLabel="Switch theme" tooltip="Switch to dark theme (T)" size="md" />
+              <IconButton name="menu" ariaLabel="Toggle navigation" tooltip="Toggle menu drawer" size="md" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Button Groups & Segmented Controls -->
+      <section class="matrix-section">
+        <h2 style="font-size: var(--rx-font-h3); margin: 0 0 1rem;">5. Button Groups & Segmented Controls</h2>
+        <div class="matrix-grid">
+          <div class="matrix-card">
+            <span class="matrix-label">Button Group (Spaced Layout)</span>
+            <ButtonGroup layout="spaced">
+              <Button variant="primary">Accept</Button>
+              <Button variant="secondary">Review</Button>
+              <Button variant="tertiary">Dismiss</Button>
+            </ButtonGroup>
+          </div>
+          <div class="matrix-card">
+            <span class="matrix-label">Button Group (Attached Segmented Layout)</span>
+            <ButtonGroup layout="attached">
+              <Button variant="secondary" size="sm">Day</Button>
+              <Button variant="secondary" size="sm">Week</Button>
+              <Button variant="secondary" size="sm">Month</Button>
+              <Button variant="secondary" size="sm">Year</Button>
+            </ButtonGroup>
+          </div>
+          <div class="matrix-card">
+            <span class="matrix-label">Segmented Control (Accessible Radio Group)</span>
+            <SegmentedControl
+              name="specimen-theme"
+              options={segmentedOptions}
+              value="dark"
+              ariaLabel="Select visual specimen theme"
+            />
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

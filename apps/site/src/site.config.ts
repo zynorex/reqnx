@@ -30,4 +30,18 @@ export const siteConfig = {
 
   /** License. */
   license: 'MIT',
+
+  /** Whether the package is published to npm. */
+  published: false,
+
+  /** Command to clone and run from source while unpublished. */
+  fromSourceCmd: 'git clone https://github.com/zynorex/reqnx.git',
 } as const;
+
+/** Format an absolute path with the configured base URL. */
+export function withBase(path: string): string {
+  const base = import.meta.env.BASE_URL ?? '/';
+  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${cleanBase}${cleanPath}`;
+}

@@ -1,0 +1,54 @@
+---
+import { resolveButtonContract, type BaseButtonProps } from './button-builder';
+import Icon from './Icon.astro';
+
+export interface Props extends Omit<BaseButtonProps, 'ariaLabel' | 'iconOnly'> {
+  name: string;
+  ariaLabel: string;
+  size?: 'sm' | 'md' | 'lg';
+  tooltip?: string;
+}
+
+const { name, ariaLabel, tooltip, size = 'md', ...rest } = Astro.props;
+
+const contract = resolveButtonContract({
+  ...rest,
+  size,
+  iconOnly: true,
+  ariaLabel,
+  title: tooltip ?? ariaLabel,
+});
+
+const { isAnchor, attrs } = contract;
+---
+
+{
+  tooltip ? (
+    <span class="btn-tooltip-wrapper">
+      {isAnchor ? (
+        <a {...attrs}>
+          <Icon name={name} />
+          <slot />
+        </a>
+      ) : (
+        <button {...attrs}>
+          <Icon name={name} />
+          <slot />
+        </button>
+      )}
+      <span class="btn-tooltip" role="tooltip" aria-hidden="true">
+        {tooltip}
+      </span>
+    </span>
+  ) : isAnchor ? (
+    <a {...attrs}>
+      <Icon name={name} />
+      <slot />
+    </a>
+  ) : (
+    <button {...attrs}>
+      <Icon name={name} />
+      <slot />
+    </button>
+  )
+}

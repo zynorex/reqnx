@@ -1,0 +1,65 @@
+---
+import { resolveButtonContract, type BaseButtonProps } from './button-builder';
+import Icon from './Icon.astro';
+
+export interface Props extends BaseButtonProps {
+  leadingIcon?: string;
+  trailingIcon?: string;
+  kbd?: string;
+}
+
+const {
+  leadingIcon,
+  trailingIcon,
+  kbd,
+  loading,
+  ...rest
+} = Astro.props;
+
+const contract = resolveButtonContract({ ...rest, loading });
+const { isAnchor, isExternal, attrs } = contract;
+---
+
+{
+  isAnchor ? (
+    <a {...attrs}>
+      {loading && <span class="btn__spinner" aria-hidden="true" />}
+      {!loading && leadingIcon && (
+        <span class="btn__icon--leading" aria-hidden="true">
+          <Icon name={leadingIcon} />
+        </span>
+      )}
+      <slot />
+      {kbd && <kbd class="btn__kbd">{kbd}</kbd>}
+      {trailingIcon && (
+        <span class="btn__icon--trailing" aria-hidden="true">
+          <Icon name={trailingIcon} />
+        </span>
+      )}
+      {isExternal && (
+        <>
+          <span class="btn__icon--trailing" aria-hidden="true">
+            <Icon name="external" size={14} />
+          </span>
+          <span class="rx-sr-only">(opens in a new tab)</span>
+        </>
+      )}
+    </a>
+  ) : (
+    <button {...attrs}>
+      {loading && <span class="btn__spinner" aria-hidden="true" />}
+      {!loading && leadingIcon && (
+        <span class="btn__icon--leading" aria-hidden="true">
+          <Icon name={leadingIcon} />
+        </span>
+      )}
+      <slot />
+      {kbd && <kbd class="btn__kbd">{kbd}</kbd>}
+      {trailingIcon && (
+        <span class="btn__icon--trailing" aria-hidden="true">
+          <Icon name={trailingIcon} />
+        </span>
+      )}
+    </button>
+  )
+}

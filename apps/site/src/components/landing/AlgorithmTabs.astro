@@ -1,0 +1,317 @@
+---
+import Section from './Section.astro';
+import { algorithms } from '../../features';
+import { landingCopy } from '../../copy/landing.copy';
+import StatusChip from '../common/StatusChip.astro';
+import Icon from '../common/Icon.astro';
+
+const { algorithms: algoCopy } = landingCopy;
+---
+
+<Section
+  id="algorithms"
+  eyebrow={algoCopy.eyebrow}
+  title={algoCopy.title}
+  lede={algoCopy.lede}
+  alt={true}
+>
+  <div class="rx-algo-tabs" data-algo-tabs>
+    <!-- Tab list with ARIA tablist -->
+    <div class="rx-tablist" role="tablist" aria-label="Rate limiting algorithms">
+      {algorithms.map((algo, idx) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${algo.id}`}
+          aria-selected={idx === 0 ? 'true' : 'false'}
+          aria-controls={`panel-${algo.id}`}
+          tabindex={idx === 0 ? 0 : -1}
+          class={`rx-tab-btn ${idx === 0 ? 'is-active' : ''}`}
+          data-algo-tab-btn
+        >
+          <span class="rx-tab-title">{algo.name}</span>
+          <StatusChip status={algo.status} size="sm" />
+        </button>
+      ))}
+    </div>
+
+    <!-- Tab panels -->
+    <div class="rx-panels-wrapper">
+      {algorithms.map((algo, idx) => (
+        <div
+          id={`panel-${algo.id}`}
+          role="tabpanel"
+          aria-labelledby={`tab-${algo.id}`}
+          tabindex={0}
+          class={`rx-tabpanel ${idx === 0 ? 'is-active' : ''}`}
+          data-algo-panel
+        >
+          <div class="rx-panel-inner">
+            <div class="rx-panel-header">
+              <div>
+                <h3 class="rx-panel-title">{algo.name}</h3>
+                <p class="rx-panel-desc">{algo.description}</p>
+              </div>
+              <StatusChip status={algo.status} size="md" />
+            </div>
+
+            <!-- Traits Matrix -->
+            <div class="rx-traits-grid">
+              <div class="rx-trait-card">
+                <span class="rx-trait-label">Memory per Key</span>
+                <span class="rx-trait-value">{algo.traits.memoryPerKey}</span>
+              </div>
+              <div class="rx-trait-card">
+                <span class="rx-trait-label">Burst Behavior</span>
+                <span class="rx-trait-value">{algo.traits.burstBehavior}</span>
+              </div>
+              <div class="rx-trait-card">
+                <span class="rx-trait-label">Boundary Behavior</span>
+                <span class="rx-trait-value">{algo.traits.boundaryBehavior}</span>
+              </div>
+              <div class="rx-trait-card">
+                <span class="rx-trait-label">Accuracy Guarantee</span>
+                <span class="rx-trait-value">{algo.traits.accuracy}</span>
+              </div>
+            </div>
+
+            <!-- Docs link if available -->
+            {algo.status === 'available' && (
+              <div class="rx-panel-footer">
+                <a href={`https://github.com/zynorex/reqnx/blob/main/${algo.evidencePath}`} class="rx-panel-link" target="_blank" rel="noopener noreferrer">
+                  <span>View algorithm specification</span>
+                  <Icon name="external" size={14} ariaHidden={true} />
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Selection Guide -->
+  <div class="rx-selection-guide">
+    <h3 class="rx-guide-title">{algoCopy.tradeoffMatrixTitle}</h3>
+    <ul class="rx-guide-list">
+      {algoCopy.selectionGuide.map((item) => (
+        <li class="rx-guide-item">
+          <span class="rx-guide-icon" aria-hidden="true">
+            <Icon name="arrow-right" size={12} ariaHidden={true} />
+          </span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Section>
+
+<script>
+  function setupAlgoTabs() {
+    const container = document.querySelector('[data-algo-tabs]');
+    if (!container) return;
+
+    const tabs = Array.from(container.querySelectorAll<HTMLButtonElement>('[data-algo-tab-btn]'));
+    const panels = Array.from(container.querySelectorAll<HTMLElement>('[data-algo-panel]'));
+
+    function selectTab(index: number) {
+      tabs.forEach((tab, i) => {
+        const isSelected = i === index;
+        tab.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        tab.tabIndex = isSelected ? 0 : -1;
+        tab.classList.toggle('is-active', isSelected);
+      });
+
+      panels.forEach((panel, i) => {
+        panel.classList.toggle('is-active', i === index);
+      });
+
+      tabs[index]?.focus();
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => selectTab(index));
+
+      tab.addEventListener('keydown', (e) => {
+        let targetIndex = -1;
+        if (e.key === 'ArrowRight') {
+          targetIndex = (index + 1) % tabs.length;
+        } else if (e.key === 'ArrowLeft') {
+          targetIndex = (index - 1 + tabs.length) % tabs.length;
+        } else if (e.key === 'Home') {
+          targetIndex = 0;
+        } else if (e.key === 'End') {
+          targetIndex = tabs.length - 1;
+        }
+
+        if (targetIndex !== -1) {
+          e.preventDefault();
+          selectTab(targetIndex);
+        }
+      });
+    });
+  }
+
+  // Setup on page load
+  setupAlgoTabs();
+  document.addEventListener('astro:page-load', setupAlgoTabs);
+</script>
+
+<style>
+  .rx-tablist {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--rx-border-subtle);
+    scrollbar-width: thin;
+  }
+
+  .rx-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-sm);
+    color: var(--rx-text-2);
+    font-family: var(--rx-font-mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--rx-transition-fast);
+  }
+
+  .rx-tab-btn:hover {
+    background: var(--rx-surface-3);
+    color: var(--rx-text-1);
+  }
+
+  .rx-tab-btn.is-active {
+    background: var(--rx-surface-3);
+    border-color: var(--rx-accent-cyan);
+    color: var(--rx-accent-cyan);
+    box-shadow: 0 0 10px rgba(20, 221, 253, 0.1);
+  }
+
+  .rx-tabpanel {
+    display: none;
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border);
+    border-radius: var(--rx-radius-md);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    margin-bottom: 3.5rem;
+  }
+
+  .rx-tabpanel.is-active {
+    display: block;
+  }
+
+  .rx-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--rx-border-subtle);
+  }
+
+  .rx-panel-title {
+    font-size: var(--rx-font-h3);
+    margin: 0 0 0.375rem;
+    color: var(--rx-text-1);
+  }
+
+  .rx-panel-desc {
+    font-size: 0.875rem;
+    color: var(--rx-text-2);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .rx-traits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .rx-trait-card {
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-sm);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .rx-trait-label {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--rx-text-3);
+  }
+
+  .rx-trait-value {
+    font-family: var(--rx-font-mono);
+    font-size: 0.8125rem;
+    color: var(--rx-text-1);
+  }
+
+  .rx-panel-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .rx-panel-link {
+    font-family: var(--rx-font-mono);
+    font-size: 0.8125rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  /* Selection Guide */
+  .rx-selection-guide {
+    background: var(--rx-surface-1);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-md);
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .rx-guide-title {
+    font-size: 1rem;
+    margin: 0 0 1rem;
+    color: var(--rx-text-1);
+  }
+
+  .rx-guide-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .rx-guide-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    font-size: 0.875rem;
+    color: var(--rx-text-2);
+    line-height: 1.5;
+  }
+
+  .rx-guide-icon {
+    color: var(--rx-accent-cyan);
+    flex-shrink: 0;
+  }
+</style>

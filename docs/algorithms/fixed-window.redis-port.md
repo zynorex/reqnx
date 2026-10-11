@@ -7,29 +7,33 @@ This specification details the Redis Lua script port of the `@reqnx/core` `fixed
 ## 1. Storage Encoding
 
 ### Redis Data Structure
+
 - Single Redis `Hash` per rate limiter key.
 - Key format: `reqnx:{prefix}:fixed-window:{identity}`
 
 ### Hash Fields
-| Field Name | Type | Value Description |
-|---|---|---|
-| `v` | string (integer) | State schema version. Must be `"1"`. |
-| `ws` | string (integer) | `windowStart`: Unix epoch timestamp in milliseconds of current window origin. |
-| `c` | string (integer) | `count`: Accumulated admitted cost in current window. |
+
+| Field Name | Type             | Value Description                                                             |
+| ---------- | ---------------- | ----------------------------------------------------------------------------- |
+| `v`        | string (integer) | State schema version. Must be `"1"`.                                          |
+| `ws`       | string (integer) | `windowStart`: Unix epoch timestamp in milliseconds of current window origin. |
+| `c`        | string (integer) | `count`: Accumulated admitted cost in current window.                         |
 
 ---
 
 ## 2. Lua Script Arguments & Keys
 
 ### `KEYS`
+
 - `KEYS[1]`: The full storage key (`reqnx:{prefix}:fixed-window:{identity}`).
 
 ### `ARGV`
-| Argument | Type | Description |
-|---|---|---|
-| `ARGV[1]` | integer | `limit`: Configured maximum capacity (safe integer $\le 2^{31}-1$). |
-| `ARGV[2]` | integer | `windowMs`: Configured window duration in milliseconds. |
-| `ARGV[3]` | integer | `cost`: Requested consumption cost ($\ge 1$). |
+
+| Argument  | Type    | Description                                                                                                                           |
+| --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `ARGV[1]` | integer | `limit`: Configured maximum capacity (safe integer $\le 2^{31}-1$).                                                                   |
+| `ARGV[2]` | integer | `windowMs`: Configured window duration in milliseconds.                                                                               |
+| `ARGV[3]` | integer | `cost`: Requested consumption cost ($\ge 1$).                                                                                         |
 | `ARGV[4]` | integer | `nowMsOverride` (optional): If $> 0$, use this timestamp instead of `redis.call('TIME')`. Enables deterministic differential testing. |
 
 ---
@@ -135,9 +139,9 @@ return {
 
 During Day 6 implementation, differential testing will feed identical sequences to TypeScript `fixedWindow.step()` and the Redis Lua script, asserting exact matching outcomes:
 
-| Test Seed | Parameters | Expected Sequence |
-|---|---|---|
-| **Golden Countdown** | limit 3, window 1000ms, cost 1 | t=0: allowed, rem=2; t=10: allowed, rem=1; t=20: allowed, rem=0; t=30: denied, rem=0, retryAfter=970; t=999: denied, rem=0, retryAfter=1; t=1000: allowed, rem=2 |
-| **Rollover** | limit 2, window 1000ms | t=999: denied, retryAfter=1; t=1000: allowed, rem=1 |
-| **No-Consume Rejection** | limit 5, window 1000ms | t=0: cost 3 (allowed); t=1: cost 3 (denied, rem=2); t=2: cost 2 (allowed, rem=0) |
-| **Backwards Clock** | limit 3, window 1000ms | t=1200: cost 1 (ws=1000, c=1); t=500: cost 1 (ws=1000, c=2, resetAt=2000) |
+| Test Seed                | Parameters                     | Expected Sequence                                                                                                                                                |
+| ------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Golden Countdown**     | limit 3, window 1000ms, cost 1 | t=0: allowed, rem=2; t=10: allowed, rem=1; t=20: allowed, rem=0; t=30: denied, rem=0, retryAfter=970; t=999: denied, rem=0, retryAfter=1; t=1000: allowed, rem=2 |
+| **Rollover**             | limit 2, window 1000ms         | t=999: denied, retryAfter=1; t=1000: allowed, rem=1                                                                                                              |
+| **No-Consume Rejection** | limit 5, window 1000ms         | t=0: cost 3 (allowed); t=1: cost 3 (denied, rem=2); t=2: cost 2 (allowed, rem=0)                                                                                 |
+| **Backwards Clock**      | limit 3, window 1000ms         | t=1200: cost 1 (ws=1000, c=1); t=500: cost 1 (ws=1000, c=2, resetAt=2000)                                                                                        |
