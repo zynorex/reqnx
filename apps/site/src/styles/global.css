@@ -7,8 +7,77 @@
 
 @layer reset, tokens, base, layout, components, utilities;
 
+@import './buttons.css' layer(components);
+
 @layer tokens {
   :root {
+    /* ─── Button System Base Geometry ────────────────────────────── */
+    --rx-btn-font: var(--rx-font-sans);
+    --rx-btn-weight: 550;
+    --rx-btn-line-height: 1.25;
+    --rx-btn-radius: var(--rx-radius-sm);
+    --rx-btn-gap: 8px;
+
+    /* Sizes (min-height, padding, font-size, icon-grid) */
+    --rx-btn-h-sm: 32px;
+    --rx-btn-px-sm: 12px;
+    --rx-btn-font-sm: 0.8125rem;
+    --rx-btn-icon-sm: 16px;
+
+    --rx-btn-h-md: 40px;
+    --rx-btn-px-md: 16px;
+    --rx-btn-font-md: 0.875rem;
+    --rx-btn-icon-md: 18px;
+
+    --rx-btn-h-lg: 48px;
+    --rx-btn-px-lg: 20px;
+    --rx-btn-font-lg: 1rem;
+    --rx-btn-icon-lg: 20px;
+
+    /* Focus Ring */
+    --rx-btn-focus-ring: 2px solid var(--rx-accent-indigo);
+    --rx-btn-focus-offset: 2px;
+
+    /* Primary Variant (Dark Canvas) */
+    --rx-btn-primary-bg: var(--rx-accent-indigo);
+    --rx-btn-primary-text: #ffffff;
+    --rx-btn-primary-border: transparent;
+    --rx-btn-primary-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    --rx-btn-primary-hover-bg: color-mix(in srgb, var(--rx-accent-indigo) 88%, #ffffff);
+    --rx-btn-primary-active-bg: color-mix(in srgb, var(--rx-accent-indigo) 80%, #000000);
+
+    /* Secondary Variant (Dark Canvas) */
+    --rx-btn-secondary-bg: var(--rx-surface-2);
+    --rx-btn-secondary-text: var(--rx-text-1);
+    --rx-btn-secondary-border: var(--rx-border-subtle);
+    --rx-btn-secondary-hover-bg: var(--rx-surface-3);
+    --rx-btn-secondary-hover-border: var(--rx-border-hover);
+    --rx-btn-secondary-active-bg: var(--rx-surface-4);
+
+    /* Tertiary (Ghost) Variant */
+    --rx-btn-tertiary-bg: transparent;
+    --rx-btn-tertiary-text: var(--rx-text-2);
+    --rx-btn-tertiary-border: transparent;
+    --rx-btn-tertiary-hover-bg: var(--rx-surface-3);
+    --rx-btn-tertiary-hover-text: var(--rx-text-1);
+    --rx-btn-tertiary-active-bg: var(--rx-surface-4);
+
+    /* Link Variant */
+    --rx-btn-link-text: var(--rx-accent-cyan);
+    --rx-btn-link-hover-text: var(--rx-text-1);
+
+    /* On-Accent Variant */
+    --rx-btn-on-accent-primary-bg: #ffffff;
+    --rx-btn-on-accent-primary-text: #0f172a;
+    --rx-btn-on-accent-secondary-bg: rgba(255, 255, 255, 0.12);
+    --rx-btn-on-accent-secondary-text: #ffffff;
+    --rx-btn-on-accent-secondary-border: rgba(255, 255, 255, 0.24);
+
+    /* Disabled */
+    --rx-btn-disabled-bg: var(--rx-surface-2);
+    --rx-btn-disabled-text: var(--rx-text-3);
+    --rx-btn-disabled-border: var(--rx-border-subtle);
+
     /* ─── 4 Surface Levels (Dark Canvas default) ─────────────────────────── */
     --rx-surface-1: #0f1117; /* Canvas base */
     --rx-surface-2: #161923; /* Panel & card surfaces */
@@ -206,6 +275,29 @@
     --rx-tick-major-color: rgba(99, 102, 241, 0.15);
 
     --rx-focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px var(--rx-accent-indigo);
+
+    /* Button Tokens (Light Mode) */
+    --rx-btn-focus-ring: 2px solid var(--rx-accent-indigo);
+    --rx-btn-primary-bg: var(--rx-accent-indigo);
+    --rx-btn-primary-text: #ffffff;
+    --rx-btn-primary-border: transparent;
+    --rx-btn-primary-hover-bg: color-mix(in srgb, var(--rx-accent-indigo) 90%, #000000);
+    --rx-btn-primary-active-bg: color-mix(in srgb, var(--rx-accent-indigo) 80%, #000000);
+    --rx-btn-secondary-bg: var(--rx-surface-2);
+    --rx-btn-secondary-text: var(--rx-text-1);
+    --rx-btn-secondary-border: var(--rx-border-subtle);
+    --rx-btn-secondary-hover-bg: var(--rx-surface-3);
+    --rx-btn-secondary-hover-border: var(--rx-border-hover);
+    --rx-btn-secondary-active-bg: var(--rx-surface-4);
+    --rx-btn-tertiary-bg: transparent;
+    --rx-btn-tertiary-text: var(--rx-text-2);
+    --rx-btn-tertiary-hover-bg: var(--rx-surface-3);
+    --rx-btn-tertiary-hover-text: var(--rx-text-1);
+    --rx-btn-link-text: var(--rx-accent-cyan);
+    --rx-btn-link-hover-text: var(--rx-text-1);
+    --rx-btn-disabled-bg: var(--rx-surface-3);
+    --rx-btn-disabled-text: var(--rx-text-3);
+    --rx-btn-disabled-border: var(--rx-border-subtle);
   }
 }
 
