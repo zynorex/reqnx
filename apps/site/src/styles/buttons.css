@@ -157,19 +157,22 @@
   /* ─── Semantic Variants ─────────────────────────────────────────────────── */
 
   /* 1. Primary (One per region, Option A: Inner Highlight) */
-  .btn[data-variant='primary'] {
+  .btn[data-variant='primary'],
+  a.btn[data-variant='primary'] {
     background-color: var(--rx-btn-primary-bg, var(--rx-accent-indigo));
     color: var(--rx-btn-primary-text, #ffffff);
     border-color: var(--rx-btn-primary-border, transparent);
     box-shadow: var(--rx-btn-primary-highlight, inset 0 1px 0 rgba(255, 255, 255, 0.22));
   }
   @media (hover: hover) {
-    .btn[data-variant='primary']:hover {
+    .btn[data-variant='primary']:hover,
+    a.btn[data-variant='primary']:hover {
       background-color: var(--rx-btn-primary-hover-bg, color-mix(in srgb, var(--rx-accent-indigo) 88%, #ffffff));
       color: var(--rx-btn-primary-text, #ffffff);
     }
   }
-  .btn[data-variant='primary']:active {
+  .btn[data-variant='primary']:active,
+  a.btn[data-variant='primary']:active {
     background-color: var(--rx-btn-primary-active-bg, color-mix(in srgb, var(--rx-accent-indigo) 80%, #000000));
   }
 

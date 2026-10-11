@@ -7,7 +7,7 @@
 
 @layer reset, tokens, base, layout, components, utilities;
 
-@import './buttons.css' layer(components);
+@import './buttons.css';
 
 @layer tokens {
   :root {
@@ -338,17 +338,17 @@
     text-wrap: pretty;
   }
 
-  a {
+  a:not(.btn) {
     color: var(--rx-accent-cyan);
     text-decoration: none;
     transition: color var(--rx-transition-fast);
   }
 
-  a:hover {
+  a:not(.btn):hover {
     color: var(--rx-accent-indigo);
   }
 
-  a:focus-visible,
+  a:not(.btn):focus-visible,
   input:focus-visible,
   select:focus-visible {
     outline: none;
