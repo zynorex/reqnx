@@ -11,6 +11,8 @@ import type { Decision } from '@reqnx/core';
 import { createBrowserFakeClock } from '../../engine/fake-clock.js';
 import { algorithms } from '../../features.js';
 import { Timeline } from '../common/Timeline.js';
+import { Button } from '../common/Button.js';
+import { ToggleButton } from '../common/ToggleButton.js';
 import { rollNumber } from '../../motion/odometer.js';
 import type { PrecomputedHeroState } from '../../engine/hero-precompute.js';
 import type { ScenarioStep } from '../../engine/types.js';
@@ -451,36 +453,36 @@ export function LiveConsole({ initialState }: LiveConsoleProps) {
       {/* Interactive Controls Bar */}
       <div class="rx-console__controls">
         <div class="rx-console__actions">
-          <button type="button" class="rx-btn rx-btn--primary" onClick={sendRequest}>
+          <Button variant="primary" size="sm" onClick={sendRequest}>
             Send request
-          </button>
+          </Button>
 
-          <button type="button" class="rx-btn rx-btn--secondary" onClick={sendBurst}>
+          <Button variant="secondary" size="sm" onClick={sendBurst}>
             Send burst (+{limit + 2})
-          </button>
+          </Button>
 
-          <button
-            type="button"
-            class="rx-btn rx-btn--ghost"
-            onClick={() => setIsPlaying(!isPlaying)}
-            aria-pressed={isPlaying}
+          <ToggleButton
+            variant="tertiary"
+            size="sm"
+            pressed={isPlaying}
+            onToggle={(pressed) => setIsPlaying(pressed)}
           >
             {isPlaying ? 'Pause' : 'Play simulation'}
-          </button>
+          </ToggleButton>
 
-          <button type="button" class="rx-btn rx-btn--ghost" onClick={resetEngine}>
+          <Button variant="tertiary" size="sm" onClick={resetEngine}>
             Reset
-          </button>
+          </Button>
         </div>
 
-        <button
-          type="button"
-          class="rx-console__log-toggle"
-          aria-expanded={showLog}
+        <Button
+          variant="tertiary"
+          size="sm"
+          ariaExpanded={showLog}
           onClick={() => setShowLog(!showLog)}
         >
           {showLog ? 'Hide decision log' : `Decision log (${steps.length})`}
-        </button>
+        </Button>
       </div>
 
       {/* Decision Log Table (Accessible Equivalent) */}

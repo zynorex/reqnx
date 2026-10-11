@@ -14,6 +14,7 @@ import type { AlgorithmId } from '@reqnx/core';
 import ConfigPanel from './ConfigPanel';
 import RequestTimeline from './RequestTimeline';
 import GaugeBar from './GaugeBar';
+import Button from '../common/Button.js';
 import '../../styles/playground.css';
 
 interface ScenarioPlayerProps {
@@ -143,30 +144,36 @@ export default function ScenarioPlayer({
 
       {/* Controls */}
       <div class="rx-controls">
-        <button
-          type="button"
-          class="rx-btn rx-btn-primary"
+        <Button
+          variant="primary"
+          size="md"
           onClick={sendRequest}
           disabled={isRunning}
         >
-          Send Request
-        </button>
-        <button type="button" class="rx-btn rx-btn-outline" onClick={reset} disabled={isRunning}>
+          Send request
+        </Button>
+        <Button
+          variant="secondary"
+          size="md"
+          onClick={reset}
+          disabled={isRunning}
+        >
           Reset
-        </button>
+        </Button>
 
         {/* Preset buttons */}
         {availablePresets.map(([id, meta]) => (
-          <button
+          <Button
             key={id}
-            type="button"
-            class="rx-btn rx-btn-outline"
+            variant="secondary"
+            size="sm"
             onClick={() => runPreset(id)}
             disabled={isRunning}
             title={meta.description}
+            leadingIcon={<span aria-hidden="true" style={{ fontSize: '0.75em' }}>▶</span>}
           >
-            ▶ {meta.name}
-          </button>
+            {meta.name}
+          </Button>
         ))}
 
         <span class="rx-controls-info">t = {formatMs(currentMs)}</span>

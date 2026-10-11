@@ -41,12 +41,31 @@ export function lintSourceFile(filePath: string, content: string): SourceLintRes
   const lines = content.split('\n');
 
   lines.forEach((line, idx) => {
-    // Check for raw <button
-    if (/<button\b/i.test(line)) {
+    // Check for raw lowercase <button HTML tag
+    if (/<button\b/.test(line)) {
+      // Look ahead to capture full multi-line tag
+      let fullTag = line;
+      let offset = 1;
+      while (!fullTag.includes('>') && idx + offset < lines.length) {
+        fullTag += ' ' + lines[idx + offset];
+        offset++;
+      }
+
       // Allowed if it explicitly has role="tab"
-      if (line.includes('role="tab"') || line.includes("role='tab'")) {
+      if (fullTag.includes('role="tab"') || fullTag.includes("role='tab'")) {
         return;
       }
+
+      // Allowed in Header.astro for menu toggle with .btn class
+      if (base === 'Header.astro' && fullTag.includes('rx-menu-toggle')) {
+        return;
+      }
+
+      // Skip internal dev motion lab
+      if (filePath.replace(/\\/g, '/').includes('/pages/dev/motion/')) {
+        return;
+      }
+
       results.push({
         file: filePath,
         line: idx + 1,

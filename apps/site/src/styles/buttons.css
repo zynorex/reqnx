@@ -459,4 +459,107 @@
       outline: 2px solid #ffffff;
     }
   }
+
+  /* ─── Starlight Docs Controls Integration ──────────────────────────────── */
+  button.open-search {
+    background-color: var(--rx-btn-secondary-bg, var(--rx-surface-2)) !important;
+    color: var(--rx-btn-secondary-text, var(--rx-text-2)) !important;
+    border: 1px solid var(--rx-btn-secondary-border, var(--rx-border-subtle)) !important;
+    border-radius: var(--rx-btn-radius, var(--rx-radius-sm)) !important;
+    min-height: var(--rx-btn-h-sm, 32px) !important;
+    font-size: var(--rx-btn-font-sm, 0.8125rem) !important;
+    padding: 0 var(--rx-btn-px-sm, 12px) !important;
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      color var(--rx-dur-fast) var(--rx-ease-out) !important;
+  }
+  button.open-search:hover {
+    background-color: var(--rx-btn-secondary-hover-bg, var(--rx-surface-3)) !important;
+    border-color: var(--rx-btn-secondary-hover-border, var(--rx-border-hover)) !important;
+    color: var(--rx-text-1) !important;
+  }
+  button.open-search:focus-visible {
+    outline: var(--rx-btn-focus-ring, 2px solid var(--rx-accent-indigo)) !important;
+    outline-offset: var(--rx-btn-focus-offset, 2px) !important;
+  }
+  button.open-search kbd {
+    background: var(--rx-surface-3) !important;
+    border: 1px solid var(--rx-border-subtle) !important;
+    color: var(--rx-text-3) !important;
+    border-radius: var(--rx-radius-xs, 4px) !important;
+    font-size: 0.6875rem !important;
+  }
+
+  figure.expressive-code button,
+  .expressive-code .copy button {
+    border-radius: var(--rx-btn-radius, var(--rx-radius-sm)) !important;
+    border: 1px solid transparent !important;
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      color var(--rx-dur-fast) var(--rx-ease-out) !important;
+  }
+  figure.expressive-code button:hover,
+  .expressive-code .copy button:hover {
+    background-color: var(--rx-surface-3) !important;
+    color: var(--rx-text-1) !important;
+  }
+  figure.expressive-code button:focus-visible,
+  .expressive-code .copy button:focus-visible {
+    outline: var(--rx-btn-focus-ring, 2px solid var(--rx-accent-indigo)) !important;
+    outline-offset: var(--rx-btn-focus-offset, 2px) !important;
+  }
+
+  .sl-link-button.primary {
+    background-color: var(--rx-btn-primary-bg, var(--rx-accent-indigo)) !important;
+    color: var(--rx-btn-primary-text, #ffffff) !important;
+    border: 1px solid var(--rx-btn-primary-border, transparent) !important;
+    border-radius: var(--rx-btn-radius, var(--rx-radius-sm)) !important;
+    box-shadow: var(--rx-btn-primary-highlight, inset 0 1px 0 rgba(255, 255, 255, 0.22)) !important;
+  }
+  .sl-link-button.primary:hover {
+    background-color: var(--rx-btn-primary-hover-bg, color-mix(in srgb, var(--rx-accent-indigo) 88%, #ffffff)) !important;
+  }
+  .sl-link-button.secondary {
+    background-color: var(--rx-btn-secondary-bg, var(--rx-surface-2)) !important;
+    color: var(--rx-btn-secondary-text, var(--rx-text-1)) !important;
+    border: 1px solid var(--rx-btn-secondary-border, var(--rx-border-subtle)) !important;
+    border-radius: var(--rx-btn-radius, var(--rx-radius-sm)) !important;
+  }
+  .sl-link-button.secondary:hover {
+    background-color: var(--rx-btn-secondary-hover-bg, var(--rx-surface-3)) !important;
+  }
+  .sl-link-button:focus-visible {
+    outline: var(--rx-btn-focus-ring, 2px solid var(--rx-accent-indigo)) !important;
+    outline-offset: var(--rx-btn-focus-offset, 2px) !important;
+  }
+
+  .pagination-links a {
+    border-radius: var(--rx-btn-radius, var(--rx-radius-sm)) !important;
+    border: 1px solid var(--rx-btn-secondary-border, var(--rx-border-subtle)) !important;
+    background-color: var(--rx-btn-secondary-bg, var(--rx-surface-2)) !important;
+    color: var(--rx-btn-secondary-text, var(--rx-text-1)) !important;
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out) !important;
+  }
+  .pagination-links a:hover {
+    background-color: var(--rx-btn-secondary-hover-bg, var(--rx-surface-3)) !important;
+    border-color: var(--rx-btn-secondary-hover-border, var(--rx-border-hover)) !important;
+  }
+  .pagination-links a:focus-visible {
+    outline: var(--rx-btn-focus-ring, 2px solid var(--rx-accent-indigo)) !important;
+    outline-offset: var(--rx-btn-focus-offset, 2px) !important;
+  }
+
+  .edit-page a {
+    color: var(--rx-btn-link-text, var(--rx-accent-cyan)) !important;
+  }
+  .edit-page a:hover {
+    text-decoration: underline !important;
+  }
+  .edit-page a:focus-visible {
+    outline: var(--rx-btn-focus-ring, 2px solid var(--rx-accent-indigo)) !important;
+    outline-offset: var(--rx-btn-focus-offset, 2px) !important;
+  }
 }

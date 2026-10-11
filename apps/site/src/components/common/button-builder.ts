@@ -30,6 +30,8 @@ export interface BaseButtonProps {
   block?: boolean;
   iconOnly?: boolean;
   ariaLabel?: string;
+  ariaExpanded?: boolean;
+  ariaControls?: string;
   className?: string;
   id?: string;
   title?: string;
@@ -54,6 +56,8 @@ export interface ResolvedButtonContract {
     disabled?: boolean;
     'aria-disabled'?: 'true';
     'aria-describedby'?: string;
+    'aria-expanded'?: 'true' | 'false';
+    'aria-controls'?: string;
     'aria-busy'?: 'true';
     'aria-label'?: string;
     title?: string;
@@ -160,6 +164,14 @@ export function resolveButtonContract(props: BaseButtonProps): ResolvedButtonCon
 
   if (ariaDescribedBy) {
     attrs['aria-describedby'] = ariaDescribedBy;
+  }
+
+  if (props.ariaExpanded !== undefined) {
+    attrs['aria-expanded'] = props.ariaExpanded ? 'true' : 'false';
+  }
+
+  if (props.ariaControls) {
+    attrs['aria-controls'] = props.ariaControls;
   }
 
   if (effectiveAriaDisabled) {

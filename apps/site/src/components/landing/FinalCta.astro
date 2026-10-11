@@ -4,6 +4,7 @@ import { landingCopy } from '../../copy/landing.copy';
 import { siteConfig, withBase } from '../../site.config';
 import CopyButton from '../common/CopyButton';
 import Icon from '../common/Icon.astro';
+import Button from '../common/Button.astro';
 import Mascot from '../brand/Mascot.astro';
 
 const { ctaBand } = landingCopy;
@@ -23,17 +24,15 @@ const commandLabel = siteConfig.published ? 'Install' : 'Run from source';
         <p class="rx-final-lede">{ctaBand.lede}</p>
 
         <div class="rx-final-actions">
-          <a href={withBase('/getting-started/')} class="rx-btn rx-btn--primary">
-            <span>{ctaBand.primary}</span>
-            <Icon name="arrow-right" size={16} ariaHidden={true} />
-          </a>
-          <a href={withBase('/playground/')} class="rx-btn rx-btn--secondary">
-            <span>{ctaBand.secondary}</span>
-          </a>
-          <a href={siteConfig.repo} class="rx-btn rx-btn--ghost" target="_blank" rel="noopener noreferrer">
-            <Icon name="github" size={16} ariaHidden={true} />
-            <span>GitHub</span>
-          </a>
+          <Button href={withBase('/getting-started/')} variant="primary" size="lg" trailingIcon="arrow-right">
+            {ctaBand.primary}
+          </Button>
+          <Button href={withBase('/playground/')} variant="secondary" size="lg">
+            {ctaBand.secondary}
+          </Button>
+          <Button href={siteConfig.repo} variant="tertiary" size="lg" leadingIcon="github">
+            GitHub
+          </Button>
         </div>
 
         <div class="rx-cmd-box rx-final-cmd">

@@ -7,6 +7,7 @@ import Footer from '../components/landing/Footer.astro';
 import BrandIcons from '../components/brand/BrandIcons.astro';
 import Mascot from '../components/brand/Mascot.astro';
 import Icon from '../components/common/Icon.astro';
+import Button from '../components/common/Button.astro';
 import '../styles/global.css';
 
 const knownRoutes = siteRoutes
@@ -82,35 +83,31 @@ const knownRoutes = siteRoutes
 
           <!-- Primary & Secondary Actions -->
           <div class="rx-404-actions">
-            <a href={withBase('/')} class="rx-btn rx-btn--primary">
-              <span>{landingCopy.notFound.backHomeCta}</span>
-              <Icon name="arrow-right" size={16} ariaHidden={true} />
-            </a>
+            <Button href={withBase('/')} variant="primary" size="md" trailingIcon="arrow-right">
+              {landingCopy.notFound.backHomeCta}
+            </Button>
             <div class="rx-404-links">
-              <a href={withBase('/getting-started/')} class="rx-link-secondary">
+              <Button href={withBase('/getting-started/')} variant="link">
                 {landingCopy.notFound.docsLink}
-              </a>
+              </Button>
               <span class="rx-sep" aria-hidden="true">·</span>
-              <a href={withBase('/algorithms/')} class="rx-link-secondary">
+              <Button href={withBase('/algorithms/')} variant="link">
                 {landingCopy.notFound.algorithmsLink}
-              </a>
+              </Button>
               <span class="rx-sep" aria-hidden="true">·</span>
-              <a href={withBase('/playground/')} class="rx-link-secondary">
+              <Button href={withBase('/playground/')} variant="link">
                 {landingCopy.notFound.playgroundLink}
-              </a>
+              </Button>
             </div>
           </div>
 
           <div class="rx-404-report">
-            <a
+            <Button
               href={`${siteConfig.repo}/issues/new?title=Broken+link+report&body=Found+broken+link`}
-              target="_blank"
-              rel="noreferrer noopener"
-              class="rx-report-link"
+              variant="link"
             >
-              <span>{landingCopy.notFound.reportBrokenLink}</span>
-              <span class="rx-sr-only">(opens in a new tab)</span>
-            </a>
+              {landingCopy.notFound.reportBrokenLink}
+            </Button>
           </div>
         </div>
 

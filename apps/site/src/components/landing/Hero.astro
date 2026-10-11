@@ -6,6 +6,7 @@ import { LiveConsole } from './LiveConsole';
 import ProofStrip from './ProofStrip.astro';
 import CopyButton from '../common/CopyButton';
 import Icon from '../common/Icon.astro';
+import Button from '../common/Button.astro';
 import Mascot from '../brand/Mascot.astro';
 
 const initialState = await getPrecomputedHeroState();
@@ -46,13 +47,12 @@ const commandLabel = siteConfig.published ? 'Install' : 'Run from source';
     <!-- CTAs and Command Line -->
     <div class="rx-hero-actions">
       <div class="rx-hero-ctas">
-        <a href={withBase('/getting-started/')} class="rx-btn rx-btn--primary">
-          <span>{landingCopy.hero.ctaPrimary}</span>
-          <Icon name="arrow-right" size={16} ariaHidden={true} />
-        </a>
-        <a href={withBase('/playground/')} class="rx-btn rx-btn--secondary">
-          <span>{landingCopy.hero.ctaSecondary}</span>
-        </a>
+        <Button href={withBase('/getting-started/')} variant="primary" size="lg" trailingIcon="arrow-right">
+          {landingCopy.hero.ctaPrimary}
+        </Button>
+        <Button href={withBase('/playground/')} variant="secondary" size="lg">
+          {landingCopy.hero.ctaSecondary}
+        </Button>
       </div>
 
       <div class="rx-cmd-box">

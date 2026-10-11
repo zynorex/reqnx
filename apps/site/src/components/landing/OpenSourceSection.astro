@@ -3,6 +3,7 @@ import Section from './Section.astro';
 import { landingCopy } from '../../copy/landing.copy';
 import { siteConfig } from '../../site.config';
 import Icon from '../common/Icon.astro';
+import Button from '../common/Button.astro';
 import Mascot from '../brand/Mascot.astro';
 
 const { openSource } = landingCopy;
@@ -65,13 +66,12 @@ const recentAdrs = [
       </p>
 
       <div class="rx-os-actions">
-        <a href={siteConfig.repo} class="rx-btn rx-btn-primary" target="_blank" rel="noopener noreferrer">
-          <Icon name="github" size={16} ariaHidden={true} />
-          <span>GitHub Repository</span>
-        </a>
-        <a href={`${siteConfig.repo}/blob/main/LICENSE`} class="rx-btn rx-btn-outline" target="_blank" rel="noopener noreferrer">
-          <span>View MIT License</span>
-        </a>
+        <Button href={siteConfig.repo} variant="primary" size="md" leadingIcon="github">
+          GitHub Repository
+        </Button>
+        <Button href={`${siteConfig.repo}/blob/main/LICENSE`} variant="secondary" size="md">
+          View MIT license
+        </Button>
       </div>
     </div>
 
@@ -103,10 +103,9 @@ const recentAdrs = [
       </div>
 
       <div class="rx-adr-footer">
-        <a href={`${siteConfig.repo}/tree/main/docs/adr`} class="rx-adr-all-link" target="_blank" rel="noopener noreferrer">
-          <span>{openSource.viewAllDecisions}</span>
-          <Icon name="arrow-right" size={12} ariaHidden={true} />
-        </a>
+        <Button href={`${siteConfig.repo}/tree/main/docs/adr`} variant="link" trailingIcon="arrow-right">
+          {openSource.viewAllDecisions}
+        </Button>
       </div>
     </div>
   </div>

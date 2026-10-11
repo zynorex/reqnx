@@ -52,3 +52,51 @@ export function lintButtonLabel(label: string): LabelLintViolation[] {
 
   return violations;
 }
+
+export function runLabelLint(): { passed: boolean; violations: { file: string; line: number; violation: LabelLintViolation }[] } {
+  const violations: { file: string; line: number; violation: LabelLintViolation }[] = [];
+  const srcDir = path.resolve(import.meta.dirname, '../src');
+
+  function scan(dir: string) {
+    for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, ent.name);
+      if (ent.isDirectory() && ent.name !== 'node_modules' && ent.name !== '.astro') {
+        scan(full);
+      } else if (ent.isFile() && (ent.name.endsWith('.astro') || ent.name.endsWith('.tsx'))) {
+        const content = fs.readFileSync(full, 'utf-8');
+        const lines = content.split('\n');
+        lines.forEach((line, idx) => {
+          // Look for <Button ...>Text</Button> on single line
+          const match = /<Button\b[^>]*>([^<{]+)<\/Button>/i.exec(line);
+          if (match && match[1]) {
+            const v = lintButtonLabel(match[1]);
+            for (const item of v) {
+              violations.push({ file: full, line: idx + 1, violation: item });
+            }
+          }
+        });
+      }
+    }
+  }
+
+  scan(srcDir);
+  return { passed: violations.length === 0, violations };
+}
+
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const { passed, violations } = runLabelLint();
+  if (!passed) {
+    console.error(`❌ Found ${violations.length} button label violations:`);
+    for (const v of violations) {
+      console.error(`  ${path.basename(v.file)}:${v.line} - ${v.violation.message} ("${v.violation.label}")`);
+    }
+    process.exit(1);
+  } else {
+    console.log('✓ Button label lint passed: All button labels follow sentence-case content rules.');
+  }
+}
+

@@ -1,6 +1,7 @@
 ---
 import { siteConfig, withBase } from '../../site.config';
 import Icon from '../common/Icon.astro';
+import Button from '../common/Button.astro';
 import { ThemeToggle } from '../common/ThemeToggle';
 import Logo from '../brand/Logo.astro';
 
@@ -71,23 +72,26 @@ const navItems = [
     <div class="rx-header__actions">
       <ThemeToggle client:load />
 
-      <a href={withBase('/getting-started/')} class="rx-header__cta">
-        <span>Get started</span>
-      </a>
+      <Button href={withBase('/getting-started/')} variant="primary" size="sm" className="rx-header__cta">
+        Get started
+      </Button>
 
       <button
         type="button"
         id="rx-menu-toggle"
-        class="rx-header__menu-btn"
+        class="btn rx-header__menu-btn"
+        data-variant="secondary"
+        data-size="sm"
+        data-icon-only="true"
         aria-expanded="false"
         aria-controls="rx-mobile-menu"
         aria-label="Toggle navigation menu"
       >
         <span class="rx-header__menu-icon-open">
-          <Icon name="menu" size={22} ariaHidden={true} />
+          <Icon name="menu" size={20} ariaHidden={true} />
         </span>
         <span class="rx-header__menu-icon-close">
-          <Icon name="close" size={22} ariaHidden={true} />
+          <Icon name="close" size={20} ariaHidden={true} />
         </span>
       </button>
     </div>
@@ -122,9 +126,9 @@ const navItems = [
       </nav>
 
       <div class="rx-mobile-sheet__actions">
-        <a href={withBase('/getting-started/')} class="rx-mobile-sheet__cta">
+        <Button href={withBase('/getting-started/')} variant="primary" size="md" block={true}>
           Get started
-        </a>
+        </Button>
       </div>
     </div>
   </div>
@@ -367,49 +371,6 @@ const navItems = [
 
     .rx-header__cta {
       display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 0.375rem 0.875rem;
-      font-size: var(--rx-font-small);
-      font-weight: 600;
-      color: #ffffff !important;
-      background: var(--rx-accent-indigo);
-      border-radius: var(--rx-radius-sm);
-      text-decoration: none;
-      transition:
-        background-color var(--rx-dur-fast) var(--rx-ease-out),
-        transform var(--rx-dur-instant) var(--rx-ease-out);
-    }
-
-    .rx-header__cta:active {
-      transform: scale(0.98);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .rx-header__cta {
-        transition: none;
-      }
-      .rx-header__cta:active {
-        transform: none;
-      }
-    }
-    html[data-motion="reduced"] .rx-header__cta {
-      transition: none;
-    }
-    html[data-motion="reduced"] .rx-header__cta:active {
-      transform: none;
-    }
-
-    .rx-header__cta span {
-      color: #ffffff !important;
-    }
-
-    .rx-header__cta:hover {
-      background: var(--rx-accent-indigo-dim);
-    }
-
-    .rx-header__cta:focus-visible {
-      outline: var(--rx-focus-ring);
     }
 
     @media (min-width: 640px) {
@@ -420,28 +381,12 @@ const navItems = [
 
     .rx-header__menu-btn {
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      padding: 0;
-      border: 1px solid var(--rx-border-subtle);
-      border-radius: var(--rx-radius-sm);
-      background: var(--rx-surface-2);
-      color: var(--rx-text-1);
-      cursor: pointer;
-      transition:
-        background-color var(--rx-dur-fast) var(--rx-ease-out),
-        border-color var(--rx-dur-fast) var(--rx-ease-out);
     }
 
-    .rx-header__menu-btn:hover {
-      background: var(--rx-surface-3);
-      border-color: var(--rx-border);
-    }
-
-    .rx-header__menu-btn:focus-visible {
-      outline: var(--rx-focus-ring);
+    @media (min-width: 768px) {
+      .rx-header__menu-btn {
+        display: none;
+      }
     }
 
     .rx-header__menu-icon-close {
