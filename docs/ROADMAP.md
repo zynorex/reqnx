@@ -70,8 +70,15 @@
   - Client-side fuzzy path recovery with Levenshtein route matching against known documentation paths
 - Brand asset pipeline (`scripts/brand-build.ts`) generating responsive WebP/PNG derivatives, multi-resolution `favicon.ico`, and `site.webmanifest` verified by SHA-256 manifest
 - Zero marketing hype words, strictly adhering to claims ledger (`docs/site/claims.md`)
+- Unified button system across Astro and Preact (`apps/site/src/components/common/Button.*`):
+  - Option A visual hierarchy with top edge highlight (`box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22)`)
+  - Strict semantic contracts (`<a>` navigates, `<button type="button">` acts, no `role="button"` on anchors)
+  - Three standardized heights (sm: 32px, md: 40px default, lg: 48px) with 6px border radius
+  - Automatic touch target expansion ($\ge 44 \times 44\text{ px}$) on coarse pointer devices
+  - Two-tone focus indicators (2px outline + 2px offset) meeting WCAG 2.2 AA
+  - Automated verification pipeline: `lint:buttons`, `audit:buttons`, `buttons:targets`, `buttons:contrast`, `buttons:a11y`, `buttons:shots`
 - 100% WCAG AA compliant with Axe accessibility audit passing with 0 serious/critical violations
-- ADR-0015 (Landing Architecture & Art Direction), ADR-0016 (Brand Asset Pipeline & Usage Rules), ADR-0017 (Not Found Page & Route Manifest), ADR-0018 (Content System & Claims Ledger)
+- ADR-0015 (Landing Architecture & Art Direction), ADR-0016 (Brand Asset Pipeline & Usage Rules), ADR-0017 (Not Found Page & Route Manifest), ADR-0018 (Content System & Claims Ledger), ADR-0019 (Unified Button System Architecture)
 
 ## Day 4 — Token Bucket Algorithm ✅
 

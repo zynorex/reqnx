@@ -74,6 +74,12 @@ pnpm --filter @reqnx/site build      # Build static docs and landing page
 pnpm --filter @reqnx/site run a11y   # Axe accessibility audit (Desktop/Mobile, Dark/Light)
 pnpm --filter @reqnx/site run shots  # Capture multi-viewport screenshot matrix
 pnpm --filter @reqnx/site run brand:build # Re-generate responsive brand asset derivatives
+pnpm --filter @reqnx/site run lint:buttons    # Lint CSS, source tags, and button labels
+pnpm --filter @reqnx/site run audit:buttons   # Audit built HTML for semantic tag correctness
+pnpm --filter @reqnx/site run buttons:targets # Verify min-height and 44x44px touch targets
+pnpm --filter @reqnx/site run buttons:contrast # Verify WCAG AA 4.5:1 button contrast ratios
+pnpm --filter @reqnx/site run buttons:a11y    # Run Axe audit on button system styleguide
+pnpm --filter @reqnx/site run buttons:shots   # Capture button system contact sheet matrix
 
 # Redis for integration tests
 docker compose up -d
@@ -93,6 +99,7 @@ docker compose down
 - **Brand & Mascot Usage:** Master assets in `brand/` are strictly read-only. Derivatives are generated via `brand:build` and hashed in `brand/manifest.json`. In Astro components, reference typed descriptors from `apps/site/src/brand.ts`. Mascot placement is permitted ONLY in hero background/peeking, open source badge, final CTA companion, 404 recovery page, and footer cameo. Mascot is strictly barred from data tables, live console output logs, code recipes, and FAQ disclosures.
 - **Landing Page Copy Policy:** Zero marketing hype words ("blazing fast", "revolutionary", "zero-overhead", "unrivaled"). Tone is technical, calm, and honest. All factual claims must be recorded in `docs/site/claims.md` with verifiable commands or code paths. Feature availability gating must query `apps/site/src/features.ts` (with valid `evidencePath`).
 - **404 Routing & Recovery:** Handled via `apps/site/src/pages/404.astro` (`disable404Route: true` in Starlight config) emitting a single static `dist/404.html` with client-side fuzzy path recovery matching against known routes.
+- **Button System:** Single unified system across Astro and Preact (`apps/site/src/components/common/Button.*`). Never write raw `<button>` or ad-hoc button classes in page components. All button CSS resides in `buttons.css` (`@layer components`). Follow semantic rules: links navigate (`<a>`), buttons act (`<button type="button">`). Exactly one primary button per region (Option A: top edge highlight `inset 0 1px 0 rgba(255, 255, 255, 0.22)`). Minimum touch targets $\ge 44 \times 44\text{ px}$ on coarse pointers. Focus indicators must use two-tone outline with 2px offset. Generic links styled via `a:not(.btn)` to prevent button contrast clobbering (ADR-0019).
 - **Accessibility:** All pages must pass Axe audits with 0 serious or critical violations across both dark and light modes. Interactive scroll areas (`overflow-x: auto`) must declare `tabindex="0" role="region" aria-label="..."`. Button text and link contrast must satisfy WCAG AA ($\ge 4.5:1$).
 
 ## Definition of Done: New Algorithm
