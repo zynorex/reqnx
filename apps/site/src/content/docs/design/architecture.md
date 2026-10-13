@@ -77,7 +77,7 @@ sequenceDiagram
     Store-->>Lim: Decision
 
     Lim->>Hook: onDecision({ key, decision, cost, durationMs })
-    Note over Hook: Throwing hook is swallowed —<br/>never affects Decision
+    Note over Hook: Throwing hook is swallowed  - <br/>never affects Decision
 
     Lim-->>App: Decision
 

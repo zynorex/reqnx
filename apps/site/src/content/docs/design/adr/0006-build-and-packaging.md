@@ -8,8 +8,32 @@ order: 6
 
 <!-- @generated from docs/adr/0006-build-and-packaging.md - DO NOT EDIT DIRECTLY -->
 
-**Status:** Accepted  
-**Date:** 2026-10-01
+<div class="rx-adr-card rx-panel">
+  <div class="rx-adr-header">
+    <div class="rx-adr-id-group">
+      <span class="rx-adr-badge">ADR-0006</span>
+      <div class="rx-adr-title">ADR-0006: Build & Packaging</div>
+    </div>
+    <span class="rx-adr-status rx-adr-accepted">
+      <span class="rx-status-dot"></span>
+      Accepted
+    </span>
+  </div>
+  <div class="rx-adr-meta-grid">
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Status</span>
+      <span class="rx-meta-value">Accepted</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Decision Date</span>
+      <span class="rx-meta-value">2026-10</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Deciders</span>
+      <span class="rx-meta-value">REQNX Architecture Team</span>
+    </div>
+  </div>
+</div>
 
 ## Context
 
@@ -19,7 +43,7 @@ Packages must work in both ESM and CJS environments, produce correct `.d.ts` dec
 
 ### Bundler: tsdown
 
-- **tsdown** (Rolldown-based, Rust-powered) — stable as of 2026, ~10x faster than tsup.
+- **tsdown** (Rolldown-based, Rust-powered)  -  stable as of 2026, ~10x faster than tsup.
 - Produces dual ESM (`.js`) + CJS (`.cjs`) + declarations (`.d.ts`).
 - Falls back to **tsup** only if a blocking bug is encountered.
 
@@ -59,8 +83,8 @@ Per-package `tsconfig.json` extends the base with local `rootDir`/`outDir`.
 
 After every build, CI runs:
 
-1. `publint` — validates package.json exports, files, and conventions
-2. `@arethetypeswrong/cli` — validates type resolution across all conditions
+1. `publint`  -  validates package.json exports, files, and conventions
+2. `@arethetypeswrong/cli`  -  validates type resolution across all conditions
 
 ### `"type": "module"` everywhere
 

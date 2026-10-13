@@ -8,6 +8,7 @@
 @layer reset, tokens, base, layout, components, utilities;
 
 @import './buttons.css';
+@import './docs-theme.css';
 
 @layer tokens {
   :root {

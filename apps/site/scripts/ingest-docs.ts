@@ -115,7 +115,10 @@ function transformContent(rawContent: string, sourceFile: string, isPlanned: boo
     }
   });
 
-  // 2. Normalize GitHub alerts to Starlight Asides
+  // 2. Normalize em-dashes to spaced hyphens
+  content = content.replace(/—/g, ' - ');
+
+  // 3. Normalize GitHub alerts to Starlight Asides
   content = content.replace(/^>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*\n((?:>.*\n?)+)/gm, (_match, type, body) => {
     const asideType = type.toLowerCase() === 'warning' || type.toLowerCase() === 'important' ? 'caution' : type.toLowerCase();
     const cleanBody = body
@@ -126,7 +129,28 @@ function transformContent(rawContent: string, sourceFile: string, isPlanned: boo
     return `:::${asideType}\n${cleanBody}\n:::\n`;
   });
 
-  // 3. Prepend planned banner if applicable
+  // 4. Ensure opening code blocks have language identifier
+  let inCode = false;
+  content = content
+    .split('\n')
+    .map((line) => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('```')) {
+        if (!inCode) {
+          inCode = true;
+          const lang = trimmed.slice(3).trim();
+          if (!lang) {
+            return '```text';
+          }
+        } else {
+          inCode = false;
+        }
+      }
+      return line;
+    })
+    .join('\n');
+
+  // 5. Prepend planned banner if applicable
   if (isPlanned) {
     const banner = `:::caution[Planned Feature]\nThis specification describes planned functionality that is not yet implemented in \`@reqnx/core\`. See the [Status and Roadmap](/project/status-roadmap/) page for the implementation schedule.\n:::\n\n`;
     content = banner + content;
@@ -284,6 +308,52 @@ export function ingestDocs() {
     // Cap description at 160 characters
     if (description.length > 160) {
       description = description.slice(0, 157) + '...';
+    }
+
+    // Enhance ADRs with executive metadata card
+    if (item.sourceRelPath.startsWith('docs/adr/')) {
+      const statusMatch = body.match(/(?:\*\*Status:\*\*|## Status\s*\n\s*)([A-Za-z]+)/);
+      const adrStatus = statusMatch ? statusMatch[1].trim() : 'Accepted';
+      const dateMatch = body.match(/(?:\*\*Date:\*\*|Date:\s*)([0-9-]+)/);
+      const adrDate = dateMatch ? dateMatch[1].trim() : '2026-10';
+      const adrIdMatch = item.sourceRelPath.match(/(\d{4})/);
+      const adrId = adrIdMatch ? `ADR-${adrIdMatch[1]}` : 'ADR';
+
+      const adrCardHtml = `<div class="rx-adr-card rx-panel">
+  <div class="rx-adr-header">
+    <div class="rx-adr-id-group">
+      <span class="rx-adr-badge">${adrId}</span>
+      <div class="rx-adr-title">${title.replace(/"/g, '&quot;')}</div>
+    </div>
+    <span class="rx-adr-status rx-adr-${adrStatus.toLowerCase()}">
+      <span class="rx-status-dot"></span>
+      ${adrStatus}
+    </span>
+  </div>
+  <div class="rx-adr-meta-grid">
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Status</span>
+      <span class="rx-meta-value">${adrStatus}</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Decision Date</span>
+      <span class="rx-meta-value">${adrDate}</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Deciders</span>
+      <span class="rx-meta-value">REQNX Architecture Team</span>
+    </div>
+  </div>
+</div>\n\n`;
+
+      // Clean redundant raw status/date lines from body
+      body = body
+        .replace(/^\*\*Status:\*\*.*$/m, '')
+        .replace(/^\*\*Date:\*\*.*$/m, '')
+        .replace(/^## Status\s*\n\s*[A-Za-z]+\s*\n/m, '')
+        .trim();
+
+      body = `${adrCardHtml}${body}`;
     }
 
     const isPlanned = item.status === 'planned';

@@ -1,0 +1,172 @@
+---
+/**
+ * DecisionFields.astro
+ * Canonical Decision response shape inspector with type badges and millisecond precision notes.
+ */
+interface Props {
+  highlight?: 'allowed' | 'remaining' | 'resetAtMs' | 'retryAfterMs' | 'limit' | 'degraded';
+}
+
+const { highlight } = Astro.props;
+
+const fields = [
+  {
+    name: 'allowed',
+    type: 'boolean',
+    required: true,
+    description: 'True if the request was permitted within configured limits; false if rejected.',
+    note: 'Primary boolean gate for middleware and gateway routing.',
+  },
+  {
+    name: 'limit',
+    type: 'number',
+    required: true,
+    description: 'The maximum capacity or rate limit configured for the active window or bucket.',
+    note: 'Mapped to standard RateLimit-Limit HTTP header.',
+  },
+  {
+    name: 'remaining',
+    type: 'number',
+    required: true,
+    description: 'Remaining tokens or requests permitted within the current window.',
+    note: 'Guaranteed non-negative integer. 0 when rejected.',
+  },
+  {
+    name: 'resetAtMs',
+    type: 'number',
+    required: true,
+    description: 'Epoch timestamp in milliseconds indicating when the window or bucket refreshes.',
+    note: 'Millisecond resolution (unlike standard unix second timestamps).',
+  },
+  {
+    name: 'retryAfterMs',
+    type: 'number',
+    required: true,
+    description: 'Minimum duration in milliseconds the client must wait before retrying.',
+    note: '0 when allowed is true. Useful for Retry-After HTTP headers.',
+  },
+  {
+    name: 'degraded',
+    type: 'boolean',
+    required: false,
+    description: 'True only when a store error occurred and a fallback decision policy was triggered.',
+    note: 'Indicates the decision was synthetic (e.g. fail-open or fail-closed).',
+  },
+];
+---
+
+<div class="rx-decision-table-wrap rx-breakout">
+  <table class="rx-decision-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Operational Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        fields.map((field) => {
+          const isHighlighted = highlight === field.name;
+          return (
+            <tr class={isHighlighted ? 'rx-row-highlight' : ''}>
+              <td>
+                <span class="rx-field-name">{field.name}</span>
+                {field.required && <span class="rx-req-badge">required</span>}
+              </td>
+              <td>
+                <span class="rx-type-badge">{field.type}</span>
+              </td>
+              <td class="rx-desc-cell">{field.description}</td>
+              <td class="rx-note-cell">{field.note}</td>
+            </tr>
+          );
+        })
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .rx-decision-table-wrap {
+    margin: 1.5rem 0 2rem 0;
+    overflow-x: auto;
+  }
+
+  .rx-decision-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: var(--rx-radius-md);
+    background: var(--rx-surface-2);
+    font-size: 0.875rem;
+    overflow: hidden;
+  }
+
+  th {
+    background: var(--rx-surface-3);
+    color: var(--rx-text-1);
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+    text-align: left;
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    color: var(--rx-text-2);
+    vertical-align: top;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .rx-row-highlight td {
+    background: var(--rx-surface-4);
+  }
+
+  .rx-field-name {
+    font-family: var(--rx-font-mono);
+    font-weight: 600;
+    color: var(--rx-text-1);
+    font-size: 0.8125rem;
+    display: block;
+  }
+
+  .rx-req-badge {
+    font-family: var(--rx-font-mono);
+    font-size: 0.625rem;
+    color: var(--rx-accent-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .rx-type-badge {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    color: var(--rx-accent-indigo);
+    background: var(--sl-color-accent-low);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--rx-radius-xs);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    display: inline-block;
+  }
+
+  .rx-desc-cell {
+    line-height: 1.5;
+  }
+
+  .rx-note-cell {
+    font-size: 0.8125rem;
+    color: var(--rx-text-3);
+    line-height: 1.5;
+  }
+</style>

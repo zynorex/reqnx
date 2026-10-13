@@ -8,8 +8,32 @@ order: 8
 
 <!-- @generated from docs/adr/0008-composite-limiting.md - DO NOT EDIT DIRECTLY -->
 
-**Status:** Proposed (implementation Day 8)  
-**Date:** 2026-10-01
+<div class="rx-adr-card rx-panel">
+  <div class="rx-adr-header">
+    <div class="rx-adr-id-group">
+      <span class="rx-adr-badge">ADR-0008</span>
+      <div class="rx-adr-title">ADR-0008: Composite Limiting</div>
+    </div>
+    <span class="rx-adr-status rx-adr-accepted">
+      <span class="rx-status-dot"></span>
+      Accepted
+    </span>
+  </div>
+  <div class="rx-adr-meta-grid">
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Status</span>
+      <span class="rx-meta-value">Accepted</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Decision Date</span>
+      <span class="rx-meta-value">2026-10</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Deciders</span>
+      <span class="rx-meta-value">REQNX Architecture Team</span>
+    </div>
+  </div>
+</div>
 
 ## Context
 
@@ -49,7 +73,7 @@ Between peek and consume, another request could have consumed tokens, causing a 
 
 If child limiters use different algorithm IDs, their Redis keys will naturally land on different shards:
 
-```
+```text
 reqnx:api:fixed-window:user-123    → shard A
 reqnx:api:token-bucket:user-123   → shard B
 ```

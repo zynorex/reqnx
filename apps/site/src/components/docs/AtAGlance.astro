@@ -1,0 +1,128 @@
+---
+/**
+ * AtAGlance.astro
+ * High-density algorithmic traits summary matrix.
+ * Placed at the top of algorithm specification pages.
+ */
+interface Props {
+  algorithm?: string;
+  memory?: string;
+  time?: string;
+  burst?: string;
+  boundary?: string;
+  storage?: string;
+}
+
+const {
+  algorithm = 'Algorithm',
+  memory = 'O(1) per key',
+  time = 'O(1) amortized',
+  burst = 'Configurable',
+  boundary = 'Strict window',
+  storage = 'Memory / Redis',
+} = Astro.props;
+---
+
+<div class="rx-at-a-glance rx-panel">
+  <div class="rx-at-a-glance-header">
+    <div class="rx-eyebrow">
+      <span class="rx-dot"></span>
+      <span>At a Glance</span>
+    </div>
+    <span class="rx-algo-badge">{algorithm}</span>
+  </div>
+
+  <div class="rx-matrix-grid">
+    <div class="rx-metric-cell">
+      <span class="rx-metric-label">Memory Overhead</span>
+      <span class="rx-metric-val">{memory}</span>
+    </div>
+
+    <div class="rx-metric-cell">
+      <span class="rx-metric-label">Time Complexity</span>
+      <span class="rx-metric-val">{time}</span>
+    </div>
+
+    <div class="rx-metric-cell">
+      <span class="rx-metric-label">Burst Tolerance</span>
+      <span class="rx-metric-val">{burst}</span>
+    </div>
+
+    <div class="rx-metric-cell">
+      <span class="rx-metric-label">Window Behavior</span>
+      <span class="rx-metric-val">{boundary}</span>
+    </div>
+
+    <div class="rx-metric-cell">
+      <span class="rx-metric-label">State Model</span>
+      <span class="rx-metric-val">{storage}</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .rx-at-a-glance {
+    margin: 1.5rem 0 2rem 0;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: var(--rx-radius-md);
+    background: var(--rx-surface-2);
+  }
+
+  .rx-at-a-glance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+  }
+
+  .rx-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--rx-accent-cyan);
+    display: inline-block;
+  }
+
+  .rx-algo-badge {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--rx-text-1);
+    background: var(--rx-surface-3);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--rx-radius-xs);
+    border: 1px solid var(--sl-color-hairline);
+  }
+
+  .rx-matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .rx-metric-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .rx-metric-label {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--rx-text-3);
+  }
+
+  .rx-metric-val {
+    font-family: var(--rx-font-mono);
+    font-size: 0.875rem;
+    color: var(--rx-text-1);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

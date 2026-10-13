@@ -8,8 +8,32 @@ order: 2
 
 <!-- @generated from docs/adr/0002-algorithm-contract-and-atomicity.md - DO NOT EDIT DIRECTLY -->
 
-**Status:** Accepted  
-**Date:** 2026-10-01
+<div class="rx-adr-card rx-panel">
+  <div class="rx-adr-header">
+    <div class="rx-adr-id-group">
+      <span class="rx-adr-badge">ADR-0002</span>
+      <div class="rx-adr-title">ADR-0002: Algorithm Contract & Atomicity Model</div>
+    </div>
+    <span class="rx-adr-status rx-adr-accepted">
+      <span class="rx-status-dot"></span>
+      Accepted
+    </span>
+  </div>
+  <div class="rx-adr-meta-grid">
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Status</span>
+      <span class="rx-meta-value">Accepted</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Decision Date</span>
+      <span class="rx-meta-value">2026-10</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Deciders</span>
+      <span class="rx-meta-value">REQNX Architecture Team</span>
+    </div>
+  </div>
+</div>
 
 ## Context
 
@@ -46,7 +70,7 @@ interface Algorithm<Config, State> {
 The `Store.consume()` method takes the full `Algorithm` object and executes the check-and-update atomically:
 
 - **MemoryStore**: Calls `algorithm.step()` synchronously. Single-threaded Node.js guarantees no interleaving as long as there's no `await` between read and write.
-- **RedisStore**: Runs an equivalent Lua script via `EVALSHA`. The algorithm's TS `step()` is never called — the Lua port is.
+- **RedisStore**: Runs an equivalent Lua script via `EVALSHA`. The algorithm's TS `step()` is never called  -  the Lua port is.
 
 ### State versioning
 
@@ -56,7 +80,7 @@ The `Store.consume()` method takes the full `Algorithm` object and executes the 
 
 - Algorithms are trivially testable (pure functions, no mocking needed).
 - New algorithms are easy to add: implement the interface, write a Lua port, add conformance tests.
-- `Store` is not a generic adapter — it's an algorithm executor. This prevents the "leaky abstraction" of trying to make atomic rate limiting work over a key-value API.
+- `Store` is not a generic adapter  -  it's an algorithm executor. This prevents the "leaky abstraction" of trying to make atomic rate limiting work over a key-value API.
 
 ## Alternatives Considered
 

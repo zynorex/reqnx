@@ -8,16 +8,40 @@ order: 5
 
 <!-- @generated from docs/adr/0005-public-api-result-shape-and-headers.md - DO NOT EDIT DIRECTLY -->
 
-**Status:** Accepted  
-**Date:** 2026-10-01
+<div class="rx-adr-card rx-panel">
+  <div class="rx-adr-header">
+    <div class="rx-adr-id-group">
+      <span class="rx-adr-badge">ADR-0005</span>
+      <div class="rx-adr-title">ADR-0005: Public API, Result Shape & Headers</div>
+    </div>
+    <span class="rx-adr-status rx-adr-accepted">
+      <span class="rx-status-dot"></span>
+      Accepted
+    </span>
+  </div>
+  <div class="rx-adr-meta-grid">
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Status</span>
+      <span class="rx-meta-value">Accepted</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Decision Date</span>
+      <span class="rx-meta-value">2026-10</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Deciders</span>
+      <span class="rx-meta-value">REQNX Architecture Team</span>
+    </div>
+  </div>
+</div>
 
 ## Context
 
 Rate-limit responses need standard HTTP headers. There are three competing conventions:
 
-1. **RFC 9110 `Retry-After`** — well-established standard for 429 responses.
-2. **IETF draft-ietf-httpapi-ratelimit-headers-11** (active Internet-Draft, May 2026) — defines `RateLimit` and `RateLimit-Policy` structured header fields.
-3. **Legacy `X-RateLimit-*`** — de-facto convention used by GitHub, Twitter, etc.
+1. **RFC 9110 `Retry-After`**  -  well-established standard for 429 responses.
+2. **IETF draft-ietf-httpapi-ratelimit-headers-11** (active Internet-Draft, May 2026)  -  defines `RateLimit` and `RateLimit-Policy` structured header fields.
+3. **Legacy `X-RateLimit-*`**  -  de-facto convention used by GitHub, Twitter, etc.
 
 ## Decision
 
@@ -71,7 +95,7 @@ All fields are present on every decision (both allowed and denied). Per-algorith
 
 ### Pure function in core
 
-`decisionToHeaders()` is a pure, framework-free function in `@reqnx/core`. Express and Fastify adapters both call it — no duplication.
+`decisionToHeaders()` is a pure, framework-free function in `@reqnx/core`. Express and Fastify adapters both call it  -  no duplication.
 
 ## Consequences
 

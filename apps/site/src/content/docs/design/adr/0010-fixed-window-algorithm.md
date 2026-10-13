@@ -8,9 +8,32 @@ order: 10
 
 <!-- @generated from docs/adr/0010-fixed-window-algorithm.md - DO NOT EDIT DIRECTLY -->
 
-## Status
-
-Accepted
+<div class="rx-adr-card rx-panel">
+  <div class="rx-adr-header">
+    <div class="rx-adr-id-group">
+      <span class="rx-adr-badge">ADR-0010</span>
+      <div class="rx-adr-title">ADR-0010: Fixed Window Counter Algorithm</div>
+    </div>
+    <span class="rx-adr-status rx-adr-accepted">
+      <span class="rx-status-dot"></span>
+      Accepted
+    </span>
+  </div>
+  <div class="rx-adr-meta-grid">
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Status</span>
+      <span class="rx-meta-value">Accepted</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Decision Date</span>
+      <span class="rx-meta-value">2026-10</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Deciders</span>
+      <span class="rx-meta-value">REQNX Architecture Team</span>
+    </div>
+  </div>
+</div>
 
 ## Context
 

@@ -8,8 +8,32 @@ order: 7
 
 <!-- @generated from docs/adr/0007-testing-strategy.md - DO NOT EDIT DIRECTLY -->
 
-**Status:** Accepted  
-**Date:** 2026-10-01
+<div class="rx-adr-card rx-panel">
+  <div class="rx-adr-header">
+    <div class="rx-adr-id-group">
+      <span class="rx-adr-badge">ADR-0007</span>
+      <div class="rx-adr-title">ADR-0007: Testing Strategy</div>
+    </div>
+    <span class="rx-adr-status rx-adr-accepted">
+      <span class="rx-status-dot"></span>
+      Accepted
+    </span>
+  </div>
+  <div class="rx-adr-meta-grid">
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Status</span>
+      <span class="rx-meta-value">Accepted</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Decision Date</span>
+      <span class="rx-meta-value">2026-10</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Deciders</span>
+      <span class="rx-meta-value">REQNX Architecture Team</span>
+    </div>
+  </div>
+</div>
 
 ## Context
 
@@ -19,7 +43,7 @@ REQNX has algorithms implemented twice (TS and Lua) and stores with different at
 
 ### Test framework: Vitest
 
-Vitest in **projects mode** — one project per package. `v8` coverage provider.
+Vitest in **projects mode**  -  one project per package. `v8` coverage provider.
 
 ### Test categories
 
@@ -34,7 +58,7 @@ Vitest in **projects mode** — one project per package. `v8` coverage provider.
 
 Located in `@reqnx/testkit`. For each algorithm:
 
-1. Define a set of `ConformanceCase<Config>` — ordered `(atMs, cost)` sequences with expected `Decision` at each step.
+1. Define a set of `ConformanceCase<Config>`  -  ordered `(atMs, cost)` sequences with expected `Decision` at each step.
 2. `runConformanceSuite()` replays each case against:
    - **TS executor**: `MemoryStore` with `FakeClock` set to each step's `atMs`.
    - **Lua executor**: `RedisStore` with `nowMs` override in the Lua script.
@@ -44,7 +68,7 @@ This catches drift between TS and Lua implementations.
 
 ### FakeClock
 
-`FakeClock` implements the `Clock` interface with manually controlled time. Tests advance time explicitly — no wall-clock dependency, no flaky timeouts.
+`FakeClock` implements the `Clock` interface with manually controlled time. Tests advance time explicitly  -  no wall-clock dependency, no flaky timeouts.
 
 ### Property-based tests (fast-check)
 

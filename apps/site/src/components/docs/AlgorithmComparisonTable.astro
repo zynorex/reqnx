@@ -1,0 +1,190 @@
+---
+/**
+ * AlgorithmComparisonTable.astro
+ * High-density responsive algorithm comparison matrix with dual-coded StatusChips.
+ */
+import StatusChip from '../common/StatusChip.astro';
+
+const algorithms = [
+  {
+    name: 'Fixed Window',
+    link: '/algorithms/fixed-window/',
+    status: 'available' as const,
+    time: 'O(1)',
+    space: 'O(1) (~270 B)',
+    burst: 'Up to 2x at boundary',
+    bestFor: 'Highest throughput, standard API tiers',
+  },
+  {
+    name: 'Token Bucket',
+    link: '/algorithms/token-bucket/',
+    status: 'available' as const,
+    time: 'O(1)',
+    space: 'O(1) (~320 B)',
+    burst: 'Controlled burst to capacity',
+    bestFor: 'APIs with natural spikiness, bucket burst',
+  },
+  {
+    name: 'Sliding Window Counter',
+    link: null,
+    status: 'planned' as const,
+    time: 'O(1)',
+    space: 'O(1) (~350 B)',
+    burst: 'Smoothed approximation',
+    bestFor: 'Balanced production workloads without boundary jumps',
+  },
+  {
+    name: 'Sliding Window Log',
+    link: null,
+    status: 'planned' as const,
+    time: 'O(n)',
+    space: 'O(n) (scales with requests)',
+    burst: 'Strict zero boundary burst',
+    bestFor: 'High-security endpoints, mathematically exact windows',
+  },
+  {
+    name: 'Leaky Bucket',
+    link: null,
+    status: 'planned' as const,
+    time: 'O(1)',
+    space: 'O(1) (~320 B)',
+    burst: 'Zero burst (fixed drain rate)',
+    bestFor: 'Protecting rate-sensitive third-party downstreams',
+  },
+];
+---
+
+<div class="rx-algo-table-wrap rx-breakout">
+  <table class="rx-algo-table">
+    <thead>
+      <tr>
+        <th>Algorithm</th>
+        <th>Status</th>
+        <th>Time</th>
+        <th>Space / Key</th>
+        <th>Burst Tolerance</th>
+        <th>Best For</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        algorithms.map((algo) => (
+          <tr>
+            <td class="rx-algo-name-cell">
+              {algo.link ? (
+                <a class="rx-algo-link" href={algo.link}>
+                  {algo.name}
+                </a>
+              ) : (
+                <span class="rx-algo-plain-name">{algo.name}</span>
+              )}
+            </td>
+            <td>
+              <StatusChip status={algo.status} />
+            </td>
+            <td>
+              <code class="rx-complexity-code">{algo.time}</code>
+            </td>
+            <td>
+              <span class="rx-space-text">{algo.space}</span>
+            </td>
+            <td>
+              <span class="rx-burst-text">{algo.burst}</span>
+            </td>
+            <td class="rx-best-for-text">{algo.bestFor}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .rx-algo-table-wrap {
+    margin: 1.75rem 0 2.25rem 0;
+    overflow-x: auto;
+    border-radius: var(--rx-radius-md);
+    border: 1px solid var(--sl-color-hairline);
+    background: var(--rx-surface-2);
+  }
+
+  .rx-algo-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+    margin: 0 !important;
+    border: none !important;
+  }
+
+  th {
+    background: var(--rx-surface-3);
+    color: var(--rx-text-1);
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    color: var(--rx-text-2);
+    vertical-align: middle;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background-color: var(--rx-surface-4);
+  }
+
+  .rx-algo-name-cell {
+    font-family: var(--rx-font-mono);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .rx-algo-link {
+    color: var(--rx-accent-cyan) !important;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .rx-algo-link:hover {
+    text-decoration: underline;
+  }
+
+  .rx-algo-plain-name {
+    color: var(--rx-text-1);
+  }
+
+  .rx-complexity-code {
+    font-family: var(--rx-font-mono);
+    font-size: 0.8125rem;
+    background: var(--rx-surface-3);
+    padding: 0.15rem 0.4rem;
+    border-radius: var(--rx-radius-xs);
+    border: 1px solid var(--sl-color-hairline);
+    color: var(--rx-text-1);
+  }
+
+  .rx-space-text,
+  .rx-burst-text {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+
+  .rx-best-for-text {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--rx-text-3);
+  }
+</style>

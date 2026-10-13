@@ -36,7 +36,7 @@ For **testing**, scripts accept an optional explicit `nowMs` argument. When prov
 
 ### Key schema
 
-```
+```text
 reqnx:{prefix}:{algorithmId}:{identity}
 ```
 

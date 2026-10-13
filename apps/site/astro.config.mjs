@@ -65,16 +65,41 @@ export default defineConfig({
         },
       ],
       sidebar: [
-        { label: 'Home', link: '/' },
-        { label: 'Getting Started', link: '/getting-started/' },
+        {
+          label: 'Start',
+          items: [
+            { label: 'Overview', link: '/' },
+            { label: 'Getting Started', link: '/getting-started/' },
+          ],
+        },
         {
           label: 'Algorithms',
           items: [
-            { label: 'Overview', link: '/algorithms/' },
+            { label: 'Overview & Comparison', link: '/algorithms/' },
             { label: 'Fixed Window', link: '/algorithms/fixed-window/' },
+            { label: 'Fixed Window (Redis Port)', link: '/algorithms/fixed-window-redis-port/' },
+            { label: 'Token Bucket', link: '/algorithms/token-bucket/' },
+            { label: 'Token Bucket (Redis Port)', link: '/algorithms/token-bucket-redis-port/' },
           ],
         },
-        { label: 'Playground', link: '/playground/' },
+        {
+          label: 'Design & Architecture',
+          items: [
+            { label: 'System Architecture', link: '/design/architecture/' },
+            { label: 'Baseline Benchmarks', link: '/design/benchmarks/day-04/' },
+            {
+              label: 'Architecture Decision Records (ADRs)',
+              collapsed: true,
+              autogenerate: { directory: 'design/adr' },
+            },
+          ],
+        },
+        {
+          label: 'Playground',
+          items: [
+            { label: 'Interactive Simulator', link: '/playground/' },
+          ],
+        },
       ],
       customCss: ['./src/styles/global.css'],
     }),

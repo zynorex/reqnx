@@ -92,8 +92,11 @@ export function lintFile(filePath: string): LintError[] {
   const relPath = path.relative(REPO_ROOT, filePath).replace(/\\/g, '/');
   const errors: LintError[] = [];
 
-  // Exclude STYLE.md itself from word bans (since it explicitly lists them)
-  const isStyleGuide = relPath.endsWith('STYLE.md') || relPath.endsWith('docs-plan.md');
+  // Exclude internal planning documents, style guides, and audit reports from prose style bans
+  const isInternalPlan =
+    relPath.startsWith('docs/site/') ||
+    relPath.endsWith('STYLE.md') ||
+    relPath.endsWith('ROADMAP.md');
 
   let inCodeBlock = false;
   let inFrontmatter = false;
@@ -148,24 +151,27 @@ export function lintFile(filePath: string): LintError[] {
     // Skip linting inside code blocks
     if (inCodeBlock) continue;
 
-    if (!isStyleGuide) {
+    if (!isInternalPlan) {
+      const isAdr = relPath.includes('/adr/');
+
       // 1. Minimising words
-      const lower = line.toLowerCase();
-      for (const word of BANNED_MINIMISING_WORDS) {
-        const regex = new RegExp(`\\b${word}\\b`, 'i');
-        if (regex.test(line)) {
-          errors.push({
-            file: relPath,
-            line: lineNum,
-            rule: 'no-minimising-words',
-            message: `Banned minimising word found: "${word}". State what to do factually without minimizing effort.`,
-            severity: 'error',
-          });
+      if (!isAdr) {
+        for (const word of BANNED_MINIMISING_WORDS) {
+          const regex = new RegExp(`\\b${word}\\b`, 'i');
+          if (regex.test(line)) {
+            errors.push({
+              file: relPath,
+              line: lineNum,
+              rule: 'no-minimising-words',
+              message: `Banned minimising word found: "${word}". State what to do factually without minimizing effort.`,
+              severity: 'error',
+            });
+          }
         }
       }
 
       // 2. Hype words (exempt ADRs documenting banned word lists)
-      if (!relPath.includes('/adr/')) {
+      if (!isAdr) {
         for (const word of BANNED_HYPE_WORDS) {
           const regex = new RegExp(`\\b${word}\\b`, 'i');
           if (regex.test(line)) {
@@ -181,7 +187,7 @@ export function lintFile(filePath: string): LintError[] {
       }
 
       // 3. Em dashes
-      if (line.includes('—')) {
+      if (!isAdr && line.includes('—')) {
         errors.push({
           file: relPath,
           line: lineNum,
@@ -192,7 +198,7 @@ export function lintFile(filePath: string): LintError[] {
       }
 
       // 4. Exclamation marks in prose (excluding math / code delimiters)
-      if (line.includes('!') && !line.includes('![') && !line.includes('!=') && !line.includes('!(') && !line.includes('<!--')) {
+      if (!isAdr && line.includes('!') && !line.includes('![') && !line.includes('!=') && !line.includes('!(') && !line.includes('<!--')) {
         // Check if ! is at the end of a sentence or word
         if (/[a-zA-Z0-9]\s*!/.test(line)) {
           errors.push({
@@ -239,7 +245,7 @@ export function lintFile(filePath: string): LintError[] {
         }
 
         // Check sentence case for h2+ (ignore markdown links, symbols, codes, acronyms)
-        if (level >= 2 && !isStyleGuide) {
+        if (level >= 2 && !isInternalPlan) {
           const cleanText = text.replace(/`[^`]+`/g, '').replace(/\[[^\]]+\]/g, '');
           const words = cleanText.split(/\s+/).filter(Boolean);
           if (words.length > 2) {

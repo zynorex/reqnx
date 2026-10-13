@@ -66,7 +66,7 @@ When `limiter.check()` executes, the returned `Decision` fields convey specific 
 
 Because fixed window boundaries are rigid, a burst of traffic centered at a window boundary can admit twice the configured limit across a very short interval:
 
-```
+```text
 Window 1 [00:00 -> 01:00)           Window 2 [01:00 -> 02:00)
 --------------------------|--------------------------
 ... [100 requests at 00:59.999] | [100 requests at 01:00.000] ...
