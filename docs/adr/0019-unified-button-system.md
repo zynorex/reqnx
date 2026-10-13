@@ -28,7 +28,7 @@ Infrastructure engineers expect clean, consistent, accessible, and high-performa
 3. **Standardized Geometries & Coarse Touch Targets**:
    - Three standard heights:
      - `sm`: 32px height, 12px padding, 13px font size (`0.8125rem`).
-     - `md`: 40px height, 16px padding, 14px font size (`0.875rem`) — default.
+     - `md`: 40px height, 16px padding, 14px font size (`0.875rem`) (default).
      - `lg`: 48px height, 20px padding, 16px font size (`1rem`).
    - Single border radius: `var(--rx-radius-sm)` (6px) across all variants.
    - Touch targets for coarse pointer devices (touchscreens) automatically expand to $\ge 44 \times 44\text{ px}$ via an invisible `::after` pseudo-element (`@media (pointer: coarse)`), ensuring WCAG 2.5.5 compliance without bloating visual layout.
