@@ -30,6 +30,13 @@ All button styling is driven by custom properties declared in `apps/site/src/sty
 | `md` | **40px** | `16px` (`1rem`) | `14px` (`0.875rem`) | `18px` | Default controls, playground buttons, form actions |
 | `lg` | **48px** | `20px` (`1.25rem`) | `16px` (`1rem`) | `20px` | Hero CTAs, final call-to-action bands |
 
+### Shape Modifiers
+
+| Shape | Attribute | Radius | Description & Usage |
+| :--- | :--- | :--- | :--- |
+| `default` | *none* | `var(--rx-btn-radius)` (`6px`) | Standard rectangular rounded geometry used across docs, playground, and forms. |
+| `pill` | `data-shape="pill"` | `var(--rx-radius-pill)` (`9999px`) | Flagship full-pill curvature used on the Landing v3 for primary CTAs, chips, and tabs. |
+
 ### Coarse Touch Target Guarantee
 
 On mobile and touch devices (`@media (pointer: coarse)`), buttons ensure a minimum interactive target of $\ge 44 \times 44\text{ px}$ via an expanded pseudo-element:

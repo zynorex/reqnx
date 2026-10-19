@@ -34,7 +34,7 @@ const VIEWPORTS = [
 
 async function main() {
   const browser = await chromium.launch({ headless: true });
-  const captureData: any = {
+  const captureData: Record<string, unknown> = {
     timestamp: new Date().toISOString(),
     status: 'success',
     measurements: {},
@@ -153,8 +153,8 @@ async function main() {
 
           captureData.measurements = params;
         }
-      } catch (err: any) {
-        console.warn(`[!] Error loading ${vp.width}x${vp.height}:`, err.message);
+      } catch (err: unknown) {
+        console.warn(`[!] Error loading ${vp.width}x${vp.height}:`, err instanceof Error ? err.message : String(err));
         captureData.status = 'error';
         break;
       } finally {

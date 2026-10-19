@@ -154,6 +154,11 @@
     width: 100%;
   }
 
+  /* ─── Shape Modifiers ─────────────────────────────────────────────────── */
+  .btn[data-shape='pill'] {
+    border-radius: var(--rx-radius-pill, 9999px);
+  }
+
   /* ─── Semantic Variants ─────────────────────────────────────────────────── */
 
   /* 1. Primary (One per region, Option A: Inner Highlight) */

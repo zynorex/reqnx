@@ -13,7 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { chromium, type Browser } from 'playwright';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -101,7 +101,7 @@ const VIEWPORTS: ShotSpec[] = [
   { name: 'landing-before-390-light', width: 390, height: 844, theme: 'light' },
 ];
 
-async function measureMetrics(browser: any, width: number, height: number) {
+async function measureMetrics(browser: Browser, width: number, height: number) {
   const context = await browser.newContext({
     viewport: { width, height },
     colorScheme: 'dark',

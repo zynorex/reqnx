@@ -14,10 +14,12 @@ export type ButtonVariant =
   | 'on-accent-secondary';
 
 export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonShape = 'default' | 'pill';
 
 export interface BaseButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  shape?: ButtonShape;
   href?: string;
   target?: string;
   rel?: string;
@@ -45,6 +47,7 @@ export interface ResolvedButtonContract {
     class: string;
     'data-variant': ButtonVariant;
     'data-size': ButtonSize;
+    'data-shape'?: ButtonShape;
     'data-loading'?: 'true';
     'data-block'?: 'true';
     'data-icon-only'?: 'true';
@@ -91,6 +94,7 @@ export function resolveButtonContract(props: BaseButtonProps): ResolvedButtonCon
   const {
     variant = 'secondary',
     size = 'md',
+    shape = 'default',
     href,
     target: explicitTarget,
     rel: explicitRel,
@@ -136,6 +140,10 @@ export function resolveButtonContract(props: BaseButtonProps): ResolvedButtonCon
     'data-variant': variant,
     'data-size': size,
   };
+
+  if (shape && shape !== 'default') {
+    attrs['data-shape'] = shape;
+  }
 
   if (loading) {
     attrs['data-loading'] = 'true';
