@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-option="option-c">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REQNX Landing v3 Hi-Fi Mocks</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+  <!-- Workbench Controls -->
+  <div class="workbench-toolbar">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <strong>REQNX Landing v3 Mocks</strong>
+      <span style="opacity:0.6;">Gate 1 Review</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <label>
+        Art Direction:
+        <select id="option-select">
+          <option value="option-c" selected>Option C: Quiet Canvas (Approved)</option>
+          <option value="option-b">Option B: Dark Stage</option>
+          <option value="option-a">Option A: Voltage Canvas</option>
+        </select>
+      </label>
+
+      <label>
+        Theme:
+        <select id="theme-select">
+          <option value="dark" selected>Dark Mode</option>
+          <option value="light">Light Mode</option>
+        </select>
+      </label>
+
+      <label>
+        Viewport:
+        <select id="viewport-select">
+          <option value="1440" selected>1440px Desktop</option>
+          <option value="390">390px Mobile</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="viewport-frame" id="frame" data-vp="1440">
+
+    <!-- S0: Header -->
+    <header class="mock-header">
+      <div class="mock-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>REQNX</span>
+      </div>
+      <ul class="mock-nav">
+        <li>Docs</li>
+        <li>Algorithms</li>
+        <li>Playground</li>
+        <li>Status</li>
+        <li>GitHub</li>
+      </ul>
+      <div style="display:flex; align-items:center; gap:16px;">
+        <a href="#playground" class="mock-btn-link">Playground</a>
+        <a href="#getting-started" class="mock-btn-pill">Get started</a>
+      </div>
+    </header>
+
+    <!-- S1: Hero -->
+    <section class="mock-hero">
+      <div class="status-pill">
+        <span style="color:var(--accent-cyan); font-weight:700;">PRE-RELEASE</span>
+        <span style="opacity:0.4;">|</span>
+        <span>v0.x What works today &rarr;</span>
+      </div>
+
+      <h1 class="hero-h1">Rate limiting you can reason about.</h1>
+      <p class="hero-subhead">
+        Zero runtime dependencies. Pure step functions and atomic stores so your tests and callers always agree.
+      </p>
+
+      <div class="hero-cta-row">
+        <a href="#getting-started" class="mock-btn-pill">Get started</a>
+        <a href="#playground" class="mock-btn-link">Open the playground &rarr;</a>
+      </div>
+
+      <div>
+        <div class="hero-command-chip">
+          <code>$ npm install @reqnx/core</code>
+          <button style="background:none; border:none; color:inherit; cursor:pointer; font-family:inherit; font-size:11px; opacity:0.8;">Copy</button>
+        </div>
+      </div>
+
+      <!-- Live Console Stage (Straddles hero bottom edge) -->
+      <div class="console-stage-frame">
+        <div class="console-header">
+          <span>Live Console · VirtualClock (Simulated Time)</span>
+          <span style="color:#10b981;">● Online</span>
+        </div>
+        <div class="console-body">
+          <div>
+            <div style="font-family:var(--rx-font-mono); font-size:12px; color:var(--text-secondary); margin-bottom:12px;">
+              // Real @reqnx/core running in your browser<br>
+              const limiter = createLimiter({ store, algorithm });
+            </div>
+            <div style="display:flex; gap:8px; margin-bottom:16px;">
+              <button class="mock-btn-pill" style="height:32px; font-size:12px; padding:0 14px;">Trigger request</button>
+              <button class="mock-btn-pill" style="height:32px; font-size:12px; padding:0 14px; background:transparent; border:1px solid rgba(255,255,255,0.2); color:#fff;">Burst 10x</button>
+            </div>
+          </div>
+          <div class="console-readout">
+            <div>Decision: <strong>ALLOWED</strong> (200 OK)</div>
+            <div>Remaining: 9 / 10 tokens</div>
+            <div>Reset: in 920 ms</div>
+            <div>Atomic step: 0.12 ms</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S2: Platform Section -->
+    <section class="mock-section">
+      <span class="section-label">Architecture</span>
+      <h2 class="section-h2">One engine. Decoupled algorithms, clocks, and stores.</h2>
+      <p class="section-lede">
+        Your application code never touches rate limiting logic directly. A single check command executes a pure state transition against your chosen store.
+      </p>
+
+      <!-- Spec Grid (3x2 joined by hairlines) -->
+      <div class="spec-grid">
+        <div class="spec-cell">
+          <div class="spec-numeral">0</div>
+          <div class="spec-caption">Runtime dependencies in core library</div>
+          <span class="spec-source">Source: packages/core/package.json</span>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-numeral">2 / 5</div>
+          <div class="spec-caption">Algorithms verified and available today</div>
+          <span class="spec-source">Source: features.ts registry</span>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-numeral">19</div>
+          <div class="spec-caption">Architectural decision records committed</div>
+          <span class="spec-source">Source: docs/adr/*.md</span>
+        </div>
+        <div class="spec-cell">
+          <div style="font-family:var(--rx-font-mono); font-size:12px; color:var(--accent-cyan); margin-bottom:8px;">01 · TRANSITIONS</div>
+          <div style="font-weight:600; margin-bottom:6px;">Pure Step Functions</div>
+          <div class="spec-caption">State transitions take current state and time, returning new state without side effects.</div>
+        </div>
+        <div class="spec-cell">
+          <div style="font-family:var(--rx-font-mono); font-size:12px; color:var(--accent-cyan); margin-bottom:8px;">02 · TIME</div>
+          <div style="font-weight:600; margin-bottom:6px;">Injected Monotonic Clocks</div>
+          <div class="spec-caption">Time is a parameter. Unit tests simulate weeks of rate limit cycles without sleeping.</div>
+        </div>
+        <div class="spec-cell">
+          <div style="font-family:var(--rx-font-mono); font-size:12px; color:var(--accent-cyan); margin-bottom:8px;">03 · PERSISTENCE</div>
+          <div style="font-weight:600; margin-bottom:6px;">Atomic Store Contract</div>
+          <div class="spec-caption">Store updates happen inside isolated transaction boundaries, eliminating boundary races.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S3: Proof Band -->
+    <section class="proof-band">
+      <div style="max-width:800px; margin:0 auto 36px auto;">
+        <span class="section-label">Verified Evidence</span>
+        <h2 style="font-size:32px; font-weight:500; margin-bottom:12px;">Every claim links to the test or source file behind it.</h2>
+        <p style="color:var(--text-secondary); font-size:16px;">
+          No customer logos or marketing endorsements. Our proof is test suites, formal properties, and recorded benchmarks.
+        </p>
+      </div>
+
+      <div class="marquee-container">
+        <div class="marquee-track">
+          <div class="evidence-chip">✓ 0 runtime dependencies</div>
+          <div class="evidence-chip">✓ Fast-check model tests</div>
+          <div class="evidence-chip">✓ Integer ms arithmetic</div>
+          <div class="evidence-chip">✓ Atomic memory store</div>
+          <div class="evidence-chip">✓ ADR-0002 Atomicity</div>
+          <div class="evidence-chip">✓ Zero floating drift</div>
+          <div class="evidence-chip">✓ Standard headers</div>
+          <div class="evidence-chip">✓ Deterministic replay</div>
+          <!-- Repeated for smooth loop -->
+          <div class="evidence-chip">✓ 0 runtime dependencies</div>
+          <div class="evidence-chip">✓ Fast-check model tests</div>
+          <div class="evidence-chip">✓ Integer ms arithmetic</div>
+          <div class="evidence-chip">✓ Atomic memory store</div>
+        </div>
+      </div>
+
+      <!-- Verbatim ADR Quote -->
+      <div style="max-width:720px; margin:48px auto 0 auto; padding:32px; background:var(--surface-card); border:1px solid var(--surface-border); border-radius:var(--radius-md); text-align:left;">
+        <div style="font-family:var(--rx-font-mono); font-size:11px; color:var(--text-muted); margin-bottom:12px;">DECISION 0002 · ACCEPTED</div>
+        <blockquote style="font-size:20px; font-weight:500; line-height:1.4; margin-bottom:16px;">
+          "Every algorithm execution must transition state atomically with respect to concurrent checks on the same key."
+        </blockquote>
+        <div style="font-size:13px; color:var(--text-secondary);">
+          — Architectural Decision Record 0002: Algorithm Contract & Atomicity
+        </div>
+      </div>
+    </section>
+
+    <!-- S4: Contrast Section -->
+    <section class="mock-section">
+      <span class="section-label">Engineering Contrast</span>
+      <h2 class="section-h2">
+        What a read-modify-write limiter gets wrong. <br>
+        <span class="muted">(And what one atomic step does instead.)</span>
+      </h2>
+      <p class="section-lede">
+        Most hand-rolled limiters fetch quota from a database, compute a decision in application memory, and write the result back. Under concurrency, this allows double-spend bursts.
+      </p>
+
+      <div class="contrast-panels">
+        <div class="contrast-card unsafe">
+          <h3 style="color:#ef4444;">Read, Compute, Write (Unsafe)</h3>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:16px; font-size:14px; color:var(--text-secondary);">
+            <li><strong>01.</strong> Read and write are separate operations with a race window.</li>
+            <li><strong>02.</strong> System clock timestamps drift across nodes.</li>
+            <li><strong>03.</strong> Window edges permit up to 2x configured burst limit.</li>
+            <li><strong>04.</strong> Network timeouts leave quota in corrupt undefined states.</li>
+          </ul>
+        </div>
+
+        <div class="contrast-card atomic">
+          <h3 style="color:#10b981;">One Atomic Step (REQNX)</h3>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:16px; font-size:14px; color:var(--text-secondary);">
+            <li><strong>01.</strong> Transition evaluates entirely inside atomic store boundary.</li>
+            <li><strong>02.</strong> Monotonic integer timestamps injected by caller.</li>
+            <li><strong>03.</strong> Continuously replenished token buckets eliminate cliffs.</li>
+            <li><strong>04.</strong> Explicit failure policies define degrade behavior on error.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- The Race Interactive Stage -->
+      <div class="race-stage">
+        <h3 style="font-size:20px; font-weight:600; margin-bottom:8px;">Live Race: 1,000 Concurrent Requests</h3>
+        <p style="color:var(--text-secondary); font-size:14px; max-width:540px; margin:0 auto 24px auto;">
+          Simulating 1,000 requests against a configured limit of 100.
+        </p>
+
+        <div class="race-bars">
+          <div class="race-bar-col">
+            <div class="race-numeral red">1,000</div>
+            <div style="font-size:13px; color:var(--text-secondary);">Admitted of 100 limit</div>
+            <div style="font-family:var(--rx-font-mono); font-size:11px; color:#ef4444; margin-top:4px;">RMW Double Spend</div>
+          </div>
+          <div class="race-bar-col">
+            <div class="race-numeral green">100</div>
+            <div style="font-size:13px; color:var(--text-secondary);">Admitted of 100 limit</div>
+            <div style="font-family:var(--rx-font-mono); font-size:11px; color:#10b981; margin-top:4px;">REQNX Atomic Guarantee</div>
+          </div>
+        </div>
+
+        <button class="mock-btn-pill" id="run-race-btn">Send 1,000 at once</button>
+      </div>
+    </section>
+
+    <!-- S5: Tiers Section -->
+    <section class="mock-section" style="padding-bottom:140px;">
+      <span class="section-label">Algorithm Guarantees</span>
+      <h2 class="section-h2">
+        Choose the guarantee you need. <br>
+        <span class="muted">(Not the one that fits in memory.)</span>
+      </h2>
+      <p class="section-lede">
+        Different traffic profiles demand different mathematical guarantees. Swap algorithms with one config line.
+      </p>
+
+      <div class="algorithm-cards">
+        <div class="algo-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-family:var(--rx-font-mono); font-size:13px;">TOKEN BUCKET</strong>
+            <span class="algo-card-status">Available</span>
+          </div>
+          <div class="algo-card-spec">Exact Burst</div>
+          <p style="font-size:14px; color:var(--text-secondary); margin-bottom:16px;">
+            Smooth token replenishment with continuous fractional refill. Memory: 2 integers.
+          </p>
+          <a href="#token-bucket" class="mock-btn-link">View algorithm spec &rarr;</a>
+        </div>
+
+        <div class="algo-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-family:var(--rx-font-mono); font-size:13px;">FIXED WINDOW</strong>
+            <span class="algo-card-status">Available</span>
+          </div>
+          <div class="algo-card-spec">1 Counter</div>
+          <p style="font-size:14px; color:var(--text-secondary); margin-bottom:16px;">
+            Minimal memory footprint with strict window-boundary resets. Ideal for simple quotas.
+          </p>
+          <a href="#fixed-window" class="mock-btn-link">View algorithm spec &rarr;</a>
+        </div>
+
+        <div class="algo-card" style="opacity:0.75;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-family:var(--rx-font-mono); font-size:13px;">SLIDING LOG</strong>
+            <span class="algo-card-status" style="background:rgba(255,255,255,0.1); color:var(--text-secondary);">Planned</span>
+          </div>
+          <div class="algo-card-spec">Zero Cliff</div>
+          <p style="font-size:14px; color:var(--text-secondary); margin-bottom:16px;">
+            Exact rolling sliding window eliminates edge spikes at cost of higher storage.
+          </p>
+          <a href="#sliding-log" class="mock-btn-link" style="opacity:0.5;">In active roadmap &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const optionSelect = document.getElementById('option-select');
+    const themeSelect = document.getElementById('theme-select');
+    const viewportSelect = document.getElementById('viewport-select');
+    const frame = document.getElementById('frame');
+
+    optionSelect.addEventListener('change', (e) => {
+      document.documentElement.setAttribute('data-option', e.target.value);
+    });
+
+    themeSelect.addEventListener('change', (e) => {
+      document.documentElement.setAttribute('data-theme', e.target.value);
+    });
+
+    viewportSelect.addEventListener('change', (e) => {
+      frame.setAttribute('data-vp', e.target.value);
+    });
+
+    document.getElementById('run-race-btn')?.addEventListener('click', () => {
+      alert('Race simulation running: 1,000 concurrent requests evaluated through @reqnx/core.');
+    });
+  </script>
+</body>
+</html>

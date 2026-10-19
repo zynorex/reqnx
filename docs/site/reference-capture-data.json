@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-10-19T04:44:04.880Z",
+  "status": "success",
+  "measurements": {
+    "title": "Cloudflare: Build for the agent era",
+    "h1": {
+      "fontSize": "56px",
+      "fontWeight": "500",
+      "lineHeight": "55.44px",
+      "letterSpacing": "-1.4px",
+      "color": "rgb(255, 255, 255)"
+    },
+    "h2": {
+      "fontSize": "48px",
+      "fontWeight": "500",
+      "lineHeight": "48px",
+      "color": "rgb(38, 38, 38)"
+    },
+    "header": {
+      "height": "72px",
+      "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "body": {
+      "backgroundColor": "rgb(255, 255, 255)",
+      "color": "rgb(38, 38, 38)",
+      "fontFamily": "\"STK Bureau Sans\", sans-serif"
+    },
+    "fonts": [
+      "FT Kunst Grotesk (400)",
+      "FT Kunst Grotesk (500)",
+      "Apercu Mono Pro (400)",
+      "STK Bureau Sans (400)",
+      "STK Bureau Sans (500)"
+    ]
+  }
+}
