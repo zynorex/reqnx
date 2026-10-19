@@ -13,9 +13,12 @@ import StatusPill from '../../../../components/landing-v3/StatusPill.astro';
 import PillTabs from '../../../../components/landing-v3/PillTabs.astro';
 import StatCell from '../../../../components/landing-v3/StatCell.astro';
 import SpecGrid from '../../../../components/landing-v3/SpecGrid.astro';
+import HeroV3 from '../../../../components/landing-v3/HeroV3.astro';
+import ArchitectureStage from '../../../../components/landing-v3/ArchitectureStage.astro';
 import Button from '../../../../components/common/Button.astro';
 import { ThemeToggle } from '../../../../components/common/ThemeToggle';
 import '../../../../styles/global.css';
+import '../../../../styles/landing.css';
 
 export function getStaticPaths() {
   if (import.meta.env.PROD && !process.env.BUILD_DEV_STYLEGUIDE) {
@@ -56,14 +59,20 @@ const mockPillars = [
       <div class="styleguide-header__inner">
         <div>
           <h1 class="styleguide-title">Landing v3 Styleguide</h1>
-          <p class="styleguide-desc">Interactive workbench for Stage 2 primitives, tokens, and pill geometry.</p>
+          <p class="styleguide-desc">Interactive workbench for Stage 2 & 3: Hero, Architecture Stage, primitives, and tokens.</p>
         </div>
         <ThemeToggle client:load />
       </div>
     </header>
 
     <main class="styleguide-main">
-      <!-- 1. Tokens Matrix -->
+      <!-- Stage 3: Hero V3 -->
+      <HeroV3 />
+
+      <!-- Stage 3: Architecture Stage (Platform Section) -->
+      <ArchitectureStage />
+
+      <!-- Stage 2: Tokens Matrix -->
       <Section label="TOKENS" h2="Landing v3 Color & Palette Tokens">
         <div class="tokens-grid">
           <div class="token-card" style="background: var(--rx-canvas); border: 1px solid var(--rx-hairline);">
