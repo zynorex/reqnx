@@ -1,0 +1,685 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/TiersSection.astro
+//
+// Landing v3 Algorithm Guarantee Tiers (S5):
+// - Two-tone H2: Choose the guarantee you need. (Not the one that fits in memory.)
+// - PillTabs algorithm switcher (Token Bucket, Fixed Window, Sliding Log, Leaky Bucket)
+// - Rich guarantee cards with 4-trait architecture matrix
+// - Interactive Time Scrubber (Decision 6) linking time step to quota replenishment
+// - Direct links to source code and ADR specifications
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Section from './Section.astro';
+import PillTabs, { type PillTabItem } from './PillTabs.astro';
+import Button from '../common/Button.astro';
+import { algorithms } from '../../features';
+import { withBase } from '../../site.config';
+
+const tabs: PillTabItem[] = [
+  { id: 'token-bucket', label: 'Token Bucket' },
+  { id: 'fixed-window', label: 'Fixed Window' },
+  { id: 'sliding-window-log', label: 'Sliding Log (Planned)' },
+  { id: 'leaky-bucket', label: 'Leaky Bucket (Planned)' },
+];
+
+const algoCards = [
+  {
+    id: 'token-bucket',
+    name: 'Token Bucket',
+    badge: 'Available Today',
+    status: 'available',
+    summary: 'Tokens refill continuously at a steady rate. Allows controlled bursts up to bucket capacity.',
+    headlineTrait: 'Exact Burst Handling',
+    traits: {
+      memory: '~320 bytes (tokens + last refill timestamp)',
+      burst: 'Permitted up to bucket capacity (e.g. 10 tokens)',
+      boundary: 'Continuous integer replenishment; zero cliff edges',
+      accuracy: 'Exact continuous token balance with integer ms math',
+    },
+    codeSnippet: `// Pure transition contract (ADR-0002)
+const decision = tokenBucket.step(state, {
+  now: 1718000001500, // Injected monotonic timestamp
+  cost: 1,
+});
+// decision => { allowed: true, remaining: 7, resetMs: 250 }`,
+    evidencePath: 'packages/core/src/algorithms/token-bucket.ts',
+    adrHref: withBase('/design/adr/0014-token-bucket-algorithm/'),
+    adrLabel: 'ADR-0014: Token Bucket Algorithm',
+  },
+  {
+    id: 'fixed-window',
+    name: 'Fixed Window Counter',
+    badge: 'Available Today',
+    status: 'available',
+    summary: 'Divides time into non-overlapping aligned windows. Simplest state and highest throughput.',
+    headlineTrait: 'Lowest Memory Footprint',
+    traits: {
+      memory: '~270 bytes (single integer count + window start)',
+      burst: 'Full window quota admitted instantly at start of window',
+      boundary: 'Up to 2x limit can burst across window boundaries',
+      accuracy: 'Exact count per aligned epoch window',
+    },
+    codeSnippet: `// Pure transition contract (ADR-0002)
+const decision = fixedWindow.step(state, {
+  now: 1718000010000, // Aligned epoch window boundary
+  cost: 1,
+});
+// decision => { allowed: true, remaining: 4, resetMs: 10000 }`,
+    evidencePath: 'packages/core/src/algorithms/fixed-window.ts',
+    adrHref: withBase('/design/adr/0002-algorithm-contract-and-atomicity/'),
+    adrLabel: 'ADR-0002: Algorithm Contract & Atomicity',
+  },
+  {
+    id: 'sliding-window-log',
+    name: 'Sliding Window Log',
+    badge: 'Planned (Day 6)',
+    status: 'planned',
+    summary: 'Tracks every admitted request timestamp. Exact rolling count over any interval with zero boundary bursts.',
+    headlineTrait: 'Zero Boundary Edge Burst',
+    traits: {
+      memory: 'O(n) per admitted timestamp in active window',
+      burst: 'Strict rolling limit; zero boundary seam bursts',
+      boundary: 'Completely continuous sliding window evaluation',
+      accuracy: '100% exact rolling window count',
+    },
+    codeSnippet: `// Sliding window log state contract
+const decision = slidingLog.step(state, {
+  now: 1718000012340,
+  cost: 1,
+});
+// Rejects older timestamps and records exact call entry`,
+    evidencePath: 'docs/adr/0002-algorithm-contract-and-atomicity.md',
+    adrHref: withBase('/design/adr/0002-algorithm-contract-and-atomicity/'),
+    adrLabel: 'ADR-0002: Algorithm Contract & Atomicity',
+  },
+  {
+    id: 'leaky-bucket',
+    name: 'Leaky Bucket',
+    badge: 'Planned (Day 7)',
+    status: 'planned',
+    summary: 'Requests queue and leak at a constant drain rate. Strict output rate smoothing with zero burst permitted.',
+    headlineTrait: 'Constant Output Smoothing',
+    traits: {
+      memory: '~320 bytes (current water level + last leak timestamp)',
+      burst: 'Zero burst permitted (constant drain rate)',
+      boundary: 'Continuous linear drain queue',
+      accuracy: 'Exact output rate smoothing with integer ms math',
+    },
+    codeSnippet: `// Leaky bucket drain contract
+const decision = leakyBucket.step(state, {
+  now: 1718000015000,
+  cost: 1,
+});
+// Smooths traffic into constant-interval egress stream`,
+    evidencePath: 'docs/adr/0002-algorithm-contract-and-atomicity.md',
+    adrHref: withBase('/design/adr/0002-algorithm-contract-and-atomicity/'),
+    adrLabel: 'ADR-0002: Algorithm Contract & Atomicity',
+  },
+];
+---
+
+<Section
+  id="algorithms"
+  label="ALGORITHM GUARANTEES"
+  h2="Choose the guarantee you need."
+  h2Muted="(Not the one that fits in memory.)"
+  lede="Select the rate limiting algorithm tailored to your traffic profile and resource constraints."
+  align="left"
+  class="rx-tiers-section"
+  isBelowFold={true}
+>
+  <div class="rx-tiers-container">
+    <!-- Pill Tabs -->
+    <PillTabs tabs={tabs} defaultTabId="token-bucket" tabsId="tiers-pill-tabs" ariaLabel="Algorithm Guarantees" />
+
+    <!-- Tab Panels Container -->
+    <div class="rx-tiers-panels">
+      {
+        algoCards.map((card, idx) => {
+          const isDefault = idx === 0;
+          return (
+            <div
+              id={`panel-${card.id}`}
+              role="tabpanel"
+              aria-labelledby={`tab-${card.id}`}
+              class:list={['rx-tier-panel', { 'is-active': isDefault }]}
+              hidden={!isDefault}
+            >
+              <div class="rx-tier-card">
+                <!-- Left: Specification & Architecture Matrix -->
+                <div class="rx-tier-main">
+                  <div class="rx-tier-header">
+                    <div class="rx-tier-header-info">
+                      <div class="rx-tier-status-wrap">
+                        <span class:list={['rx-tier-badge', `rx-tier-badge--${card.status}`]}>
+                          {card.badge}
+                        </span>
+                        <span class="rx-tier-headline-trait">{card.headlineTrait}</span>
+                      </div>
+                      <h3 class="rx-tier-title">{card.name}</h3>
+                      <p class="rx-tier-summary">{card.summary}</p>
+                    </div>
+                  </div>
+
+                  <!-- 4-Trait Matrix Grid -->
+                  <div class="rx-traits-grid">
+                    <div class="rx-trait-item">
+                      <span class="rx-trait-label">Memory per Key</span>
+                      <strong class="rx-trait-val">{card.traits.memory}</strong>
+                    </div>
+                    <div class="rx-trait-item">
+                      <span class="rx-trait-label">Burst Behavior</span>
+                      <strong class="rx-trait-val">{card.traits.burst}</strong>
+                    </div>
+                    <div class="rx-trait-item">
+                      <span class="rx-trait-label">Boundary Behavior</span>
+                      <strong class="rx-trait-val">{card.traits.boundary}</strong>
+                    </div>
+                    <div class="rx-trait-item">
+                      <span class="rx-trait-label">Accuracy Guarantee</span>
+                      <strong class="rx-trait-val">{card.traits.accuracy}</strong>
+                    </div>
+                  </div>
+
+                  <!-- Actions / Links -->
+                  <div class="rx-tier-links">
+                    <a
+                      href={`https://github.com/zynorex/reqnx/blob/main/${card.evidencePath}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="rx-tier-source-link"
+                    >
+                      <span class="rx-tier-source-icon" aria-hidden="true">&#x1F4C4;</span>
+                      <span>Source: <code>{card.evidencePath}</code></span>
+                      <span class="rx-tier-arrow" aria-hidden="true">&nearr;</span>
+                    </a>
+                    <a href={card.adrHref} class="rx-tier-adr-link">
+                      <span>{card.adrLabel}</span>
+                      <span class="rx-tier-arrow" aria-hidden="true">&rarr;</span>
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Right: Time Scrubber & Pure Mathematical Contract -->
+                <div class="rx-tier-interactive">
+                  <div class="rx-scrubber-box">
+                    <div class="rx-scrubber-header">
+                      <span class="rx-scrubber-title">Time Scrubber Simulation</span>
+                      <span class="rx-scrubber-clock" id={`clock-val-${card.id}`}>+1,500ms</span>
+                    </div>
+
+                    <!-- Visual Token / Counter Meter -->
+                    <div class="rx-meter-display">
+                      <div class="rx-meter-label-row">
+                        <span class="rx-meter-label">Available Capacity</span>
+                        <span class="rx-meter-val" id={`meter-val-${card.id}`}>7 / 10 tokens</span>
+                      </div>
+                      <div
+                        class="rx-meter-track"
+                        role="progressbar"
+                        aria-label={`Available capacity progress for ${card.name}`}
+                        aria-valuenow="70"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      >
+                        <div class="rx-meter-fill" id={`meter-fill-${card.id}`} style="width: 70%;"></div>
+                      </div>
+                    </div>
+
+                    <!-- Range Slider -->
+                    <div class="rx-scrubber-controls">
+                      <label for={`slider-${card.id}`} class="rx-slider-label">
+                        <span>Advance Virtual Clock:</span>
+                        <span class="rx-slider-range">0ms &mdash; 5,000ms</span>
+                      </label>
+                      <input
+                        type="range"
+                        id={`slider-${card.id}`}
+                        class="rx-time-slider"
+                        min="0"
+                        max="5000"
+                        step="250"
+                        value="1500"
+                        aria-label={`Advance virtual clock for ${card.name}`}
+                        data-algo-id={card.id}
+                      />
+                    </div>
+
+                    <!-- Code snippet of the pure step() invocation -->
+                    <div class="rx-code-preview">
+                      <div class="rx-code-preview__header">
+                        <span class="rx-code-preview__title">Pure step(state, now)</span>
+                        <span class="rx-code-preview__lang">TypeScript</span>
+                      </div>
+                      <pre class="rx-code-preview__code"><code>{card.codeSnippet}</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-tiers-section {
+    position: relative;
+    width: 100%;
+  }
+
+  .rx-tiers-container {
+    width: 100%;
+  }
+
+  .rx-tiers-panels {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .rx-tier-panel {
+    display: none;
+    width: 100%;
+  }
+
+  .rx-tier-panel.is-active {
+    display: block;
+    animation: rx-fade-in var(--rx-dur-fast, 150ms) var(--rx-ease-out, ease-out);
+  }
+
+  @keyframes rx-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Main Card Layout: 2 Columns */
+  .rx-tier-card {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 32px;
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-md, 8px);
+    padding: 36px;
+    box-sizing: border-box;
+    transition: border-color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-tier-card:hover {
+    border-color: var(--rx-hairline-strong);
+  }
+
+  /* Left Column */
+  .rx-tier-main {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .rx-tier-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rx-tier-status-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
+  .rx-tier-badge {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 10px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .rx-tier-badge--available {
+    background: var(--rx-accent-soft);
+    color: var(--rx-accent);
+    border: 1px solid var(--rx-hairline-strong);
+  }
+
+  .rx-tier-badge--planned {
+    background: var(--rx-surface-2, rgba(255, 255, 255, 0.04));
+    color: var(--rx-muted);
+    border: 1px solid var(--rx-hairline);
+  }
+
+  .rx-tier-headline-trait {
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--rx-ink-soft);
+    letter-spacing: 0.02em;
+  }
+
+  .rx-tier-title {
+    font-family: var(--rx-font-sans);
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--rx-ink);
+    margin: 0;
+  }
+
+  .rx-tier-summary {
+    font-family: var(--rx-font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--rx-ink-soft);
+    margin: 0;
+    max-width: 52ch;
+  }
+
+  /* 4-Trait Matrix Grid */
+  .rx-traits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    background: var(--rx-canvas);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-md, 8px);
+    padding: 20px;
+  }
+
+  .rx-trait-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .rx-trait-label {
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--rx-muted);
+  }
+
+  .rx-trait-val {
+    font-family: var(--rx-font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--rx-ink);
+  }
+
+  /* Links & Citations */
+  .rx-tier-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid var(--rx-hairline);
+  }
+
+  .rx-tier-source-link,
+  .rx-tier-adr-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    color: var(--rx-ink-soft);
+    text-decoration: none;
+    transition: color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-tier-source-link:hover,
+  .rx-tier-adr-link:hover {
+    color: var(--rx-accent);
+  }
+
+  .rx-tier-source-link code {
+    font-family: var(--rx-font-mono);
+    color: var(--rx-ink);
+  }
+
+  .rx-tier-arrow {
+    color: var(--rx-accent);
+    font-weight: 600;
+  }
+
+  /* Right Column: Time Scrubber Simulation */
+  .rx-tier-interactive {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rx-scrubber-box {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: var(--rx-canvas);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-md, 8px);
+    padding: 24px;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .rx-scrubber-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rx-hairline);
+  }
+
+  .rx-scrubber-title {
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--rx-ink);
+  }
+
+  .rx-scrubber-clock {
+    font-family: var(--rx-font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--rx-accent);
+    background: var(--rx-accent-soft);
+    padding: 2px 8px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    border: 1px solid var(--rx-hairline-strong);
+  }
+
+  /* Meter */
+  .rx-meter-display {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rx-meter-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-family: var(--rx-font-sans);
+  }
+
+  .rx-meter-label {
+    color: var(--rx-muted);
+  }
+
+  .rx-meter-val {
+    font-family: var(--rx-font-mono);
+    font-weight: 600;
+    color: var(--rx-ink);
+  }
+
+  .rx-meter-track {
+    width: 100%;
+    height: 10px;
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-pill, 9999px);
+    overflow: hidden;
+  }
+
+  .rx-meter-fill {
+    height: 100%;
+    background: var(--rx-accent);
+    border-radius: var(--rx-radius-pill, 9999px);
+    transition: width var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  /* Slider Controls */
+  .rx-scrubber-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rx-slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    color: var(--rx-muted);
+    text-transform: uppercase;
+  }
+
+  .rx-time-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--rx-hairline-strong);
+    outline: none;
+    cursor: pointer;
+    accent-color: var(--rx-accent);
+  }
+
+  .rx-time-slider:focus-visible {
+    outline: 2px solid var(--rx-accent);
+    outline-offset: 2px;
+  }
+
+  /* Code Preview */
+  .rx-code-preview {
+    margin-top: auto;
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-md, 8px);
+    overflow: hidden;
+  }
+
+  .rx-code-preview__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    background: var(--rx-surface-2, rgba(255, 255, 255, 0.03));
+    border-bottom: 1px solid var(--rx-hairline);
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    color: var(--rx-muted);
+  }
+
+  .rx-code-preview__code {
+    margin: 0;
+    padding: 14px;
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--rx-ink);
+    overflow-x: auto;
+  }
+
+  @media (max-width: 1024px) {
+    .rx-tier-card {
+      grid-template-columns: 1fr;
+      padding: 24px;
+      gap: 24px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .rx-traits-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  function setupTiersScrubber() {
+    const sliders = document.querySelectorAll<HTMLInputElement>('.rx-time-slider');
+
+    sliders.forEach((slider) => {
+      const algoId = slider.getAttribute('data-algo-id');
+      if (!algoId) return;
+
+      const clockEl = document.getElementById(`clock-val-${algoId}`);
+      const meterValEl = document.getElementById(`meter-val-${algoId}`);
+      const meterFillEl = document.getElementById(`meter-fill-${algoId}`);
+
+      function update(ms: number) {
+        if (clockEl) {
+          clockEl.textContent = `+${ms.toLocaleString()}ms`;
+        }
+
+        if (algoId === 'token-bucket') {
+          // Token bucket: base 4 tokens, +2 tokens per 1000ms up to 10
+          const capacity = 10;
+          const tokens = Math.min(capacity, Math.floor(4 + (ms / 1000) * 2));
+          const pct = Math.round((tokens / capacity) * 100);
+          if (meterValEl) meterValEl.textContent = `${tokens} / ${capacity} tokens`;
+          if (meterFillEl) meterFillEl.style.width = `${pct}%`;
+        } else if (algoId === 'fixed-window') {
+          // Fixed window: 10s window (10,000ms), 5 quota. Reset when window flips.
+          const limit = 5;
+          const quota = ms < 5000 ? 3 : 5;
+          const pct = Math.round((quota / limit) * 100);
+          if (meterValEl) meterValEl.textContent = `${quota} / ${limit} requests remaining`;
+          if (meterFillEl) meterFillEl.style.width = `${pct}%`;
+        } else if (algoId === 'sliding-window-log') {
+          const limit = 5;
+          const inWindow = Math.max(1, Math.min(5, 5 - Math.floor(ms / 1250)));
+          const remaining = limit - inWindow;
+          const pct = Math.round((remaining / limit) * 100);
+          if (meterValEl) meterValEl.textContent = `${remaining} / ${limit} slots open`;
+          if (meterFillEl) meterFillEl.style.width = `${pct}%`;
+        } else if (algoId === 'leaky-bucket') {
+          // Leaky bucket: 5 capacity, drains 1 per 1000ms
+          const capacity = 5;
+          const water = Math.max(0, 4 - Math.floor(ms / 1000));
+          const pct = Math.round((water / capacity) * 100);
+          if (meterValEl) meterValEl.textContent = `${water} / ${capacity} queue depth`;
+          if (meterFillEl) meterFillEl.style.width = `${pct}%`;
+        }
+      }
+
+      slider.addEventListener('input', (e) => {
+        const val = parseInt((e.target as HTMLInputElement).value, 10);
+        update(val);
+      });
+    });
+  }
+
+  setupTiersScrubber();
+  document.addEventListener('astro:page-load', setupTiersScrubber);
+</script>

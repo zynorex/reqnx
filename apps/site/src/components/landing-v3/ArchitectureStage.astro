@@ -13,6 +13,7 @@
 import Section from './Section.astro';
 import SpecGrid from './SpecGrid.astro';
 import type { StatItem, PillarItem } from './SpecGrid.astro';
+import Button from '../common/Button.astro';
 import { computeFacts } from '../../facts.js';
 
 const facts = computeFacts();
@@ -83,7 +84,7 @@ const pillars: PillarItem[] = [
           role="tab"
           id="tab-store-memory"
           aria-selected="true"
-          aria-controls="panel-store-memory"
+          aria-controls="rx-arch-diagram"
           class="rx-arch-segmented__btn is-active"
           data-store="memory"
         >
@@ -94,7 +95,7 @@ const pillars: PillarItem[] = [
           role="tab"
           id="tab-store-redis"
           aria-selected="false"
-          aria-controls="panel-store-redis"
+          aria-controls="rx-arch-diagram"
           class="rx-arch-segmented__btn"
           data-store="redis"
         >
@@ -103,16 +104,17 @@ const pillars: PillarItem[] = [
       </div>
 
       <div class="rx-arch-actions">
-        <button
-          type="button"
-          role="tab"
+        <Button
           id="rx-arch-packet-btn"
-          class="rx-arch-action-btn"
-          aria-label="Send test request packet through architecture"
+          variant="tertiary"
+          size="sm"
+          shape="pill"
+          ariaLabel="Send test request packet through architecture"
+          className="rx-arch-action-btn"
         >
           <span class="rx-arch-action-icon" aria-hidden="true">&#9654;</span>
           <span>Send request packet</span>
-        </button>
+        </Button>
       </div>
     </div>
 
@@ -120,7 +122,7 @@ const pillars: PillarItem[] = [
     <div
       class="rx-arch-diagram"
       id="rx-arch-diagram"
-      role="img"
+      role="region"
       aria-label="Architecture diagram showing decoupled HTTP Ingress, Limiter Engine, Pure Algorithm Step Function, Injected Clock, and Atomic Store Contract."
     >
       <div class="rx-arch-grid">

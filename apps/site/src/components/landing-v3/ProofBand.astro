@@ -1,0 +1,433 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/ProofBand.astro
+//
+// Landing v3 Proof Band (S3):
+// - Sunken background surface (--rx-canvas-sunken)
+// - Dual marquee tracks moving in opposite directions
+// - Accessible pause button (WCAG 2.2.2) + hover/focus pause + reduced-motion fallback
+// - Verbatim architectural decision quote from ADR-0002
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Section from './Section.astro';
+import Button from '../common/Button.astro';
+import { withBase } from '../../site.config';
+
+export interface EvidenceChipItem {
+  id: string;
+  label: string;
+  href: string;
+  isExternal?: boolean;
+}
+
+const row1Chips: EvidenceChipItem[] = [
+  {
+    id: 'deps',
+    label: '0 runtime dependencies',
+    href: 'https://github.com/zynorex/reqnx/blob/main/packages/core/package.json',
+    isExternal: true,
+  },
+  {
+    id: 'model-tests',
+    label: 'Fast-check model tests',
+    href: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/__tests__/token-bucket.model.test.ts',
+    isExternal: true,
+  },
+  {
+    id: 'duration',
+    label: 'Integer ms arithmetic',
+    href: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/duration.ts',
+    isExternal: true,
+  },
+  {
+    id: 'memory-store',
+    label: 'Atomic memory store',
+    href: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/memory-store.ts',
+    isExternal: true,
+  },
+];
+
+const row2Chips: EvidenceChipItem[] = [
+  {
+    id: 'adr-0002',
+    label: 'ADR-0002 Atomicity',
+    href: withBase('/design/adr/0002-algorithm-contract-and-atomicity/'),
+    isExternal: false,
+  },
+  {
+    id: 'floating-drift',
+    label: 'Zero floating drift',
+    href: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/__tests__/token-bucket.test.ts',
+    isExternal: true,
+  },
+  {
+    id: 'rfc-headers',
+    label: 'Standard RFC headers',
+    href: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/limiter.ts',
+    isExternal: true,
+  },
+  {
+    id: 'deterministic',
+    label: 'Deterministic replay',
+    href: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/__tests__/keys.test.ts',
+    isExternal: true,
+  },
+];
+
+// Duplicate for infinite seamless marquee loop
+const row1Repeated = [...row1Chips, ...row1Chips, ...row1Chips];
+const row2Repeated = [...row2Chips, ...row2Chips, ...row2Chips];
+
+// Verbatim quote from ADR-0002
+const quoteText =
+  "Store is not a generic adapter — it's an algorithm executor. This prevents the \"leaky abstraction\" of trying to make atomic rate limiting work over a key-value API.";
+const quoteSource = 'Architectural Decision Record 0002: Algorithm Contract & Atomicity Model';
+const quoteHref = withBase('/design/adr/0002-algorithm-contract-and-atomicity/');
+---
+
+<Section
+  id="proof"
+  label="VERIFIED EVIDENCE"
+  h2="Every claim links to the test or source file behind it."
+  lede="No customer logos or marketing endorsements. Our proof is test suites, formal properties, and recorded benchmarks."
+  align="left"
+  sunken={true}
+  class="rx-proof-band"
+>
+  <div class="rx-proof-content">
+    <!-- Marquee Controller & Dual Tracks -->
+    <div class="rx-marquee-wrapper" id="rx-marquee-wrapper">
+      <div class="rx-marquee-controls">
+        <Button
+          id="rx-marquee-pause-btn"
+          variant="tertiary"
+          size="sm"
+          shape="pill"
+          ariaLabel="Pause marquee animation"
+          ariaPressed={false}
+          className="rx-marquee-pause-btn"
+        >
+          <span class="rx-marquee-pause-icon" id="rx-pause-icon" aria-hidden="true">&#10074;&#10074;</span>
+          <span class="rx-marquee-pause-text" id="rx-pause-label">Pause movement</span>
+        </Button>
+      </div>
+
+      <!-- Track 1: Leftward -->
+      <div class="rx-marquee-track rx-marquee-track--left" tabindex="0" role="region" aria-label="Evidence chips moving left">
+        <div class="rx-marquee-row" id="rx-marquee-row-1">
+          {
+            row1Repeated.map((chip, idx) => (
+              <a
+                href={chip.href}
+                class="rx-evidence-chip"
+                target={chip.isExternal ? '_blank' : undefined}
+                rel={chip.isExternal ? 'noopener noreferrer' : undefined}
+                tabindex={idx >= row1Chips.length ? -1 : 0}
+              >
+                <span class="rx-evidence-chip__check" aria-hidden="true">✓</span>
+                <span class="rx-evidence-chip__text">{chip.label}</span>
+                <span class="rx-evidence-chip__arrow" aria-hidden="true">&rarr;</span>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Track 2: Rightward -->
+      <div class="rx-marquee-track rx-marquee-track--right" tabindex="0" role="region" aria-label="Evidence chips moving right">
+        <div class="rx-marquee-row" id="rx-marquee-row-2">
+          {
+            row2Repeated.map((chip, idx) => (
+              <a
+                href={chip.href}
+                class="rx-evidence-chip"
+                target={chip.isExternal ? '_blank' : undefined}
+                rel={chip.isExternal ? 'noopener noreferrer' : undefined}
+                tabindex={idx >= row2Chips.length ? -1 : 0}
+              >
+                <span class="rx-evidence-chip__check" aria-hidden="true">✓</span>
+                <span class="rx-evidence-chip__text">{chip.label}</span>
+                <span class="rx-evidence-chip__arrow" aria-hidden="true">&rarr;</span>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Verbatim Decision Quote Card -->
+    <div class="rx-decision-quote-card">
+      <div class="rx-decision-quote-badge">
+        <span class="rx-decision-quote-dot" aria-hidden="true"></span>
+        <span>DECISION 0002 · ACCEPTED</span>
+      </div>
+      <blockquote class="rx-decision-quote-text">
+        &ldquo;{quoteText}&rdquo;
+      </blockquote>
+      <div class="rx-decision-quote-citation">
+        <a href={quoteHref} class="rx-decision-quote-link">
+          &mdash; {quoteSource} &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-proof-band {
+    border-top: 1px solid var(--rx-hairline);
+    border-bottom: 1px solid var(--rx-hairline);
+  }
+
+  .rx-proof-content {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  /* Marquee Wrapper */
+  .rx-marquee-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .rx-marquee-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+  }
+
+  .rx-marquee-pause-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    background: var(--rx-canvas-card);
+    border: 1px solid var(--rx-hairline-strong);
+    color: var(--rx-ink-faint);
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    cursor: pointer;
+    transition:
+      color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-marquee-pause-btn:hover {
+    color: var(--rx-ink);
+    border-color: var(--rx-accent);
+  }
+
+  .rx-marquee-pause-icon {
+    font-size: 9px;
+  }
+
+  /* Tracks */
+  .rx-marquee-track {
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 14px;
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+
+  .rx-marquee-row {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    will-change: transform;
+  }
+
+  /* Marquee animations */
+  @media (prefers-reduced-motion: no-preference) {
+    html:not([data-motion='reduced']) .rx-marquee-track--left .rx-marquee-row {
+      animation: rx-scroll-left 42s linear infinite;
+    }
+
+    html:not([data-motion='reduced']) .rx-marquee-track--right .rx-marquee-row {
+      animation: rx-scroll-right 42s linear infinite;
+    }
+  }
+
+  /* Pause states on hover, focus, and class */
+  .rx-marquee-wrapper:hover .rx-marquee-row,
+  .rx-marquee-wrapper:focus-within .rx-marquee-row,
+  .rx-marquee-wrapper.is-paused .rx-marquee-row {
+    animation-play-state: paused !important;
+  }
+
+  @keyframes rx-scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-33.333%);
+    }
+  }
+
+  @keyframes rx-scroll-right {
+    0% {
+      transform: translateX(-33.333%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  /* Reduced motion fallback: wrap into static grid */
+  @media (prefers-reduced-motion: reduce) {
+    .rx-marquee-track {
+      overflow: visible;
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+
+    .rx-marquee-row {
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .rx-marquee-controls {
+      display: none;
+    }
+  }
+
+  html[data-motion='reduced'] .rx-marquee-track {
+    overflow: visible;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  html[data-motion='reduced'] .rx-marquee-row {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  html[data-motion='reduced'] .rx-marquee-controls {
+    display: none;
+  }
+
+  /* Evidence Chip */
+  .rx-evidence-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    padding: 0 18px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    background: var(--rx-canvas-card);
+    border: 1px solid var(--rx-hairline-strong);
+    color: var(--rx-ink);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      transform var(--rx-dur-instant) var(--rx-ease-out);
+  }
+
+  .rx-evidence-chip:hover {
+    border-color: var(--rx-accent);
+    background: var(--rx-accent-soft);
+    transform: translateY(-1px);
+  }
+
+  .rx-evidence-chip__check {
+    color: var(--rx-semantic-allowed, #10b981);
+    font-weight: 700;
+  }
+
+  .rx-evidence-chip__arrow {
+    color: var(--rx-ink-faint);
+    transition: transform var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-evidence-chip:hover .rx-evidence-chip__arrow {
+    transform: translateX(3px);
+    color: var(--rx-accent);
+  }
+
+  /* Decision Quote Card */
+  .rx-decision-quote-card {
+    max-width: 820px;
+    margin: 16px auto 0 auto;
+    padding: clamp(24px, 4vw, 40px);
+    background: var(--rx-canvas-card);
+    border: 1px solid var(--rx-hairline-strong);
+    border-radius: var(--rx-radius-card, 8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .rx-decision-quote-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--rx-ink-faint);
+    margin-bottom: 16px;
+  }
+
+  .rx-decision-quote-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--rx-accent);
+  }
+
+  .rx-decision-quote-text {
+    font-family: var(--rx-font-sans);
+    font-size: clamp(18px, 2.2vw, 24px);
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--rx-ink);
+    margin: 0 0 20px 0;
+    text-wrap: pretty;
+  }
+
+  .rx-decision-quote-citation {
+    font-size: 13.5px;
+  }
+
+  .rx-decision-quote-link {
+    color: var(--rx-ink-muted);
+    text-decoration: none;
+    transition: color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-decision-quote-link:hover {
+    color: var(--rx-accent);
+  }
+</style>
+
+<script>
+  // Marquee pause toggle (WCAG 2.2.2 compliance)
+  const wrapper = document.getElementById('rx-marquee-wrapper');
+  const btn = document.getElementById('rx-marquee-pause-btn');
+  const icon = document.getElementById('rx-pause-icon');
+  const label = document.getElementById('rx-pause-label');
+
+  let isPaused = false;
+
+  btn?.addEventListener('click', () => {
+    isPaused = !isPaused;
+    if (isPaused) {
+      wrapper?.classList.add('is-paused');
+      btn.setAttribute('aria-pressed', 'true');
+      if (icon) icon.textContent = '▶';
+      if (label) label.textContent = 'Play movement';
+    } else {
+      wrapper?.classList.remove('is-paused');
+      btn.setAttribute('aria-pressed', 'false');
+      if (icon) icon.textContent = '❚❚';
+      if (label) label.textContent = 'Pause movement';
+    }
+  });
+</script>

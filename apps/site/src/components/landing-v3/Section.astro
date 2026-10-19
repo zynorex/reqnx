@@ -82,6 +82,7 @@ const {
     color: var(--rx-ink);
     position: relative;
     box-sizing: border-box;
+    scroll-margin-top: 80px;
   }
 
   .rx-v3-section.is-sunken {
@@ -91,8 +92,7 @@ const {
   }
 
   .rx-v3-section.below-fold {
-    content-visibility: auto;
-    contain-intrinsic-size: var(--intrinsic-size, 1000px);
+    /* Below-the-fold optimization marker */
   }
 
   .rx-v3-section__inner {
