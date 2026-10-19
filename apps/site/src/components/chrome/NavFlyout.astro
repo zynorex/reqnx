@@ -1,0 +1,309 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/chrome/NavFlyout.astro
+//
+// Algorithms Navigation Flyout (Hybrid Disclosure Pattern).
+// ──────────────────────────────────────────────────────────────────────────────
+
+import { chromeData } from '../../data/chrome';
+import { withBase } from '../../site.config';
+
+interface Props {
+  isActive?: boolean;
+}
+
+const { isActive = false } = Astro.props;
+---
+
+<div class="rx-nav-flyout-container" id="rx-algorithms-flyout">
+  <div class="rx-nav-flyout-trigger-group">
+    <a
+      href={withBase('/algorithms/')}
+      class:list={['rx-header__nav-link', { 'is-active': isActive }]}
+      aria-current={isActive ? 'page' : undefined}
+    >
+      Algorithms
+    </a>
+    <button
+      type="button"
+      class="rx-nav-flyout-btn"
+      id="rx-algorithms-disclosure-btn"
+      aria-expanded="false"
+      aria-controls="rx-algorithms-panel"
+      aria-label="Algorithms menu"
+    >
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Flyout Panel (320px) -->
+  <div
+    class="rx-nav-flyout-panel"
+    id="rx-algorithms-panel"
+    style="display: none;"
+    role="region"
+    aria-label="Algorithms Overview"
+  >
+    <div class="rx-flyout-header">All Algorithms</div>
+    <div class="rx-flyout-list">
+      {
+        chromeData.flyoutAlgorithms.map((algo) => (
+          <a href={algo.href} class="rx-flyout-item">
+            <div class="rx-flyout-item__title">
+              <span class="rx-flyout-item__name">{algo.name}</span>
+              <span
+                class:list={[
+                  'rx-status-mini-chip',
+                  algo.status === 'available'
+                    ? 'rx-status-mini-chip--available'
+                    : 'rx-status-mini-chip--planned',
+                ]}
+              >
+                {algo.status === 'available' ? 'Available' : 'Coming Soon'}
+              </span>
+            </div>
+            <p class="rx-flyout-item__desc">{algo.description}</p>
+          </a>
+        ))
+      }
+    </div>
+    <div class="rx-flyout-footer">
+      <a href={withBase('/algorithms/')} class="rx-flyout-footer-link">
+        Compare all 5 algorithms &rarr;
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .rx-nav-flyout-container {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .rx-nav-flyout-trigger-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .rx-nav-flyout-btn {
+    height: 32px;
+    width: 22px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: var(--rx-text-3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: var(--rx-radius-xs);
+    transition: color var(--rx-dur-fast), background-color var(--rx-dur-fast);
+  }
+
+  .rx-nav-flyout-btn:hover {
+    color: var(--rx-text-1);
+    background-color: var(--rx-surface-3);
+  }
+
+  .rx-nav-flyout-btn:focus-visible {
+    outline: var(--rx-btn-focus-ring);
+    outline-offset: 1px;
+  }
+
+  .rx-nav-flyout-btn svg {
+    transition: transform var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-nav-flyout-btn[aria-expanded='true'] svg {
+    transform: rotate(180deg);
+  }
+
+  .rx-nav-flyout-panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 320px;
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-header-border, rgba(255, 255, 255, 0.08));
+    border-radius: var(--rx-radius-lg);
+    box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.45);
+    padding: 0.75rem;
+    z-index: var(--z-flyout, 50);
+    animation: rxFlyoutIn 140ms var(--rx-ease-out);
+  }
+
+  @keyframes rxFlyoutIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .rx-flyout-header {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rx-text-3);
+    padding: 0.25rem 0.5rem 0.5rem;
+    border-bottom: 1px solid var(--rx-border-subtle);
+    margin-bottom: 0.35rem;
+  }
+
+  .rx-flyout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .rx-flyout-item {
+    display: block;
+    padding: 0.5rem 0.65rem;
+    border-radius: var(--rx-radius-sm);
+    text-decoration: none;
+    transition: background-color var(--rx-dur-fast);
+  }
+
+  .rx-flyout-item:hover,
+  .rx-flyout-item:focus-visible {
+    background-color: var(--rx-surface-3);
+    outline: none;
+  }
+
+  .rx-flyout-item__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.2rem;
+  }
+
+  .rx-flyout-item__name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--rx-text-1);
+  }
+
+  .rx-flyout-item__desc {
+    font-size: 0.75rem;
+    color: var(--rx-text-3);
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  .rx-status-mini-chip {
+    font-family: var(--rx-font-mono);
+    font-size: 0.625rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--rx-radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+
+  .rx-status-mini-chip--available {
+    background: var(--rx-semantic-allowed-surface);
+    color: var(--rx-semantic-allowed);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+
+  .rx-status-mini-chip--planned {
+    background: rgba(148, 163, 184, 0.12);
+    color: var(--rx-text-3);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+  }
+
+  .rx-flyout-footer {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--rx-border-subtle);
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+  }
+
+  .rx-flyout-footer-link {
+    font-size: 0.75rem;
+    color: var(--rx-accent-cyan);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .rx-flyout-footer-link:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  const container = document.getElementById('rx-algorithms-flyout');
+  const btn = document.getElementById('rx-algorithms-disclosure-btn');
+  const panel = document.getElementById('rx-algorithms-panel');
+
+  if (container && btn && panel) {
+    let hoverTimer: number | undefined;
+    let graceTimer: number | undefined;
+
+    function openFlyout() {
+      panel.style.display = 'block';
+      btn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeFlyout() {
+      panel.style.display = 'none';
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      if (isOpen) {
+        closeFlyout();
+      } else {
+        openFlyout();
+      }
+    });
+
+    // Hover intent (120ms) and grace period (200ms)
+    container.addEventListener('mouseenter', () => {
+      clearTimeout(graceTimer);
+      hoverTimer = window.setTimeout(openFlyout, 120);
+    });
+
+    container.addEventListener('mouseleave', () => {
+      clearTimeout(hoverTimer);
+      graceTimer = window.setTimeout(closeFlyout, 200);
+    });
+
+    // Close on Escape or click outside
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') {
+        closeFlyout();
+        btn.focus();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!container.contains(e.target as Node)) {
+        closeFlyout();
+      }
+    });
+  }
+</script>

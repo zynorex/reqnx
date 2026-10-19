@@ -1,0 +1,475 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/chrome/SiteFooter.astro
+//
+// Unified SiteFooter supporting both Full Marketing and Slim Docs variants.
+// Fully theme-matched across light, dark, system, forced-colors, and print.
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Logo from '../brand/Logo.astro';
+import Mascot from '../brand/Mascot.astro';
+import FooterRuler from './FooterRuler.astro';
+import { ThemeControl } from './ThemeControl';
+import MotionControl from '../common/MotionControl.astro';
+import { chromeData } from '../../data/chrome';
+import { withBase } from '../../site.config';
+
+interface Props {
+  variant?: 'full' | 'slim';
+  showRuler?: boolean;
+}
+
+const { variant = 'full', showRuler = true } = Astro.props;
+const isSlim = variant === 'slim';
+const currentYear = new Date().getFullYear();
+---
+
+{
+  !isSlim ? (
+    <footer class="rx-site-footer-full" role="contentinfo">
+      {showRuler && <FooterRuler />}
+
+      <div class="rx-footer-full__inner">
+        <div class="rx-footer-12-grid">
+          
+          <!-- Brand Block (5 columns) -->
+          <div class="rx-footer-brand-col">
+            <div class="rx-footer-logo-wrap">
+              <Logo size={28} showText={true} />
+            </div>
+
+            <p class="rx-footer-tagline">
+              {chromeData.brand.tagline}. Five algorithms, two stores, zero core dependencies.
+            </p>
+
+            <div class="rx-footer-badge-row">
+              <span class="rx-version-chip">v{chromeData.brand.version}</span>
+              <span class="rx-footer-status-chip">Pre-release</span>
+            </div>
+
+            <!-- Hairline Meter: N of M Algorithms Available -->
+            <div class="rx-footer-meter">
+              <div class="rx-meter-track" aria-hidden="true">
+                <div class="rx-meter-fill" style="width: 40%;" />
+              </div>
+              <span class="rx-meter-label">2 of 5 algorithms available</span>
+            </div>
+
+            <div class="rx-footer-facts">
+              Built from git commit <code>5548141</code> · Clean Tree
+            </div>
+
+            <!-- Mascot Cameo (44px) -->
+            <div class="rx-footer-mascot-cameo" title="REQNX Mascot">
+              <Mascot placement="footer" />
+            </div>
+          </div>
+
+          <!-- Link Columns (3 columns x 2 cols each) -->
+          {chromeData.footerGroups.map((group) => (
+            <div class="rx-footer-link-col">
+              <h2 class="rx-footer-col-heading">{group.heading}</h2>
+              <ul class="rx-footer-link-list" role="list">
+                {group.links.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      target={link.isExternal ? '_blank' : undefined}
+                      rel={link.isExternal ? 'noreferrer noopener' : undefined}
+                    >
+                      <span>{link.label}</span>
+                      {link.isExternal && <span class="rx-external-arrow" aria-hidden="true">&#8599;</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+        </div>
+
+        <!-- Bottom Legal & Preferences Strip -->
+        <div class="rx-footer-bottom-strip">
+          <div class="rx-footer-legal-top">
+            <p class="rx-footer-license-note">{chromeData.legal.licenseNotice}</p>
+            <p class="rx-footer-trademark-note">{chromeData.legal.trademarkNotice}</p>
+            <a href="#main-content" class="rx-back-to-top">
+              Back to top &uarr;
+            </a>
+          </div>
+
+          <div class="rx-footer-legal-bottom">
+            <span>{chromeData.legal.privacyNotice}</span>
+
+            <div class="rx-footer-preferences-wrap">
+              <div class="rx-footer-pref-item">
+                <span class="rx-footer-pref-label">Theme</span>
+                <ThemeControl client:load idPrefix="rx-theme-footer" />
+              </div>
+              <div class="rx-footer-pref-item">
+                <span class="rx-footer-pref-label">Motion</span>
+                <MotionControl />
+              </div>
+            </div>
+
+            <span class="rx-footer-copyright">
+              &copy; {currentYear} {chromeData.brand.name} Project Contributors
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+  ) : (
+    /* Slim Docs Footer Variant (Compact row below docs shell) */
+    <footer class="rx-site-footer-slim" role="contentinfo">
+      {showRuler && <FooterRuler />}
+      <div class="rx-footer-slim__inner">
+        
+        <div class="rx-slim-left">
+          <Logo size={22} showText={false} />
+          <span class="rx-slim-license">MIT Licensed · {chromeData.brand.name} Contributors</span>
+        </div>
+
+        <ul class="rx-slim-links" role="list">
+          <li><a href={withBase('/getting-started/')}>Docs Home</a></li>
+          <li><a href={`${chromeData.brand.repo}/blob/main/CHANGELOG.md`} target="_blank" rel="noreferrer">Changelog</a></li>
+          <li><a href={chromeData.brand.repo} target="_blank" rel="noreferrer">GitHub</a></li>
+          <li><a href={`${chromeData.brand.repo}/issues`} target="_blank" rel="noreferrer">Issues</a></li>
+          <li><a href={`${chromeData.brand.repo}/blob/main/LICENSE`} target="_blank" rel="noreferrer">License</a></li>
+        </ul>
+
+        <div class="rx-slim-preferences">
+          <ThemeControl client:load idPrefix="rx-theme-docs-footer" />
+        </div>
+
+      </div>
+    </footer>
+  )
+}
+
+<style>
+  /* ─── Full Marketing Footer ──────────────────────────────────────── */
+  .rx-site-footer-full {
+    background: var(--rx-footer-bg, var(--rx-surface-1));
+    border-top: 1px solid var(--rx-footer-border, rgba(255, 255, 255, 0.08));
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rx-footer-full__inner {
+    max-width: var(--container-max, 1280px);
+    margin: 0 auto;
+    padding: 3.5rem clamp(1rem, 3vw, 2rem) 2.5rem;
+  }
+
+  .rx-footer-12-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .rx-footer-brand-col {
+    grid-column: span 5;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .rx-footer-tagline {
+    font-size: 0.875rem;
+    color: var(--rx-text-3);
+    max-width: 34ch;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .rx-footer-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .rx-footer-status-chip {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    padding: 0.125rem 0.45rem;
+    border-radius: var(--rx-radius-full);
+    background: var(--rx-semantic-allowed-surface);
+    color: var(--rx-semantic-allowed);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    font-weight: 500;
+  }
+
+  .rx-footer-meter {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    color: var(--rx-text-2);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .rx-meter-track {
+    width: 64px;
+    height: 4px;
+    background: var(--rx-surface-3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .rx-meter-fill {
+    height: 100%;
+    background: var(--rx-accent-cyan);
+    border-radius: 2px;
+  }
+
+  .rx-footer-facts {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-footer-mascot-cameo {
+    margin-top: 0.5rem;
+    opacity: 0.85;
+    transition: opacity var(--rx-dur-fast);
+  }
+
+  .rx-footer-mascot-cameo:hover {
+    opacity: 1;
+  }
+
+  .rx-footer-link-col {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .rx-footer-col-heading {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rx-text-1);
+    margin: 0;
+  }
+
+  .rx-footer-link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .rx-footer-link-list a {
+    font-size: 0.875rem;
+    color: var(--rx-text-2);
+    text-decoration: none;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color var(--rx-dur-fast);
+  }
+
+  .rx-footer-link-list a:hover {
+    color: var(--rx-accent-cyan);
+    text-decoration: underline;
+  }
+
+  .rx-external-arrow {
+    font-size: 0.75rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-footer-bottom-strip {
+    border-top: 1px solid var(--rx-footer-border, rgba(255, 255, 255, 0.08));
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-footer-legal-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .rx-footer-license-note,
+  .rx-footer-trademark-note {
+    margin: 0 0 0.4rem;
+    max-width: 75ch;
+    line-height: 1.5;
+  }
+
+  .rx-back-to-top {
+    color: var(--rx-text-3);
+    text-decoration: none;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    transition: color var(--rx-dur-fast);
+  }
+
+  .rx-back-to-top:hover {
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-footer-legal-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--rx-border-subtle);
+  }
+
+  .rx-footer-preferences-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .rx-footer-pref-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .rx-footer-pref-label {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rx-text-3);
+  }
+
+  @media (max-width: 1023px) {
+    .rx-footer-12-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+    .rx-footer-brand-col {
+      grid-column: span 3;
+    }
+    .rx-footer-link-col {
+      grid-column: span 1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .rx-footer-12-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+    .rx-footer-brand-col {
+      grid-column: span 2;
+    }
+    .rx-footer-link-col {
+      grid-column: span 1;
+    }
+    .rx-footer-link-list a {
+      height: 44px;
+    }
+  }
+
+  /* ─── Slim Docs Footer ──────────────────────────────────────────── */
+  .rx-site-footer-slim {
+    background: var(--rx-footer-bg, var(--rx-surface-1));
+    border-top: 1px solid var(--rx-footer-border, rgba(255, 255, 255, 0.08));
+    position: relative;
+  }
+
+  .rx-footer-slim__inner {
+    width: 100%;
+    max-width: var(--docs-container-max, 1440px);
+    margin: 0 auto;
+    padding: 1.25rem clamp(1rem, 3vw, 2rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .rx-slim-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--rx-text-3);
+  }
+
+  .rx-slim-license {
+    white-space: nowrap;
+  }
+
+  .rx-slim-links {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.8125rem;
+  }
+
+  .rx-slim-links a {
+    color: var(--rx-text-2);
+    text-decoration: none;
+    transition: color var(--rx-dur-fast);
+  }
+
+  .rx-slim-links a:hover {
+    color: var(--rx-accent-cyan);
+    text-decoration: underline;
+  }
+
+  .rx-slim-preferences {
+    display: flex;
+    align-items: center;
+  }
+
+  @media (max-width: 1023px) {
+    .rx-footer-slim__inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .rx-slim-links {
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+  }
+
+  /* ─── Print Styles ──────────────────────────────────────────────── */
+  @media print {
+    .rx-site-footer-full,
+    .rx-site-footer-slim {
+      background: none !important;
+      border: none !important;
+      color: #000 !important;
+    }
+    .rx-footer-preferences-wrap,
+    .rx-footer-meter,
+    .rx-footer-mascot-cameo,
+    .rx-back-to-top,
+    .rx-slim-preferences {
+      display: none !important;
+    }
+  }
+</style>

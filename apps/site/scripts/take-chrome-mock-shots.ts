@@ -79,6 +79,16 @@ interface MockShotSpec {
   clipToHeader?: boolean;
 }
 
+interface MockWindow {
+  setHeaderState?: (s: string) => void;
+  toggleFlyout?: () => void;
+  setNavMode?: (m: string) => void;
+  toggleSearchFocus?: () => void;
+  openSheet?: () => void;
+  setAppTheme?: (t: string) => void;
+  setTheme?: (t: string) => void;
+}
+
 const SHOTS: MockShotSpec[] = [
   // Marketing Header - Top State (1440, 1024, 768, 390 x dark/light)
   { name: 'mock-marketing-top-1440-dark', mockFile: 'marketing-header.html', width: 1440, height: 900, theme: 'dark', clipToHeader: true },
@@ -95,7 +105,7 @@ const SHOTS: MockShotSpec[] = [
     height: 900,
     theme: 'dark',
     action: async (page) => {
-      await page.evaluate(() => (window as any).setHeaderState('scrolled'));
+      await page.evaluate(() => (window as unknown as MockWindow).setHeaderState?.('scrolled'));
       await page.waitForTimeout(200);
     },
     clipToHeader: true,
@@ -107,7 +117,7 @@ const SHOTS: MockShotSpec[] = [
     height: 900,
     theme: 'light',
     action: async (page) => {
-      await page.evaluate(() => (window as any).setHeaderState('scrolled'));
+      await page.evaluate(() => (window as unknown as MockWindow).setHeaderState?.('scrolled'));
       await page.waitForTimeout(200);
     },
     clipToHeader: true,
@@ -121,7 +131,7 @@ const SHOTS: MockShotSpec[] = [
     height: 900,
     theme: 'dark',
     action: async (page) => {
-      await page.evaluate(() => (window as any).toggleFlyout());
+      await page.evaluate(() => (window as unknown as MockWindow).toggleFlyout?.());
       await page.waitForTimeout(200);
     },
   },
@@ -132,7 +142,7 @@ const SHOTS: MockShotSpec[] = [
     height: 900,
     theme: 'light',
     action: async (page) => {
-      await page.evaluate(() => (window as any).toggleFlyout());
+      await page.evaluate(() => (window as unknown as MockWindow).toggleFlyout?.());
       await page.waitForTimeout(200);
     },
   },
@@ -149,7 +159,7 @@ const SHOTS: MockShotSpec[] = [
     height: 800,
     theme: 'dark',
     action: async (page) => {
-      await page.evaluate(() => (window as any).setNavMode('narrow'));
+      await page.evaluate(() => (window as unknown as MockWindow).setNavMode?.('narrow'));
       const btn = page.locator('#section-disclosure-btn');
       await btn.click();
       await page.waitForTimeout(200);
@@ -164,7 +174,7 @@ const SHOTS: MockShotSpec[] = [
     height: 900,
     theme: 'dark',
     action: async (page) => {
-      await page.evaluate(() => (window as any).toggleSearchFocus());
+      await page.evaluate(() => (window as unknown as MockWindow).toggleSearchFocus?.());
       await page.waitForTimeout(200);
     },
     clipToHeader: true,
@@ -179,7 +189,7 @@ const SHOTS: MockShotSpec[] = [
     height: 900,
     theme: 'dark',
     action: async (page) => {
-      await page.evaluate(() => (window as any).openSheet());
+      await page.evaluate(() => (window as unknown as MockWindow).openSheet?.());
       await page.waitForTimeout(250);
     },
   },
@@ -191,8 +201,9 @@ const SHOTS: MockShotSpec[] = [
     theme: 'light',
     action: async (page) => {
       await page.evaluate(() => {
-        (window as any).setAppTheme('light');
-        (window as any).openSheet();
+        const win = window as unknown as MockWindow;
+        win.setAppTheme?.('light');
+        win.openSheet?.();
       });
       await page.waitForTimeout(250);
     },
@@ -218,7 +229,7 @@ const SHOTS: MockShotSpec[] = [
     height: 900,
     theme: 'light',
     action: async (page) => {
-      await page.evaluate(() => (window as any).setTheme('light'));
+      await page.evaluate(() => (window as unknown as MockWindow).setTheme?.('light'));
       const el = page.locator('#full-footer-preview');
       await el.scrollIntoViewIfNeeded();
       await page.waitForTimeout(200);

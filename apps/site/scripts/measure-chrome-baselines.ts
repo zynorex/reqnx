@@ -82,12 +82,13 @@ async function measurePagePerformance(url: string, width = 1440, height = 900) {
 
   // Inject CLS observer before script execution
   await page.addInitScript(() => {
-    (window as any).__clsScore = 0;
+    (window as unknown as { __clsScore: number }).__clsScore = 0;
     try {
       const observer = new PerformanceObserver((entryList) => {
         for (const entry of entryList.getEntries()) {
-          if (!(entry as any).hadRecentInput) {
-            (window as any).__clsScore += (entry as any).value;
+          const shiftEntry = entry as PerformanceEntry & { hadRecentInput?: boolean; value?: number };
+          if (!shiftEntry.hadRecentInput && typeof shiftEntry.value === 'number') {
+            (window as unknown as { __clsScore: number }).__clsScore += shiftEntry.value;
           }
         }
       });
@@ -110,7 +111,7 @@ async function measurePagePerformance(url: string, width = 1440, height = 900) {
     const paint = performance.getEntriesByType('paint');
     const fcp = paint.find((p) => p.name === 'first-contentful-paint')?.startTime ?? 0;
     return {
-      cls: (window as any).__clsScore ?? 0,
+      cls: (window as unknown as { __clsScore?: number }).__clsScore ?? 0,
       fcp: Math.round(fcp),
       domContentLoaded: Math.round(timing?.domContentLoadedEventEnd ?? 0),
       load: Math.round(timing?.loadEventEnd ?? 0),

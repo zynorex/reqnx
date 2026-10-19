@@ -7,25 +7,44 @@ import Logo from '../brand/Logo.astro';
 
 interface Props {
   currentPath?: string;
+  isDocs?: boolean;
 }
 
-const { currentPath = '/' } = Astro.props;
+const { currentPath = '/', isDocs = false } = Astro.props;
+
+const isLanding = currentPath === withBase('/') || currentPath === '/';
 
 const navItems = [
   { label: 'Docs', href: withBase('/getting-started/') },
   { label: 'Algorithms', href: withBase('/algorithms/') },
   { label: 'Playground', href: withBase('/playground/') },
-  { label: 'Status', href: '#status' },
+  { label: 'Status', href: isLanding ? '#status' : withBase('/#status') },
 ];
+
+function isItemActive(itemHref: string, label: string): boolean {
+  if (label === 'Docs') {
+    if (currentPath.startsWith(withBase('/getting-started/'))) return true;
+    if (isDocs && !currentPath.startsWith(withBase('/algorithms/')) && !currentPath.startsWith(withBase('/playground/'))) {
+      return true;
+    }
+  }
+  if (itemHref.startsWith('#')) {
+    return false;
+  }
+  if (itemHref === withBase('/')) {
+    return currentPath === withBase('/') || currentPath === '/';
+  }
+  return currentPath.startsWith(itemHref);
+}
 ---
 
 <a href="#main-content" class="rx-skip-link">
   Skip to main content
 </a>
 
-<div id="rx-header-sentinel" aria-hidden="true" class="rx-sentinel"></div>
+{!isDocs && <div id="rx-header-sentinel" aria-hidden="true" class="rx-sentinel"></div>}
 
-<header class="rx-header" id="rx-site-header">
+<header class:list={['rx-header', { 'is-docs': isDocs, 'is-scrolled': isDocs }]} id="rx-site-header">
   <div class="rx-header__progress" aria-hidden="true" id="rx-header-progress"></div>
   <div class="rx-header__inner">
     <div class="rx-header__brand">
@@ -39,7 +58,7 @@ const navItems = [
       <span class="rx-header__indicator" aria-hidden="true" id="rx-nav-indicator"></span>
       <ul class="rx-header__nav-list" role="list">
         {navItems.map((item) => {
-          const isActive = currentPath === item.href || (item.href !== withBase('/') && !item.href.startsWith('#') && currentPath.startsWith(item.href));
+          const isActive = isItemActive(item.href, item.label);
           return (
             <li>
               <a
@@ -70,11 +89,53 @@ const navItems = [
     </nav>
 
     <div class="rx-header__actions">
+      {
+        isDocs && (
+          <>
+            <button
+              type="button"
+              class="rx-header__search-btn"
+              id="rx-header-search-btn"
+              aria-label="Search docs (Ctrl+K)"
+              title="Search docs (Ctrl+K)"
+            >
+              <Icon name="search" size={15} ariaHidden={true} />
+              <span class="rx-header__search-label">Search docs...</span>
+              <kbd class="rx-header__search-kbd">Ctrl K</kbd>
+            </button>
+
+            <button
+              type="button"
+              class="rx-header__icon-btn rx-header__search-icon-btn"
+              id="rx-header-search-icon-btn"
+              aria-label="Search docs (Ctrl+K)"
+              title="Search docs (Ctrl+K)"
+            >
+              <Icon name="search" size={18} ariaHidden={true} />
+            </button>
+
+            <button
+              type="button"
+              class="rx-header__icon-btn rx-header__docs-sidebar-btn"
+              id="rx-docs-sidebar-toggle"
+              aria-label="Toggle documentation outline"
+              title="Docs Table of Contents"
+            >
+              <Icon name="book" size={18} ariaHidden={true} />
+            </button>
+          </>
+        )
+      }
+
       <ThemeToggle client:load />
 
-      <Button href={withBase('/getting-started/')} variant="primary" size="sm" className="rx-header__cta">
-        Get started
-      </Button>
+      {
+        !isDocs && (
+          <Button href={withBase('/getting-started/')} variant="primary" size="sm" className="rx-header__cta">
+            Get started
+          </Button>
+        )
+      }
 
       <button
         type="button"
@@ -101,15 +162,33 @@ const navItems = [
   <div id="rx-mobile-menu" class="rx-mobile-sheet" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
     <div class="rx-mobile-sheet__backdrop" id="rx-sheet-backdrop"></div>
     <div class="rx-mobile-sheet__panel">
+      {
+        isDocs && (
+          <button
+            type="button"
+            class="rx-mobile-sheet__search-btn"
+            id="rx-mobile-search-trigger"
+            aria-label="Search documentation"
+          >
+            <Icon name="search" size={16} ariaHidden={true} />
+            <span>Search documentation...</span>
+            <kbd class="rx-header__search-kbd">Ctrl K</kbd>
+          </button>
+        )
+      }
+
       <nav class="rx-mobile-sheet__nav" aria-label="Mobile Navigation Links">
         <ul class="rx-mobile-sheet__list" role="list">
-          {navItems.map((item) => (
-            <li>
-              <a href={item.href} class="rx-mobile-sheet__link">
-                {item.label}
-              </a>
-            </li>
-          ))}
+          {navItems.map((item) => {
+            const isActive = isItemActive(item.href, item.label);
+            return (
+              <li>
+                <a href={item.href} class:list={['rx-mobile-sheet__link', { 'is-active': isActive }]}>
+                  {item.label}
+                </a>
+              </li>
+            );
+          })}
           <li>
             <a
               href={siteConfig.repo}
@@ -125,11 +204,30 @@ const navItems = [
         </ul>
       </nav>
 
-      <div class="rx-mobile-sheet__actions">
-        <Button href={withBase('/getting-started/')} variant="primary" size="md" block={true}>
-          Get started
-        </Button>
-      </div>
+      {
+        isDocs && (
+          <button
+            type="button"
+            class="rx-mobile-sheet__outline-btn"
+            id="rx-mobile-outline-btn"
+            aria-label="Browse documentation outline and sections"
+          >
+            <Icon name="book" size={18} ariaHidden={true} />
+            <span>Browse Docs Outline / TOC</span>
+            <span class="rx-mobile-sheet__arrow">&rarr;</span>
+          </button>
+        )
+      }
+
+      {
+        !isDocs && (
+          <div class="rx-mobile-sheet__actions">
+            <Button href={withBase('/getting-started/')} variant="primary" size="md" block={true}>
+              Get started
+            </Button>
+          </div>
+        )
+      }
     </div>
   </div>
 </header>
@@ -223,11 +321,16 @@ const navItems = [
       transition: none;
     }
 
+    .rx-header.is-docs,
     .rx-header.is-scrolled {
       background-color: color-mix(in srgb, var(--rx-surface-1) 85%, transparent);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom-color: var(--rx-border);
+    }
+
+    .rx-header.is-docs .rx-header__inner {
+      max-width: 1440px;
     }
 
     .rx-header__inner {
@@ -369,6 +472,94 @@ const navItems = [
       gap: 0.75rem;
     }
 
+    .rx-header__search-btn {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--rx-surface-2);
+      border: 1px solid var(--rx-border);
+      color: var(--rx-text-2);
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--rx-radius-sm);
+      font-family: var(--rx-font-mono);
+      font-size: 0.75rem;
+      cursor: pointer;
+      min-height: 36px;
+      min-width: 170px;
+      justify-content: space-between;
+      transition:
+        background-color var(--rx-dur-fast) var(--rx-ease-out),
+        border-color var(--rx-dur-fast) var(--rx-ease-out),
+        color var(--rx-dur-fast) var(--rx-ease-out);
+    }
+
+    @media (min-width: 768px) {
+      .rx-header__search-btn {
+        display: inline-flex;
+      }
+    }
+
+    .rx-header__search-btn:hover {
+      background: var(--rx-surface-3);
+      color: var(--rx-text-1);
+      border-color: var(--rx-border-hover);
+    }
+
+    .rx-header__search-btn:focus-visible {
+      outline: var(--rx-focus-ring);
+    }
+
+    .rx-header__search-label {
+      flex: 1;
+      text-align: left;
+      margin-left: 0.15rem;
+    }
+
+    .rx-header__search-kbd {
+      font-family: var(--rx-font-mono);
+      font-size: 0.6875rem;
+      padding: 0.1rem 0.35rem;
+      border-radius: var(--rx-radius-xs);
+      background: var(--rx-surface-3);
+      border: 1px solid var(--rx-border-subtle);
+      color: var(--rx-text-3);
+      line-height: 1;
+    }
+
+    .rx-header__icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      background: var(--rx-surface-2);
+      border: 1px solid var(--rx-border);
+      border-radius: var(--rx-radius-sm);
+      color: var(--rx-text-2);
+      cursor: pointer;
+      transition:
+        background-color var(--rx-dur-fast) var(--rx-ease-out),
+        border-color var(--rx-dur-fast) var(--rx-ease-out),
+        color var(--rx-dur-fast) var(--rx-ease-out);
+    }
+
+    @media (min-width: 768px) {
+      .rx-header__icon-btn {
+        display: none;
+      }
+    }
+
+    .rx-header__icon-btn:hover {
+      background: var(--rx-surface-3);
+      color: var(--rx-text-1);
+      border-color: var(--rx-border-hover);
+    }
+
+    .rx-header__icon-btn:focus-visible {
+      outline: var(--rx-focus-ring);
+    }
+
     .rx-header__cta {
       display: none;
     }
@@ -482,6 +673,62 @@ const navItems = [
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
+    }
+
+    .rx-mobile-sheet__search-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      min-height: 44px;
+      padding: 0.625rem 1rem;
+      background: var(--rx-surface-2);
+      border: 1px solid var(--rx-border);
+      border-radius: var(--rx-radius-sm);
+      color: var(--rx-text-2);
+      font-family: var(--rx-font-sans);
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition:
+        background-color var(--rx-dur-fast) var(--rx-ease-out),
+        border-color var(--rx-dur-fast) var(--rx-ease-out);
+    }
+
+    .rx-mobile-sheet__search-btn:hover {
+      background: var(--rx-surface-3);
+      border-color: var(--rx-border-hover);
+      color: var(--rx-text-1);
+    }
+
+    .rx-mobile-sheet__search-btn kbd {
+      margin-left: auto;
+    }
+
+    .rx-mobile-sheet__outline-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      min-height: 44px;
+      padding: 0.75rem 1rem;
+      background: var(--sl-color-accent-low, rgba(79, 70, 229, 0.18));
+      border: 1px solid var(--rx-border-hover);
+      border-radius: var(--rx-radius-sm);
+      color: var(--rx-text-1);
+      font-family: var(--rx-font-sans);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--rx-dur-fast) var(--rx-ease-out);
+    }
+
+    .rx-mobile-sheet__outline-btn:hover {
+      background: var(--rx-accent-indigo);
+      color: #ffffff;
+    }
+
+    .rx-mobile-sheet__arrow {
+      margin-left: auto;
     }
 
     .rx-mobile-sheet__cta {
@@ -685,4 +932,47 @@ const navItems = [
       }
     });
   }
+
+  // E4: Search trigger wiring
+  function triggerSearch() {
+    const searchBtn = document.querySelector<HTMLButtonElement>('site-search button[data-open-modal]');
+    if (searchBtn) {
+      searchBtn.click();
+    }
+  }
+
+  document.getElementById('rx-header-search-btn')?.addEventListener('click', triggerSearch);
+  document.getElementById('rx-header-search-icon-btn')?.addEventListener('click', triggerSearch);
+  document.getElementById('rx-mobile-search-trigger')?.addEventListener('click', () => {
+    document.getElementById('rx-mobile-sheet')?.classList.remove('is-open');
+    triggerSearch();
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+      e.preventDefault();
+      triggerSearch();
+    }
+    if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      triggerSearch();
+    }
+  });
+
+  // E5: Docs outline mobile toggle wiring
+  function toggleDocsSidebar() {
+    const starlightMenuBtn = document.querySelector<HTMLButtonElement>('starlight-menu-button button');
+    if (starlightMenuBtn) {
+      starlightMenuBtn.click();
+    }
+  }
+
+  document.getElementById('rx-docs-sidebar-toggle')?.addEventListener('click', toggleDocsSidebar);
+  document.getElementById('rx-mobile-outline-btn')?.addEventListener('click', () => {
+    const menuToggleBtn = document.getElementById('rx-menu-toggle');
+    if (menuToggleBtn && menuToggleBtn.getAttribute('aria-expanded') === 'true') {
+      menuToggleBtn.click();
+    }
+    toggleDocsSidebar();
+  });
 </script>

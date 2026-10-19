@@ -101,6 +101,10 @@ export default defineConfig({
           ],
         },
       ],
+      components: {
+        Header: './src/components/chrome/StarlightHeader.astro',
+        Footer: './src/components/chrome/StarlightFooter.astro',
+      },
       customCss: ['./src/styles/global.css'],
     }),
     preact(),

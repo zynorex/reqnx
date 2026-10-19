@@ -71,18 +71,52 @@
  * ────────────────────────────────────────────────────────────────────────────── */
 
 header.header {
-  background-color: var(--sl-color-bg-nav);
-  border-bottom: 1px solid var(--sl-color-hairline);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: border-color var(--rx-transition-fast);
+  padding: 0 !important;
+  background-color: transparent !important;
+  border-bottom: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  height: var(--sl-nav-height, 56px) !important;
 }
 
-.site-title {
-  font-family: var(--rx-font-mono);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  gap: 0.5rem;
+@media (max-width: 767px) {
+  :root {
+    --sl-nav-height: 3.25rem; /* 52px */
+  }
+}
+
+/* Starlight Pagefind Search Modal Theme Customizations */
+#starlight__search dialog {
+  background: var(--rx-surface-2) !important;
+  border: 1px solid var(--sl-color-hairline) !important;
+  border-radius: var(--rx-radius-lg) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
+  overflow: hidden !important;
+}
+
+#starlight__search .pagefind-ui__search-input {
+  background-color: var(--rx-surface-3) !important;
+  border: 1px solid var(--sl-color-hairline) !important;
+  border-radius: var(--rx-radius-md) !important;
+  color: var(--rx-text-1) !important;
+  font-family: var(--rx-font-sans) !important;
+}
+
+#starlight__search .pagefind-ui__result-title,
+#starlight__search .pagefind-ui__result-nested {
+  background-color: var(--rx-surface-2) !important;
+  border-radius: var(--rx-radius-sm) !important;
+}
+
+#starlight__search .pagefind-ui__result-title:hover,
+#starlight__search .pagefind-ui__result-nested:hover {
+  background-color: var(--rx-surface-3) !important;
+}
+
+#starlight__search mark {
+  background-color: transparent !important;
+  color: var(--rx-accent-cyan) !important;
+  text-decoration: underline !important;
 }
 
 .site-title a {

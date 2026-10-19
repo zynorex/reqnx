@@ -1,0 +1,26 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/chrome/StarlightFooter.astro
+//
+// Starlight Footer Override Component:
+// Composes Starlight's default pagination/edit footer with our slim SiteFooter.
+// ──────────────────────────────────────────────────────────────────────────────
+
+import DefaultFooter from '@astrojs/starlight/components/Footer.astro';
+import SiteFooter from './SiteFooter.astro';
+---
+
+<div class="rx-starlight-footer-wrapper">
+  <DefaultFooter {...Astro.props}>
+    <slot />
+  </DefaultFooter>
+
+  <SiteFooter variant="slim" showRuler={true} />
+</div>
+
+<style>
+  .rx-starlight-footer-wrapper {
+    width: 100%;
+    margin-top: 3rem;
+  }
+</style>

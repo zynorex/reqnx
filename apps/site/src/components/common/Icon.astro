@@ -21,7 +21,9 @@ interface Props {
     | 'monitor'
     | 'arrow-right'
     | 'menu'
-    | 'close';
+    | 'close'
+    | 'search'
+    | 'book';
   size?: number;
   class?: string;
   ariaHidden?: boolean;
@@ -135,6 +137,18 @@ const { name, size = 16, class: className = '', ariaHidden = true } = Astro.prop
     <>
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
+    </>
+  )}
+  {name === 'search' && (
+    <>
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </>
+  )}
+  {name === 'book' && (
+    <>
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
     </>
   )}
 </svg>

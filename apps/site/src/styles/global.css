@@ -241,6 +241,25 @@
 
     /* ─── Focus Ring ─────────────────────────────────────────────────────── */
     --rx-focus-ring: 0 0 0 2px var(--rx-surface-1), 0 0 0 4px var(--rx-accent-indigo);
+
+    /* ─── Chrome Geometry & Z-Index Tokens ───────────────────────────────── */
+    --rx-header-height: 56px;
+    --rx-header-height-mobile: 52px;
+    --rx-header-bg: transparent;
+    --rx-header-bg-solid: color-mix(in srgb, var(--rx-surface-1) 92%, transparent);
+    --rx-header-border: var(--rx-border-subtle);
+    --rx-footer-bg: var(--rx-surface-1);
+    --rx-footer-border: var(--rx-border-subtle);
+
+    --header-height: var(--rx-header-height);
+    --header-height-mobile: var(--rx-header-height-mobile);
+
+    --z-header: 40;
+    --z-flyout: 50;
+    --z-sheet: 60;
+    --z-palette: 70;
+    --z-tooltip: 80;
+    --z-skip-link: 100;
   }
 
   /* ─── Light Mode Definitions ───────────────────────────────────────────── */
@@ -271,6 +290,10 @@
     --rx-border: rgba(99, 102, 241, 0.2);
     --rx-border-subtle: rgba(15, 23, 42, 0.08);
     --rx-border-hover: rgba(99, 102, 241, 0.45);
+    --rx-header-bg-solid: color-mix(in srgb, #ffffff 92%, transparent);
+    --rx-header-border: var(--rx-border-subtle);
+    --rx-footer-bg: var(--rx-surface-1);
+    --rx-footer-border: var(--rx-border-subtle);
 
     --rx-tick-color: rgba(99, 102, 241, 0.05);
     --rx-tick-major-color: rgba(99, 102, 241, 0.15);
