@@ -110,7 +110,7 @@ sequenceDiagram
 
 ## Key Schema
 
-```
+```text
 reqnx:{prefix}:{algorithmId}:{identity}
 ```
 

@@ -18,6 +18,26 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
+    },
+    "./node-redis": {
+      "import": {
+        "types": "./dist/adapters/node-redis.d.ts",
+        "default": "./dist/adapters/node-redis.js"
+      },
+      "require": {
+        "types": "./dist/adapters/node-redis.d.cts",
+        "default": "./dist/adapters/node-redis.cjs"
+      }
+    },
+    "./ioredis": {
+      "import": {
+        "types": "./dist/adapters/ioredis.d.ts",
+        "default": "./dist/adapters/ioredis.js"
+      },
+      "require": {
+        "types": "./dist/adapters/ioredis.d.cts",
+        "default": "./dist/adapters/ioredis.cjs"
+      }
     }
   },
   "main": "./dist/index.cjs",
@@ -25,11 +45,19 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
+    "node-redis.js",
+    "node-redis.cjs",
+    "node-redis.d.ts",
+    "ioredis.js",
+    "ioredis.cjs",
+    "ioredis.d.ts",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsdown src/index.ts --format esm,cjs --dts",
+    "prebuild": "tsx scripts/build-lua.ts",
+    "build": "tsdown src/index.ts src/adapters/node-redis.ts src/adapters/ioredis.ts --format esm,cjs --dts",
+    "build:lua": "tsx scripts/build-lua.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check-package": "publint && attw --pack ."
@@ -38,15 +66,22 @@
     "@reqnx/core": "workspace:*"
   },
   "peerDependencies": {
-    "ioredis": "^5.0.0"
+    "ioredis": "^5.0.0",
+    "redis": "^4.7.0 || ^5.0.0"
   },
   "peerDependenciesMeta": {
     "ioredis": {
-      "optional": false
+      "optional": true
+    },
+    "redis": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@reqnx/testkit": "workspace:*",
+    "@types/node": "^22.0.0",
     "ioredis": "^5.4.0",
+    "redis": "^4.7.0",
     "typescript": "^5.7.0"
   }
 }

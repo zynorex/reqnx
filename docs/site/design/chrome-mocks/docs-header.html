@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs Header Mock — REQNX Chrome System</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Docs Layout Canvas: Sidebar + Prose */
+    .docs-shell {
+      max-width: var(--docs-container-max);
+      margin: 0 auto;
+      display: flex;
+      min-height: calc(100vh - var(--header-height));
+    }
+    .docs-sidebar-placeholder {
+      width: var(--sidebar-width);
+      border-right: 1px solid var(--header-border);
+      background: var(--rx-surface-1);
+      padding: 1.5rem 1rem;
+      flex-shrink: 0;
+    }
+    .docs-content-placeholder {
+      flex: 1;
+      padding: 2.5rem 3rem;
+      background: var(--rx-surface-1);
+    }
+    .docs-h1 {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      color: var(--rx-text-1);
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--header-border);
+    }
+    .docs-p {
+      color: var(--rx-text-2);
+      line-height: 1.68;
+      max-width: 68ch;
+      margin-bottom: 1rem;
+    }
+    .toolbar-dock {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--rx-surface-2);
+      border: 1px solid var(--header-border);
+      border-radius: var(--radius-full);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      z-index: 1000;
+      font-size: 0.8125rem;
+      font-family: var(--font-mono);
+    }
+    .toolbar-dock button {
+      background: var(--rx-surface-3);
+      border: 1px solid var(--header-border);
+      color: var(--rx-text-1);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .toolbar-dock button.active {
+      background: var(--rx-accent-cyan);
+      color: #000;
+      border-color: var(--rx-accent-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Links -->
+  <a href="#main-content" class="rx-skip-link">Skip to content</a>
+  <a href="#docs-nav" class="rx-skip-link" style="left: 9rem;">Skip to navigation</a>
+
+  <!-- Docs Header (Always Solid 92% with Hairline) -->
+  <header class="site-header site-header--solid" id="docs-header">
+    <div class="site-header__container site-header__container--docs">
+      
+      <!-- Left: Logo, Slash, Docs Home, Area Nav -->
+      <div class="site-header__left">
+        <a href="/" class="brand-lockup" aria-label="REQNX home">
+          <div class="brand-icon-box">
+            <img src="../../../../brand/logo.png" alt="" width="28" height="28">
+          </div>
+          <span class="brand-name">REQN<span class="brand-name-gold">X</span></span>
+        </a>
+
+        <span class="brand-divider-slash" aria-hidden="true"></span>
+        <a href="/getting-started/" class="docs-breadcrumb-label">Docs</a>
+
+        <!-- Wide Area Tabs (1280px+) -->
+        <nav class="site-nav" id="wide-area-nav" aria-label="Documentation sections">
+          <ul class="site-nav__list" role="list">
+            <li class="site-nav__item">
+              <a href="/getting-started/" class="site-nav__link">Start</a>
+            </li>
+            <li class="site-nav__item">
+              <a href="/guides/" class="site-nav__link">Guides</a>
+            </li>
+            <li class="site-nav__item">
+              <a href="/algorithms/" class="site-nav__link is-active" aria-current="page">Algorithms</a>
+            </li>
+            <li class="site-nav__item">
+              <a href="/reference/" class="site-nav__link">Reference</a>
+            </li>
+            <li class="site-nav__item">
+              <a href="/design/architecture/" class="site-nav__link">Design</a>
+            </li>
+            <li class="site-nav__item">
+              <a href="/project/" class="site-nav__link">Project</a>
+            </li>
+          </ul>
+
+          <div class="site-nav__marker" id="docs-nav-marker"></div>
+        </nav>
+
+        <!-- Narrow Section Disclosure (1024 - 1279px) -->
+        <div class="docs-section-disclosure-wrap" id="narrow-section-wrap" style="display: none;">
+          <button type="button" class="docs-section-btn" id="section-disclosure-btn" aria-expanded="false" aria-controls="section-disclosure-panel">
+            <span>Algorithms</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          
+          <div class="docs-section-panel" id="section-disclosure-panel" style="display: none;">
+            <a href="/getting-started/" class="docs-section-item">Start</a>
+            <a href="/guides/" class="docs-section-item">Guides</a>
+            <a href="/algorithms/" class="docs-section-item is-current">Algorithms</a>
+            <a href="/reference/" class="docs-section-item">Reference</a>
+            <a href="/design/architecture/" class="docs-section-item">Design</a>
+            <a href="/project/" class="docs-section-item">Project</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: Full Search Trigger, Version Chip, GitHub, Theme Control (No CTA) -->
+      <div class="site-header__right">
+        <!-- Full Search Trigger (36px x 260px) -->
+        <button type="button" class="search-trigger-full" id="search-trigger-full" aria-label="Search docs (Ctrl+K)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span class="search-label">Search docs</span>
+          <kbd class="search-kbd" id="search-kbd-chip">Ctrl K</kbd>
+        </button>
+
+        <!-- Version Chip -->
+        <a href="/status/" class="version-chip" title="Current Version">v0.x</a>
+
+        <!-- GitHub Icon Link -->
+        <a href="https://github.com/zynorex/reqnx" target="_blank" rel="noreferrer" class="icon-btn" aria-label="GitHub repository (opens in a new tab)" title="GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+        </a>
+
+        <div class="header-divider"></div>
+
+        <!-- Theme Segmented Control -->
+        <div class="segmented-theme-control" role="radiogroup" aria-label="Theme preference">
+          <div class="segmented-theme-thumb" id="theme-thumb"></div>
+          <button type="button" class="segmented-theme-option" data-theme-val="system" aria-label="System theme" title="System">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </button>
+          <button type="button" class="segmented-theme-option is-selected" data-theme-val="dark" aria-label="Dark mode" title="Dark">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+          <button type="button" class="segmented-theme-option" data-theme-val="light" aria-label="Light mode" title="Light">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mobile Menu Trigger (< 768px) -->
+        <button type="button" class="mobile-menu-btn" aria-label="Open menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <span>Menu</span>
+        </button>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Docs Layout Shell -->
+  <div class="docs-shell">
+    <aside class="docs-sidebar-placeholder" id="docs-nav">
+      <div style="font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; color: var(--rx-text-3); margin-bottom: 0.75rem; font-weight: 600;">
+        Algorithms
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.875rem;">
+        <a href="#" style="color: var(--rx-text-1); text-decoration: none; padding: 0.35rem 0.5rem; background: var(--rx-surface-3); border-radius: 4px; font-weight: 600;">Overview & Comparison</a>
+        <a href="#" style="color: var(--rx-text-2); text-decoration: none; padding: 0.35rem 0.5rem;">Fixed Window</a>
+        <a href="#" style="color: var(--rx-text-2); text-decoration: none; padding: 0.35rem 0.5rem;">Token Bucket</a>
+        <a href="#" style="color: var(--rx-text-2); text-decoration: none; padding: 0.35rem 0.5rem;">Sliding Window Log</a>
+      </div>
+    </aside>
+
+    <main id="main-content" class="docs-content-placeholder">
+      <h1 class="docs-h1">Algorithms Overview & Comparison</h1>
+      <p class="docs-p">
+        Rate limiting algorithms balance memory efficiency, CPU time, boundary behavior, and burst characteristics. Every algorithm in REQNX adheres to the strict step() transition contract.
+      </p>
+    </main>
+  </div>
+
+  <!-- Interactive Controls Dock -->
+  <div class="toolbar-dock">
+    <span>Nav Mode:</span>
+    <button id="btn-mode-wide" class="active" onclick="setNavMode('wide')">Wide (Area Tabs 1280px+)</button>
+    <button id="btn-mode-narrow" onclick="setNavMode('narrow')">Narrow (Section Disclosure 1024-1279px)</button>
+    <span>Search:</span>
+    <button id="btn-focus-search" onclick="toggleSearchFocus()">Search Focus</button>
+    <span>Theme:</span>
+    <button id="btn-theme-dark" class="active" onclick="setTheme('dark')">Dark</button>
+    <button id="btn-theme-light" onclick="setTheme('light')">Light</button>
+  </div>
+
+  <script>
+    const marker = document.getElementById('docs-nav-marker');
+    const activeLink = document.querySelector('#wide-area-nav .site-nav__link.is-active');
+
+    function updateMarker(target) {
+      if (!target || !marker) return;
+      const navRect = target.closest('.site-nav').getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      marker.style.transform = `translateX(${targetRect.left - navRect.left}px)`;
+      marker.style.width = `${targetRect.width}px`;
+    }
+
+    if (activeLink) {
+      updateMarker(activeLink);
+    }
+
+    document.querySelectorAll('#wide-area-nav .site-nav__link').forEach(link => {
+      link.addEventListener('mouseenter', () => updateMarker(link));
+      link.addEventListener('focus', () => updateMarker(link));
+    });
+
+    document.getElementById('wide-area-nav').addEventListener('mouseleave', () => {
+      if (activeLink) updateMarker(activeLink);
+    });
+
+    function setNavMode(mode) {
+      document.querySelectorAll('#btn-mode-wide, #btn-mode-narrow').forEach(b => b.classList.remove('active'));
+      const wideNav = document.getElementById('wide-area-nav');
+      const narrowNav = document.getElementById('narrow-section-wrap');
+
+      if (mode === 'wide') {
+        wideNav.style.display = 'flex';
+        narrowNav.style.display = 'none';
+        document.getElementById('btn-mode-wide').classList.add('active');
+        if (activeLink) updateMarker(activeLink);
+      } else {
+        wideNav.style.display = 'none';
+        narrowNav.style.display = 'block';
+        document.getElementById('btn-mode-narrow').classList.add('active');
+      }
+    }
+
+    const sectionBtn = document.getElementById('section-disclosure-btn');
+    const sectionPanel = document.getElementById('section-disclosure-panel');
+    sectionBtn.addEventListener('click', () => {
+      const isOpen = sectionPanel.style.display !== 'none';
+      sectionPanel.style.display = isOpen ? 'none' : 'block';
+      sectionBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    function toggleSearchFocus() {
+      const searchTrigger = document.getElementById('search-trigger-full');
+      searchTrigger.classList.toggle('is-focused');
+      document.getElementById('btn-focus-search').classList.toggle('active');
+    }
+
+    function setTheme(th) {
+      document.documentElement.setAttribute('data-theme', th);
+      document.querySelectorAll('#btn-theme-dark, #btn-theme-light').forEach(b => b.classList.remove('active'));
+      if (th === 'dark') {
+        document.getElementById('btn-theme-dark').classList.add('active');
+        document.getElementById('theme-thumb').style.transform = 'translateX(28px)';
+      } else {
+        document.getElementById('btn-theme-light').classList.add('active');
+        document.getElementById('theme-thumb').style.transform = 'translateX(56px)';
+      }
+    }
+  </script>
+</body>
+</html>

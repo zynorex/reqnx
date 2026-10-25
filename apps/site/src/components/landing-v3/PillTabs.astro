@@ -1,0 +1,234 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/PillTabs.astro
+//
+// Landing v3 Pill Tabs:
+// - 36px tall pills, 8px gaps
+// - Active = accent fill with on-accent text
+// - Inactive = canvas with hairline border that strengthens on hover
+// - ARIA tabs: roving tabindex, arrows (Left/Right), Home, End
+// - Mobile (< 768px): horizontal scroll with scroll snap and edge fades
+// ──────────────────────────────────────────────────────────────────────────────
+
+export interface PillTabItem {
+  id: string;
+  label: string;
+  disabled?: boolean;
+}
+
+interface Props {
+  tabs: PillTabItem[];
+  defaultTabId?: string;
+  tabsId?: string;
+  ariaLabel?: string;
+}
+
+const {
+  tabs,
+  defaultTabId = tabs[0]?.id,
+  tabsId = 'rx-pill-tabs',
+  ariaLabel = 'Categories',
+} = Astro.props;
+---
+
+<div class="rx-pill-tabs-wrapper" id={tabsId}>
+  <div
+    class="rx-pill-tabs"
+    role="tablist"
+    aria-label={ariaLabel}
+  >
+    {
+      tabs.map((tab, idx) => {
+        const isSelected = tab.id === defaultTabId;
+        return (
+          <button
+            type="button"
+            role="tab"
+            id={`tab-${tab.id}`}
+            aria-selected={isSelected ? 'true' : 'false'}
+            aria-controls={`panel-${tab.id}`}
+            tabindex={isSelected ? 0 : -1}
+            disabled={tab.disabled}
+            class:list={['rx-pill-tab', { 'is-active': isSelected }]}
+            data-tab-id={tab.id}
+          >
+            {tab.label}
+          </button>
+        );
+      })
+    }
+  </div>
+</div>
+
+<style>
+  .rx-pill-tabs-wrapper {
+    position: relative;
+    max-width: 100%;
+    margin-bottom: 32px;
+  }
+
+  .rx-pill-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-pill, 9999px);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-width: 100%;
+  }
+
+  .rx-pill-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rx-pill-tab {
+    height: 36px;
+    padding: 0 18px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--rx-ink-soft);
+    font-family: var(--rx-font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      color var(--rx-dur-fast) var(--rx-ease-out),
+      transform var(--rx-dur-instant) var(--rx-ease-out);
+  }
+
+  .rx-pill-tab:hover:not(:disabled):not(.is-active) {
+    background: var(--rx-surface-3, rgba(255, 255, 255, 0.05));
+    border-color: var(--rx-hairline-strong);
+    color: var(--rx-ink);
+  }
+
+  .rx-pill-tab.is-active {
+    background: var(--rx-accent);
+    color: var(--rx-on-accent);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  }
+
+  .rx-pill-tab:focus-visible {
+    outline: 2px solid var(--rx-accent);
+    outline-offset: 2px;
+  }
+
+  .rx-pill-tab:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    .rx-pill-tabs-wrapper {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
+    }
+
+    .rx-pill-tabs {
+      display: flex;
+      width: max-content;
+      padding: 4px 16px;
+    }
+
+    .rx-pill-tab {
+      scroll-snap-align: center;
+    }
+  }
+</style>
+
+<script>
+  function setupPillTabs() {
+    const tablists = document.querySelectorAll<HTMLElement>('.rx-pill-tabs[role="tablist"]');
+
+    tablists.forEach((tablist) => {
+      const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+
+      function activateTab(tabToActivate: HTMLButtonElement) {
+        tabs.forEach((tab) => {
+          const isTarget = tab === tabToActivate;
+          tab.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+          tab.tabIndex = isTarget ? 0 : -1;
+          tab.classList.toggle('is-active', isTarget);
+
+          const panelId = tab.getAttribute('aria-controls');
+          if (panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+              panel.hidden = !isTarget;
+              if (isTarget) {
+                panel.classList.add('is-active');
+              } else {
+                panel.classList.remove('is-active');
+              }
+            }
+          }
+        });
+
+        // Dispatch custom change event
+        tablist.dispatchEvent(
+          new CustomEvent('tab-change', {
+            detail: { tabId: tabToActivate.getAttribute('data-tab-id') },
+            bubbles: true,
+          })
+        );
+      }
+
+      tablist.addEventListener('click', (e) => {
+        const target = (e.target as HTMLElement).closest<HTMLButtonElement>('[role="tab"]');
+        if (target && !target.disabled) {
+          activateTab(target);
+        }
+      });
+
+      tablist.addEventListener('keydown', (e) => {
+        const currentTab = document.activeElement as HTMLButtonElement;
+        const currentIndex = tabs.indexOf(currentTab);
+        if (currentIndex === -1) return;
+
+        let nextIndex = -1;
+
+        switch (e.key) {
+          case 'ArrowLeft':
+            nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+            break;
+          case 'ArrowRight':
+            nextIndex = (currentIndex + 1) % tabs.length;
+            break;
+          case 'Home':
+            nextIndex = 0;
+            break;
+          case 'End':
+            nextIndex = tabs.length - 1;
+            break;
+          default:
+            return;
+        }
+
+        e.preventDefault();
+        const nextTab = tabs[nextIndex];
+        if (nextTab && !nextTab.disabled) {
+          nextTab.focus();
+          activateTab(nextTab);
+        }
+      });
+    });
+  }
+
+  // Initialize on load and page swaps
+  setupPillTabs();
+  document.addEventListener('astro:page-load', setupPillTabs);
+</script>

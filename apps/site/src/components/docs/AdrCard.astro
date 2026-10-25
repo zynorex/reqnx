@@ -1,0 +1,193 @@
+---
+/**
+ * AdrCard.astro
+ * Executive metadata summary card for Architecture Decision Records (ADRs).
+ */
+interface Props {
+  id: string;
+  title: string;
+  status: 'Accepted' | 'Proposed' | 'Superseded' | 'Deprecated' | 'Rejected';
+  date: string;
+  deciders?: string;
+  supersededBy?: string;
+}
+
+const {
+  id,
+  title,
+  status = 'Accepted',
+  date,
+  deciders = 'REQNX Core Engineering Team',
+  supersededBy,
+} = Astro.props;
+
+const statusClass = {
+  Accepted: 'rx-adr-accepted',
+  Proposed: 'rx-adr-proposed',
+  Superseded: 'rx-adr-superseded',
+  Deprecated: 'rx-adr-deprecated',
+  Rejected: 'rx-adr-rejected',
+}[status] ?? 'rx-adr-accepted';
+---
+
+<div class="rx-adr-card rx-panel">
+  <div class="rx-adr-header">
+    <div class="rx-adr-id-group">
+      <span class="rx-adr-badge">{id}</span>
+      <h2 class="rx-adr-title">{title}</h2>
+    </div>
+    <span class={`rx-adr-status ${statusClass}`}>
+      <span class="rx-status-dot"></span>
+      {status}
+    </span>
+  </div>
+
+  <div class="rx-adr-meta-grid">
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Decision Date</span>
+      <span class="rx-meta-value">{date}</span>
+    </div>
+    <div class="rx-meta-item">
+      <span class="rx-meta-label">Deciders</span>
+      <span class="rx-meta-value">{deciders}</span>
+    </div>
+    {
+      supersededBy && (
+        <div class="rx-meta-item">
+          <span class="rx-meta-label">Superseded By</span>
+          <a class="rx-meta-value rx-adr-link" href={supersededBy}>
+            {supersededBy}
+          </a>
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .rx-adr-card {
+    margin: 1.5rem 0 2rem 0;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: var(--rx-radius-md);
+    background: var(--rx-surface-2);
+  }
+
+  .rx-adr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .rx-adr-id-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .rx-adr-badge {
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--rx-accent-cyan);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .rx-adr-title {
+    font-family: var(--rx-font-mono);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--rx-text-1);
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .rx-adr-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--rx-radius-full);
+    border: 1px solid transparent;
+  }
+
+  .rx-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .rx-adr-accepted {
+    background: var(--rx-semantic-allowed-surface);
+    color: var(--rx-semantic-allowed);
+    border-color: rgba(16, 185, 129, 0.25);
+  }
+  .rx-adr-accepted .rx-status-dot {
+    background-color: var(--rx-semantic-allowed);
+  }
+
+  .rx-adr-proposed {
+    background: var(--rx-semantic-warn-surface);
+    color: var(--rx-semantic-warn);
+    border-color: rgba(245, 158, 11, 0.25);
+  }
+  .rx-adr-proposed .rx-status-dot {
+    background-color: var(--rx-semantic-warn);
+  }
+
+  .rx-adr-superseded,
+  .rx-adr-deprecated,
+  .rx-adr-rejected {
+    background: var(--rx-semantic-neutral-surface);
+    color: var(--rx-text-3);
+    border-color: rgba(100, 116, 139, 0.25);
+  }
+  .rx-adr-superseded .rx-status-dot,
+  .rx-adr-deprecated .rx-status-dot,
+  .rx-adr-rejected .rx-status-dot {
+    background-color: var(--rx-text-3);
+  }
+
+  .rx-adr-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .rx-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .rx-meta-label {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--rx-text-3);
+  }
+
+  .rx-meta-value {
+    font-family: var(--rx-font-mono);
+    font-size: 0.875rem;
+    color: var(--rx-text-1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rx-adr-link {
+    color: var(--rx-accent-cyan) !important;
+    text-decoration: underline;
+  }
+</style>

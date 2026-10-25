@@ -1,0 +1,201 @@
+---
+/**
+ * apps/site/src/pages/dev/styleguide/landing/[...slug].astro
+ *
+ * Dev-only Styleguide for Landing v3 Primitives & Tokens.
+ *
+ * CRITICAL REQUIREMENT:
+ * Zero output in production builds (returns [] in getStaticPaths),
+ * absent from nav and sitemap, not an underscore route.
+ */
+import Section from '../../../../components/landing-v3/Section.astro';
+import StatusPill from '../../../../components/landing-v3/StatusPill.astro';
+import PillTabs from '../../../../components/landing-v3/PillTabs.astro';
+import StatCell from '../../../../components/landing-v3/StatCell.astro';
+import SpecGrid from '../../../../components/landing-v3/SpecGrid.astro';
+import HeroV3 from '../../../../components/landing-v3/HeroV3.astro';
+import ArchitectureStage from '../../../../components/landing-v3/ArchitectureStage.astro';
+import Button from '../../../../components/common/Button.astro';
+import { ThemeToggle } from '../../../../components/common/ThemeToggle';
+import '../../../../styles/global.css';
+import '../../../../styles/landing.css';
+
+export function getStaticPaths() {
+  if (import.meta.env.PROD && !process.env.BUILD_DEV_STYLEGUIDE) {
+    return [];
+  }
+  return [{ params: { slug: undefined } }];
+}
+
+const mockTabs = [
+  { id: 'token-bucket', label: 'Token Bucket' },
+  { id: 'fixed-window', label: 'Fixed Window' },
+  { id: 'sliding-log', label: 'Sliding Log (Planned)', disabled: false },
+];
+
+const mockStats = [
+  { value: 0, caption: 'Runtime dependencies in core', sourceLabel: 'packages/core/package.json', sourceHref: '/getting-started/' },
+  { value: '2 / 5', caption: 'Algorithms available today', sourceLabel: 'features.ts', sourceHref: '/algorithms/' },
+  { value: 19, caption: 'Architectural decision records', sourceLabel: 'docs/adr/*.md', sourceHref: '/design/adr/0001-package-boundaries/' },
+];
+
+const mockPillars = [
+  { index: '01 · TRANSITIONS', title: 'Pure Step Functions', description: 'State transitions take state and time, returning new state and quota without side effects.' },
+  { index: '02 · INJECTED TIME', title: 'Monotonic Virtual Clocks', description: 'Time is a parameter. Multi-year rate limit window tests complete in sub-millisecond unit runs.' },
+  { index: '03 · PERSISTENCE', title: 'Atomic Store Transactions', description: 'Store operations execute in isolated transactions, eliminating race-condition double spends.' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REQNX — Landing v3 Styleguide (Dev Only)</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body>
+    <header class="styleguide-header">
+      <div class="styleguide-header__inner">
+        <div>
+          <h1 class="styleguide-title">Landing v3 Styleguide</h1>
+          <p class="styleguide-desc">Interactive workbench for Stage 2 & 3: Hero, Architecture Stage, primitives, and tokens.</p>
+        </div>
+        <ThemeToggle client:load />
+      </div>
+    </header>
+
+    <main class="styleguide-main">
+      <!-- Stage 3: Hero V3 -->
+      <HeroV3 />
+
+      <!-- Stage 3: Architecture Stage (Platform Section) -->
+      <ArchitectureStage />
+
+      <!-- Stage 2: Tokens Matrix -->
+      <Section label="TOKENS" h2="Landing v3 Color & Palette Tokens">
+        <div class="tokens-grid">
+          <div class="token-card" style="background: var(--rx-canvas); border: 1px solid var(--rx-hairline);">
+            <code>--rx-canvas</code>
+            <span>Base Canvas</span>
+          </div>
+          <div class="token-card" style="background: var(--rx-canvas-sunken); border: 1px solid var(--rx-hairline);">
+            <code>--rx-canvas-sunken</code>
+            <span>Sunken Surface</span>
+          </div>
+          <div class="token-card" style="background: var(--rx-accent); color: var(--rx-on-accent);">
+            <code>--rx-accent</code>
+            <span>Primary Brand Accent</span>
+          </div>
+          <div class="token-card" style="background: var(--rx-accent-soft); color: var(--rx-accent); border: 1px solid var(--rx-hairline);">
+            <code>--rx-accent-soft</code>
+            <span>Soft Accent Wash</span>
+          </div>
+        </div>
+      </Section>
+
+      <!-- 2. Status Pill -->
+      <Section label="PRIMITIVE" h2="StatusPill Component" sunken={true}>
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+          <StatusPill />
+          <StatusPill tag="BETA" phrase="Redis store port in review" href="#redis" />
+        </div>
+      </Section>
+
+      <!-- 3. Button Pill Shape Modifier -->
+      <Section label="BUTTONS" h2="Pill Button Modifier (data-shape='pill')">
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+          <Button variant="primary" size="lg" shape="pill">Get started (48px Pill)</Button>
+          <Button variant="secondary" size="lg" shape="pill">Secondary Pill</Button>
+          <Button variant="tertiary" size="md" shape="pill">Tertiary Pill</Button>
+        </div>
+      </Section>
+
+      <!-- 4. PillTabs Primitive -->
+      <Section label="TABS" h2="PillTabs with ARIA Navigation" sunken={true}>
+        <PillTabs tabs={mockTabs} tabsId="styleguide-pill-tabs" />
+        <div id="panel-token-bucket" role="tabpanel" class="mock-tab-panel">
+          <p><strong>Token Bucket:</strong> Continuous replenishment with fractional refills.</p>
+        </div>
+        <div id="panel-fixed-window" role="tabpanel" class="mock-tab-panel" hidden>
+          <p><strong>Fixed Window:</strong> Minimal integer memory footprint with window reset boundaries.</p>
+        </div>
+        <div id="panel-sliding-log" role="tabpanel" class="mock-tab-panel" hidden>
+          <p><strong>Sliding Log:</strong> Precise rolling window calculations without boundary cliffs.</p>
+        </div>
+      </Section>
+
+      <!-- 5. StatCell & SpecGrid -->
+      <Section
+        label="SPEC GRID"
+        h2="SpecGrid with Computed Numerals"
+        h2Muted="(Joined by 1px hairlines)"
+        lede="Top row features big computed numerals with evidence links; bottom row highlights architecture pillars."
+      >
+        <SpecGrid stats={mockStats} pillars={mockPillars} />
+      </Section>
+    </main>
+
+    <style>
+      body {
+        margin: 0;
+        background: var(--rx-canvas);
+        color: var(--rx-ink);
+        font-family: var(--rx-font-sans);
+      }
+
+      .styleguide-header {
+        border-bottom: 1px solid var(--rx-hairline-strong);
+        background: var(--rx-canvas-sunken);
+        padding: 24px;
+      }
+
+      .styleguide-header__inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .styleguide-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+      }
+
+      .styleguide-desc {
+        font-size: 14px;
+        color: var(--rx-ink-soft);
+        margin: 0;
+      }
+
+      .styleguide-main {
+        width: 100%;
+      }
+
+      .tokens-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+      }
+
+      .token-card {
+        padding: 20px;
+        border-radius: var(--rx-radius-md, 8px);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-family: var(--rx-font-mono);
+        font-size: 13px;
+      }
+
+      .mock-tab-panel {
+        padding: 24px;
+        background: var(--rx-canvas);
+        border: 1px solid var(--rx-hairline);
+        border-radius: var(--rx-radius-md, 8px);
+      }
+    </style>
+  </body>
+</html>

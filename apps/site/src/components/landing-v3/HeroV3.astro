@@ -1,0 +1,422 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/HeroV3.astro
+//
+// Landing v3 Flagship Hero (Option C: Quiet Canvas):
+// - Full-bleed warm cream (#fffbf5) in light mode, dark charcoal (#0b0d13) in dark mode
+// - Precision tick motif at 6-8% opacity with pointer tracking backlight (E6)
+// - Eyebrow StatusPill linking to #status
+// - Editorial H1 (LCP element, server-rendered static HTML, never animated from opacity 0)
+// - Subhead prose (56ch max, balanced wrap)
+// - Pill CTA row: primary pill button + quiet playground link + command chip
+// - Product Stage: Live Console in frame up to 1080px wide, straddling hero bottom edge by 64px
+// ──────────────────────────────────────────────────────────────────────────────
+
+import { siteConfig, withBase } from '../../site.config';
+import { getPrecomputedHeroState } from '../../engine/hero-precompute';
+import { LiveConsole } from '../landing/LiveConsole';
+import StatusPill from './StatusPill.astro';
+import Button from '../common/Button.astro';
+import CopyButton from '../common/CopyButton';
+import Mascot from '../brand/Mascot.astro';
+
+const initialState = await getPrecomputedHeroState();
+const commandText = siteConfig.published ? siteConfig.installCmd : siteConfig.fromSourceCmd;
+const commandLabel = siteConfig.published ? 'npm install' : 'run from source';
+---
+
+<section class="rx-v3-hero" id="hero">
+  <!-- Precision engineering tick motif background -->
+  <div class="rx-v3-hero__tick-bg" aria-hidden="true"></div>
+
+  <!-- Pointer backlight (E6) -->
+  <div class="rx-v3-hero__backlight" id="rx-v3-hero-backlight" aria-hidden="true"></div>
+
+  <div class="rx-v3-hero__container">
+    <!-- Status Pill linking to honest status matrix -->
+    <div class="rx-v3-hero__eyebrow">
+      <StatusPill
+        tag="PRE-RELEASE"
+        phrase={`v${siteConfig.version} · What works today`}
+        href="#status"
+      />
+    </div>
+
+    <!-- Editorial H1: LCP element, rendered in static SSR HTML with zero animation delay -->
+    <h1 class="rx-v3-hero__h1">
+      Rate limiting you can reason about.
+    </h1>
+
+    <!-- Subhead -->
+    <p class="rx-v3-hero__subhead">
+      Zero runtime dependencies. Pure step functions and atomic stores so your tests and callers always agree.
+    </p>
+
+    <!-- CTAs and Command Chip -->
+    <div class="rx-v3-hero__actions">
+      <div class="rx-v3-hero__cta-group">
+        <Button
+          href={withBase('/getting-started/')}
+          variant="primary"
+          size="lg"
+          shape="pill"
+          trailingIcon="arrow-right"
+        >
+          Get started
+        </Button>
+        <a href={withBase('/playground/')} class="rx-v3-hero__quiet-link">
+          <span>Open the playground</span>
+          <span class="rx-v3-hero__quiet-link-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+
+      <div class="rx-v3-hero__cmd-chip">
+        <span class="rx-v3-hero__cmd-prompt" aria-hidden="true">$</span>
+        <code class="rx-v3-hero__cmd-code" tabindex="0" role="region" aria-label="Terminal installation command">{commandText}</code>
+        <CopyButton client:load text={commandText} />
+      </div>
+    </div>
+
+    <!-- Product Stage: Live Console in frame up to 1080px wide, 8px radius, straddling hero bottom edge by 64px -->
+    <div class="rx-v3-hero__stage-wrapper">
+      <div class="rx-v3-hero__mascot-wrapper" id="rx-v3-hero-mascot" aria-hidden="true">
+        <Mascot placement="hero" />
+      </div>
+
+      <div class="rx-v3-hero__stage-frame">
+        <LiveConsole client:idle initialState={initialState} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rx-v3-hero {
+    position: relative;
+    background: var(--rx-canvas);
+    color: var(--rx-ink);
+    padding-top: clamp(48px, 6vw, 72px);
+    /* Accommodate 64px console stage overhang */
+    padding-bottom: clamp(72px, 8vw, 100px);
+    border-bottom: 1px solid var(--rx-hairline);
+    overflow: visible;
+  }
+
+  /* Precision tick grid background */
+  .rx-v3-hero__tick-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(var(--rx-hairline-strong) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.65;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
+  }
+
+  /* Pointer tracking backlight (E6) */
+  .rx-v3-hero__backlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle 280px at var(--pointer-x, 50%) var(--pointer-y, 30%),
+      var(--rx-accent-soft) 0%,
+      transparent 80%
+    );
+    opacity: 0.5;
+    transition: opacity var(--rx-dur-base) var(--rx-ease-out);
+  }
+
+  .rx-v3-hero__container {
+    position: relative;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 4vw, 48px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .rx-v3-hero__eyebrow {
+    margin-bottom: 24px;
+  }
+
+  /* Editorial H1 (LCP Element) */
+  .rx-v3-hero__h1 {
+    font-family: var(--rx-font-sans);
+    font-size: clamp(40px, 6.2vw, 72px);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    color: var(--rx-ink);
+    max-width: 18ch;
+    margin: 0 auto 20px auto;
+    text-wrap: balance;
+  }
+
+  /* Subhead */
+  .rx-v3-hero__subhead {
+    font-family: var(--rx-font-sans);
+    font-size: clamp(17px, 2vw, 20px);
+    line-height: 1.55;
+    color: var(--rx-ink-muted);
+    max-width: 56ch;
+    margin: 0 auto 36px auto;
+    text-wrap: pretty;
+  }
+
+  /* CTAs & Command Chip */
+  .rx-v3-hero__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: clamp(56px, 7vw, 76px);
+  }
+
+  .rx-v3-hero__cta-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .rx-v3-hero__quiet-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--rx-ink-muted);
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    transition:
+      color var(--rx-dur-fast) var(--rx-ease-out),
+      background-color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-v3-hero__quiet-link:hover {
+    color: var(--rx-ink);
+    background: var(--rx-accent-soft);
+  }
+
+  .rx-v3-hero__quiet-link-arrow {
+    transition: transform var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-v3-hero__quiet-link:hover .rx-v3-hero__quiet-link-arrow {
+    transform: translateX(3px);
+  }
+
+  /* Command Chip */
+  .rx-v3-hero__cmd-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    border-radius: var(--rx-radius-sm, 4px);
+    background: var(--rx-canvas-card);
+    border: 1px solid var(--rx-hairline-strong);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .rx-v3-hero__cmd-prompt {
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    color: var(--rx-accent);
+    user-select: none;
+    font-weight: 600;
+  }
+
+  .rx-v3-hero__cmd-code {
+    font-family: var(--rx-font-mono);
+    font-size: 13px;
+    color: var(--rx-ink);
+    user-select: all;
+    background: transparent;
+    border: none;
+  }
+
+  /* Stage Wrapper (straddling hero bottom edge by 64px) */
+  .rx-v3-hero__stage-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1080px;
+    /* Straddle the hero bottom edge by 64px */
+    margin-bottom: -64px;
+    z-index: 20;
+  }
+
+  .rx-v3-hero__mascot-wrapper {
+    position: absolute;
+    top: -72px;
+    right: 24px;
+    z-index: 5;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html:not([data-motion='reduced']) .rx-v3-hero__mascot-wrapper {
+      animation: rx-mascot-arrival 700ms var(--rx-ease-spring) 250ms both;
+    }
+  }
+
+  @keyframes rx-mascot-arrival {
+    from {
+      opacity: 0;
+      transform: translateY(16px) rotate(-2deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  @keyframes rx-mascot-nod {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(4px) rotate(2.5deg);
+    }
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  .rx-v3-hero__mascot-wrapper.is-nodding {
+    animation: rx-mascot-nod 180ms var(--rx-ease-out);
+  }
+
+  @media (max-width: 1024px) {
+    .rx-v3-hero__mascot-wrapper {
+      top: -55px;
+      right: 16px;
+      transform: scale(0.8);
+      transform-origin: bottom right;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .rx-v3-hero__mascot-wrapper {
+      display: none;
+    }
+  }
+
+  /* Stage Frame */
+  .rx-v3-hero__stage-frame {
+    width: 100%;
+    background: var(--rx-canvas-card);
+    border: 1px solid var(--rx-hairline-strong);
+    border-radius: var(--rx-radius-card, 8px);
+    box-shadow:
+      0 24px 64px -16px rgba(0, 0, 0, 0.45),
+      0 0 0 1px var(--rx-hairline);
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .rx-v3-hero__stage-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    background: var(--rx-canvas-sunken);
+    border-bottom: 1px solid var(--rx-hairline);
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+  }
+
+  .rx-v3-hero__stage-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .rx-v3-hero__stage-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--rx-semantic-allowed, #10b981);
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+  }
+
+  .rx-v3-hero__stage-title {
+    font-weight: 600;
+    color: var(--rx-ink);
+  }
+
+  .rx-v3-hero__stage-tag {
+    font-size: 11px;
+    color: var(--rx-ink-faint);
+    background: var(--rx-accent-soft);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .rx-v3-hero__stage-bar-right {
+    font-size: 11px;
+    color: var(--rx-ink-muted);
+  }
+
+  .rx-v3-hero__stage-body {
+    padding: 0;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .rx-v3-hero {
+      padding-top: 36px;
+      padding-bottom: 56px;
+    }
+
+    .rx-v3-hero__stage-wrapper {
+      margin-bottom: -36px;
+    }
+
+    .rx-v3-hero__stage-bar-right {
+      display: none;
+    }
+
+    .rx-v3-hero__cta-group {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .rx-v3-hero__cta-group :global(a) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  import { trackPointer } from '../../motion/pointer.js';
+
+  // E6: Pointer backlight tracking
+  const heroSection = document.getElementById('hero');
+  const backlight = document.getElementById('rx-v3-hero-backlight');
+  if (heroSection && backlight) {
+    trackPointer(heroSection, (x, y) => {
+      backlight.style.setProperty('--pointer-x', `${x}px`);
+      backlight.style.setProperty('--pointer-y', `${y}px`);
+    });
+  }
+
+  // E22: Mascot nod on console denial
+  const mascot = document.getElementById('rx-v3-hero-mascot');
+  if (mascot) {
+    window.addEventListener('rx-console-denial', () => {
+      mascot.classList.remove('is-nodding');
+      void mascot.offsetWidth;
+      mascot.classList.add('is-nodding');
+      setTimeout(() => mascot.classList.remove('is-nodding'), 220);
+    });
+  }
+</script>

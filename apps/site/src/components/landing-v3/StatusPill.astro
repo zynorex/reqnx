@@ -1,0 +1,93 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/StatusPill.astro
+//
+// Landing v3 Status Pill:
+// - Height: 32px, full pill (9999px)
+// - Hairline translucent surface
+// - Mono micro-label ("PRE-RELEASE") + 14px/500 phrase + arrow icon
+// - Links to #status
+// ──────────────────────────────────────────────────────────────────────────────
+
+import { siteConfig } from '../../site.config';
+
+interface Props {
+  tag?: string;
+  phrase?: string;
+  href?: string;
+}
+
+const {
+  tag = 'PRE-RELEASE',
+  phrase = `v${siteConfig.version} · What works today`,
+  href = '#status',
+} = Astro.props;
+---
+
+<a href={href} class="rx-status-pill" aria-label={`Status: ${tag}. ${phrase}. Learn what works today.`}>
+  <span class="rx-status-pill__tag">{tag}</span>
+  <span class="rx-status-pill__divider" aria-hidden="true">|</span>
+  <span class="rx-status-pill__phrase">{phrase}</span>
+  <span class="rx-status-pill__arrow" aria-hidden="true">&rarr;</span>
+</a>
+
+<style>
+  .rx-status-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 14px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    background: var(--rx-accent-soft);
+    border: 1px solid var(--rx-hairline-strong);
+    color: var(--rx-ink);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      transform var(--rx-dur-instant) var(--rx-ease-out);
+  }
+
+  .rx-status-pill:hover {
+    border-color: var(--rx-accent);
+    transform: translateY(-1px);
+  }
+
+  .rx-status-pill:hover .rx-status-pill__arrow {
+    transform: translateX(2px);
+  }
+
+  .rx-status-pill:focus-visible {
+    outline: 2px solid var(--rx-accent);
+    outline-offset: 2px;
+  }
+
+  .rx-status-pill__tag {
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--rx-accent);
+  }
+
+  .rx-status-pill__divider {
+    color: var(--rx-muted);
+    font-weight: 300;
+  }
+
+  .rx-status-pill__phrase {
+    color: var(--rx-ink-soft);
+  }
+
+  .rx-status-pill__arrow {
+    color: var(--rx-accent);
+    transition: transform var(--rx-dur-fast) var(--rx-ease-out);
+    display: inline-block;
+  }
+</style>

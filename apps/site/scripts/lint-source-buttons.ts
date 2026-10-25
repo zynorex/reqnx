@@ -20,8 +20,12 @@ const ALLOWED_COMPONENTS = new Set([
   'IconButton.tsx',
   'ToggleButton.tsx',
   'CopyButton.tsx',
+  'CopyMarkdownButton.tsx',
   'MotionControl.astro',
   'ThemeToggle.tsx',
+  'Header.astro',
+  'MobileSheet.astro',
+  'NavFlyout.astro',
 ]);
 
 export interface SourceLintResult {

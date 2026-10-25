@@ -1,0 +1,39 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/chrome/FooterRuler.astro
+//
+// 12px time-ruler top edge motif for SiteFooter ("The Instrument").
+// Repeating 8px tick pattern with 10px major ticks, faded at ends via mask.
+// ──────────────────────────────────────────────────────────────────────────────
+---
+
+<div class="rx-footer-ruler-strip" aria-hidden="true"></div>
+
+<style>
+  .rx-footer-ruler-strip {
+    height: 12px;
+    width: 100%;
+    border-bottom: 1px solid var(--rx-footer-border, rgba(255, 255, 255, 0.08));
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--rx-border-subtle, rgba(255, 255, 255, 0.08)) 0px,
+      var(--rx-border-subtle, rgba(255, 255, 255, 0.08)) 1px,
+      transparent 1px,
+      transparent 8px
+    );
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  }
+
+  @media (forced-colors: active) {
+    .rx-footer-ruler-strip {
+      display: none;
+    }
+  }
+
+  @media print {
+    .rx-footer-ruler-strip {
+      display: none;
+    }
+  }
+</style>

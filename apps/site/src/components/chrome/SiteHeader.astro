@@ -1,0 +1,19 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/chrome/SiteHeader.astro
+//
+// Unified SiteHeader for both Marketing and Docs:
+// Synchronized 1:1 with the main page navbar ("The Instrument").
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Header from '../landing/Header.astro';
+
+interface Props {
+  variant?: 'marketing' | 'docs';
+  currentPath?: string;
+}
+
+const { variant = 'marketing', currentPath = '/' } = Astro.props;
+---
+
+<Header isDocs={variant === 'docs'} currentPath={currentPath} />

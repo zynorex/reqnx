@@ -1,0 +1,151 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/SpecGrid.astro
+//
+// Landing v3 Spec Grid Primitive:
+// - 3x2 grid joined by 1px hairlines (cells padded 32 by 24)
+// - Top row: 3 STAT cells (numeral 88px, caption, source link)
+// - Bottom row: 3 PILLAR cells (mono index, title 20/500, description)
+// - Responsive: single column under 768px with horizontal hairlines
+// ──────────────────────────────────────────────────────────────────────────────
+
+import StatCell from './StatCell.astro';
+
+export interface StatItem {
+  value: number | string | null | undefined;
+  caption: string;
+  sourceLabel: string;
+  sourceHref?: string;
+}
+
+export interface PillarItem {
+  index: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  stats: StatItem[];
+  pillars: PillarItem[];
+}
+
+const { stats, pillars } = Astro.props;
+---
+
+<div class="rx-spec-grid">
+  <!-- Top Row: Stat Cells -->
+  <div class="rx-spec-grid__row rx-spec-grid__row--stats">
+    {
+      stats.map((stat) => (
+        <div class="rx-spec-grid__cell">
+          <StatCell
+            value={stat.value}
+            caption={stat.caption}
+            sourceLabel={stat.sourceLabel}
+            sourceHref={stat.sourceHref}
+          />
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Bottom Row: Pillar Cells -->
+  <div class="rx-spec-grid__row rx-spec-grid__row--pillars">
+    {
+      pillars.map((pillar) => (
+        <div class="rx-spec-grid__cell rx-spec-grid__cell--pillar">
+          <span class="rx-spec-grid__pillar-idx" aria-hidden="true">
+            {pillar.index}
+          </span>
+          <h3 class="rx-spec-grid__pillar-title">{pillar.title}</h3>
+          <p class="rx-spec-grid__pillar-desc">{pillar.description}</p>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .rx-spec-grid {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--rx-hairline-strong);
+    border-radius: var(--rx-radius-md, 8px);
+    overflow: hidden;
+    background: var(--rx-canvas);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .rx-spec-grid__row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+  }
+
+  .rx-spec-grid__row--stats {
+    border-bottom: 1px solid var(--rx-hairline);
+  }
+
+  .rx-spec-grid__cell {
+    border-right: 1px solid var(--rx-hairline);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rx-spec-grid__cell:last-child {
+    border-right: none;
+  }
+
+  /* Pillar Cell */
+  .rx-spec-grid__cell--pillar {
+    padding: 32px 24px;
+    background: var(--rx-canvas-sunken);
+  }
+
+  .rx-spec-grid__pillar-idx {
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--rx-accent);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .rx-spec-grid__pillar-title {
+    font-family: var(--rx-font-sans);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--rx-ink);
+    margin: 0 0 12px 0;
+  }
+
+  .rx-spec-grid__pillar-desc {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--rx-ink-soft);
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .rx-spec-grid__row {
+      grid-template-columns: 1fr;
+    }
+
+    .rx-spec-grid__cell {
+      border-right: none;
+      border-bottom: 1px solid var(--rx-hairline);
+    }
+
+    .rx-spec-grid__row--pillars .rx-spec-grid__cell:last-child {
+      border-bottom: none;
+    }
+
+    .rx-spec-grid__cell--pillar {
+      padding: 24px 16px;
+    }
+  }
+</style>

@@ -38,6 +38,10 @@ export function lintCssContent(filename: string, content: string): CssLintResult
     if (trimmed.startsWith('/*') || trimmed.startsWith('*') || trimmed.startsWith('//')) {
       return;
     }
+    // Skip third-party vendor overrides (e.g. Starlight Expressive Code copy button)
+    if (trimmed.includes('.expressive-code')) {
+      return;
+    }
     // Skip property declarations (lines without opening brace, e.g. color: red;)
     if (trimmed.includes(':') && !trimmed.includes('{') && !trimmed.includes('button')) {
       return;

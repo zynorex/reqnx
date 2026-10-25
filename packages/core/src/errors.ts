@@ -112,10 +112,13 @@ export class ConfigError extends RateLimitError {
  * The error is always reported via the `onError` hook.
  */
 export class StoreError extends RateLimitError {
-  override readonly code = 'STORE_ERROR' as const;
+  override readonly code: string = 'STORE_ERROR';
 
-  constructor(message: string, options?: { cause?: unknown }) {
+  constructor(message: string, options?: { code?: string; cause?: unknown }) {
     super(message, options);
+    if (options?.code) {
+      this.code = options.code;
+    }
     this.name = 'StoreError';
     Object.defineProperty(this, BRAND, {
       value: 'StoreError',

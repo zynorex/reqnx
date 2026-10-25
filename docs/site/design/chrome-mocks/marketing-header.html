@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketing Header Mock — REQNX Chrome System</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Stage Preview Canvas with Tick Motif */
+    .mock-stage {
+      min-height: 80vh;
+      background-color: var(--rx-surface-1);
+      background-image: 
+        radial-gradient(ellipse at 50% 0%, rgba(20, 221, 253, 0.08) 0%, transparent 65%),
+        repeating-linear-gradient(to right, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 40px);
+      padding-top: 2rem;
+    }
+    :root[data-theme='light'] .mock-stage {
+      background-image: 
+        radial-gradient(ellipse at 50% 0%, rgba(2, 132, 199, 0.08) 0%, transparent 65%),
+        repeating-linear-gradient(to right, rgba(15, 23, 42, 0.03) 0px, rgba(15, 23, 42, 0.03) 1px, transparent 1px, transparent 40px);
+    }
+    .hero-content {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 4rem clamp(1rem, 3vw, 2rem);
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--rx-accent-cyan);
+      margin-bottom: 1rem;
+    }
+    .hero-h1 {
+      font-family: var(--font-mono);
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--rx-text-1);
+      max-width: 24ch;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+    .hero-lede {
+      font-size: 1.125rem;
+      color: var(--rx-text-2);
+      max-width: 54ch;
+      line-height: 1.6;
+    }
+    .toolbar-dock {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--rx-surface-2);
+      border: 1px solid var(--header-border);
+      border-radius: var(--radius-full);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      z-index: 1000;
+      font-size: 0.8125rem;
+      font-family: var(--font-mono);
+    }
+    .toolbar-dock button {
+      background: var(--rx-surface-3);
+      border: 1px solid var(--header-border);
+      color: var(--rx-text-1);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .toolbar-dock button.active {
+      background: var(--rx-accent-cyan);
+      color: #000;
+      border-color: var(--rx-accent-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Links -->
+  <a href="#main-content" class="rx-skip-link">Skip to main content</a>
+
+  <!-- Marketing Header Shell -->
+  <header class="site-header site-header--transparent" id="site-header">
+    <div class="site-header__container">
+      
+      <!-- Left: Logo, Version, Navigation -->
+      <div class="site-header__left">
+        <a href="/" class="brand-lockup" aria-label="REQNX home">
+          <div class="brand-icon-box">
+            <img src="../../../../brand/logo.png" alt="" width="28" height="28">
+          </div>
+          <span class="brand-name">REQN<span class="brand-name-gold">X</span></span>
+        </a>
+
+        <a href="/status/" class="version-chip" title="Current Version">v0.x</a>
+
+        <!-- Main Navigation with 2px Bottom Accent Marker -->
+        <nav class="site-nav" aria-label="Main Navigation">
+          <ul class="site-nav__list" role="list">
+            <li class="site-nav__item">
+              <a href="/getting-started/" class="site-nav__link">Docs</a>
+            </li>
+            
+            <!-- Algorithms with Hybrid Flyout Disclosure -->
+            <li class="site-nav__item" id="nav-item-algorithms">
+              <div class="nav-flyout-trigger-wrap">
+                <a href="/algorithms/" class="site-nav__link is-active" aria-current="page">Algorithms</a>
+                <button
+                  type="button"
+                  class="nav-flyout-btn"
+                  id="flyout-trigger"
+                  aria-expanded="false"
+                  aria-controls="algorithms-flyout-panel"
+                  aria-label="Algorithms menu"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Algorithms Compact Flyout Panel (320px) -->
+              <div class="nav-flyout-panel" id="algorithms-flyout-panel" style="display: none;">
+                <div class="flyout-header-row">All Algorithms</div>
+                <a href="/algorithms/fixed-window/" class="flyout-item">
+                  <div class="flyout-item__title-row">
+                    <span class="flyout-item__name">Fixed Window Counter</span>
+                    <span class="status-chip-mini status-chip-mini--available">Available</span>
+                  </div>
+                  <p class="flyout-item__desc">Simplest O(1) step function. High throughput.</p>
+                </a>
+                <a href="/algorithms/token-bucket/" class="flyout-item">
+                  <div class="flyout-item__title-row">
+                    <span class="flyout-item__name">Token Bucket</span>
+                    <span class="status-chip-mini status-chip-mini--available">Available</span>
+                  </div>
+                  <p class="flyout-item__desc">Smooth continuous refill with burst capacity.</p>
+                </a>
+                <a href="/algorithms/sliding-window-log/" class="flyout-item">
+                  <div class="flyout-item__title-row">
+                    <span class="flyout-item__name">Sliding Window Log</span>
+                    <span class="status-chip-mini status-chip-mini--planned">Coming Soon</span>
+                  </div>
+                  <p class="flyout-item__desc">Exact request timestamps with zero boundary burst.</p>
+                </a>
+                <a href="/algorithms/leaky-bucket/" class="flyout-item">
+                  <div class="flyout-item__title-row">
+                    <span class="flyout-item__name">Leaky Bucket</span>
+                    <span class="status-chip-mini status-chip-mini--planned">Coming Soon</span>
+                  </div>
+                  <p class="flyout-item__desc">FIFO queue output smoothing with constant leak rate.</p>
+                </a>
+                <div class="flyout-footer-row">
+                  <a href="/algorithms/" class="flyout-footer-link">
+                    Compare all 5 algorithms &rarr;
+                  </a>
+                </div>
+              </div>
+            </li>
+
+            <li class="site-nav__item">
+              <a href="/playground/" class="site-nav__link">Playground</a>
+            </li>
+            <li class="site-nav__item">
+              <a href="#status" class="site-nav__link">Status</a>
+            </li>
+          </ul>
+
+          <!-- The Current-Location Marker (2px accent bar flush with bottom border) -->
+          <div class="site-nav__marker" id="nav-marker"></div>
+        </nav>
+      </div>
+
+      <!-- Right: Search, GitHub, Theme, CTA, Mobile Menu -->
+      <div class="site-header__right">
+        <!-- Search Icon Button -->
+        <button type="button" class="icon-btn" id="search-btn" aria-label="Search docs (Ctrl+K)" title="Search docs (Ctrl+K)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        <!-- GitHub Icon Link -->
+        <a href="https://github.com/zynorex/reqnx" target="_blank" rel="noreferrer" class="icon-btn" aria-label="GitHub repository (opens in a new tab)" title="GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+        </a>
+
+        <div class="header-divider"></div>
+
+        <!-- Theme Segmented Control -->
+        <div class="segmented-theme-control" role="radiogroup" aria-label="Theme preference">
+          <div class="segmented-theme-thumb" id="theme-thumb"></div>
+          <button type="button" class="segmented-theme-option" data-theme-val="system" aria-label="System theme" title="System">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </button>
+          <button type="button" class="segmented-theme-option is-selected" data-theme-val="dark" aria-label="Dark mode" title="Dark">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+          <button type="button" class="segmented-theme-option" data-theme-val="light" aria-label="Light mode" title="Light">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Primary CTA Button -->
+        <a href="/getting-started/" class="btn-primary-sm">Get started</a>
+
+        <!-- Mobile Menu Trigger -->
+        <button type="button" class="mobile-menu-btn" aria-label="Open menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <span>Menu</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Stage Canvas -->
+  <main id="main-content" class="mock-stage">
+    <div class="hero-content">
+      <div class="hero-eyebrow">OPEN SOURCE · MIT · V0.X</div>
+      <h1 class="hero-h1">Rate limiting built from small, checkable parts.</h1>
+      <p class="hero-lede">
+        Zero runtime dependencies. Pure state-transition functions. Injected clocks and atomic stores so your tests and callers always agree.
+      </p>
+    </div>
+  </main>
+
+  <!-- Interactive Controls Dock for Reviewing States -->
+  <div class="toolbar-dock">
+    <span>State:</span>
+    <button id="btn-state-top" class="active" onclick="setHeaderState('top')">Top (Transparent)</button>
+    <button id="btn-state-scrolled" onclick="setHeaderState('scrolled')">Scrolled (Solid 92%)</button>
+    <button id="btn-toggle-flyout" onclick="toggleFlyout()">Flyout (Open/Close)</button>
+    <span>Theme:</span>
+    <button id="btn-theme-dark" class="active" onclick="setTheme('dark')">Dark</button>
+    <button id="btn-theme-light" onclick="setTheme('light')">Light</button>
+  </div>
+
+  <script>
+    const header = document.getElementById('site-header');
+    const flyout = document.getElementById('algorithms-flyout-panel');
+    const flyoutTrigger = document.getElementById('flyout-trigger');
+    const marker = document.getElementById('nav-marker');
+    const activeLink = document.querySelector('.site-nav__link.is-active');
+
+    function updateMarker(target) {
+      if (!target || !marker) return;
+      const navRect = target.closest('.site-nav').getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      marker.style.transform = `translateX(${targetRect.left - navRect.left}px)`;
+      marker.style.width = `${targetRect.width}px`;
+    }
+
+    if (activeLink) {
+      updateMarker(activeLink);
+    }
+
+    // Hover sliding marker
+    document.querySelectorAll('.site-nav__link').forEach(link => {
+      link.addEventListener('mouseenter', () => updateMarker(link));
+      link.addEventListener('focus', () => updateMarker(link));
+    });
+
+    document.querySelector('.site-nav').addEventListener('mouseleave', () => {
+      if (activeLink) updateMarker(activeLink);
+    });
+
+    function setHeaderState(state) {
+      document.querySelectorAll('#btn-state-top, #btn-state-scrolled').forEach(b => b.classList.remove('active'));
+      if (state === 'top') {
+        header.classList.remove('site-header--solid');
+        header.classList.add('site-header--transparent');
+        document.getElementById('btn-state-top').classList.add('active');
+      } else {
+        header.classList.remove('site-header--transparent');
+        header.classList.add('site-header--solid');
+        document.getElementById('btn-state-scrolled').classList.add('active');
+      }
+    }
+
+    function toggleFlyout() {
+      const isOpen = flyout.style.display !== 'none';
+      if (isOpen) {
+        flyout.style.display = 'none';
+        flyoutTrigger.setAttribute('aria-expanded', 'false');
+        document.getElementById('btn-toggle-flyout').classList.remove('active');
+      } else {
+        flyout.style.display = 'block';
+        flyoutTrigger.setAttribute('aria-expanded', 'true');
+        document.getElementById('btn-toggle-flyout').classList.add('active');
+      }
+    }
+
+    flyoutTrigger.addEventListener('click', toggleFlyout);
+
+    function setTheme(th) {
+      document.documentElement.setAttribute('data-theme', th);
+      document.querySelectorAll('#btn-theme-dark, #btn-theme-light').forEach(b => b.classList.remove('active'));
+      if (th === 'dark') {
+        document.getElementById('btn-theme-dark').classList.add('active');
+        document.getElementById('theme-thumb').style.transform = 'translateX(28px)';
+      } else {
+        document.getElementById('btn-theme-light').classList.add('active');
+        document.getElementById('theme-thumb').style.transform = 'translateX(56px)';
+      }
+    }
+  </script>
+</body>
+</html>

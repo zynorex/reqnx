@@ -60,3 +60,18 @@ export type {
   TokenBucketState,
 } from './algorithms/token-bucket.js';
 export { tokenBucket } from './algorithms/token-bucket.js';
+
+export type {
+  SlidingWindowLogInput,
+  SlidingWindowLogConfig,
+  SlidingWindowLogState,
+  SlidingWindowLogEntry,
+} from './algorithms/sliding-window-log.js';
+export { slidingWindowLog } from './algorithms/sliding-window-log.js';
+
+export type {
+  SlidingWindowCounterInput,
+  SlidingWindowCounterConfig,
+  SlidingWindowCounterState,
+} from './algorithms/sliding-window-counter.js';
+export { slidingWindowCounter } from './algorithms/sliding-window-counter.js';

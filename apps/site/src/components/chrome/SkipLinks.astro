@@ -1,0 +1,54 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/chrome/SkipLinks.astro
+//
+// Accessible skip links for keyboard and screen reader navigation.
+// ──────────────────────────────────────────────────────────────────────────────
+
+interface Props {
+  isDocs?: boolean;
+}
+
+const { isDocs = false } = Astro.props;
+---
+
+<a href="#main-content" class="rx-chrome-skip-link">
+  Skip to content
+</a>
+
+{
+  isDocs && (
+    <a href="#starlight__sidebar" class="rx-chrome-skip-link rx-chrome-skip-link--nav">
+      Skip to navigation
+    </a>
+  )
+}
+
+<style>
+  .rx-chrome-skip-link {
+    position: absolute;
+    top: -100px;
+    left: 1rem;
+    background: var(--rx-accent-indigo);
+    color: #ffffff;
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--rx-radius-sm);
+    font-family: var(--rx-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: var(--z-skip-link, 100);
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: top var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-chrome-skip-link:focus-visible {
+    top: 0.75rem;
+    outline: var(--rx-btn-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .rx-chrome-skip-link--nav:focus-visible {
+    left: 8.5rem;
+  }
+</style>

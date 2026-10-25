@@ -144,5 +144,14 @@ describe('Button System Contract Builder', () => {
       expect(contract.attrs.title).toBe('Submit form');
       expect(contract.attrs['aria-describedby']).toBe('error-note');
     });
+
+    it('sets data-shape="pill" when shape="pill"', () => {
+      const contract = resolveButtonContract({
+        shape: 'pill',
+        size: 'lg',
+      });
+      expect(contract.attrs['data-shape']).toBe('pill');
+      expect(contract.attrs['data-size']).toBe('lg');
+    });
   });
 });

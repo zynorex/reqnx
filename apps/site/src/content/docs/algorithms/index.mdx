@@ -3,19 +3,15 @@ title: 'Algorithm Comparison'
 description: "Compare REQNX's five rate limiting algorithms across time complexity, memory footprint, and burst behavior."
 ---
 
+import AlgorithmComparisonTable from '../../../components/docs/AlgorithmComparisonTable.astro';
+
 REQNX implements five classical rate limiting algorithms as pure, deterministic state machines. Each algorithm makes different trade-offs between computational overhead, memory usage, and burst tolerance.
 
 ---
 
 ## Algorithms at a Glance
 
-| Algorithm                                     | Status         | Time             | Space / Key               | Burst Behavior               | Best For                               |
-| --------------------------------------------- | -------------- | ---------------- | ------------------------- | ---------------------------- | -------------------------------------- |
-| **[Fixed Window](/algorithms/fixed-window/)** | ✅ Available   | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ (~270 B) | Up to $2\times$ at boundary  | Highest throughput, standard API tiers |
-| **Token Bucket**                              | ⏳ Coming Soon | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ (~320 B) | Controlled burst to capacity | APIs with natural spikiness            |
-| **Sliding Window Log**                        | ⏳ Coming Soon | $\mathcal{O}(n)$ | $\mathcal{O}(n)$          | No boundary burst            | Exact enforcement, strict security     |
-| **Sliding Window Counter**                    | ⏳ Coming Soon | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ (~350 B) | Smoothed approximation       | Balanced production workloads          |
-| **Leaky Bucket**                              | ⏳ Coming Soon | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ (~320 B) | Zero burst (fixed rate)      | Downstream queue protection            |
+<AlgorithmComparisonTable />
 
 ---
 

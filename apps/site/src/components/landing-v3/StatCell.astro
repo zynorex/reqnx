@@ -1,0 +1,101 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/StatCell.astro
+//
+// Landing v3 Stat Cell Primitive:
+// - Big Numeral: clamp(56px, 7vw, 88px)/1/500/-0.03em tabular (56px on mobile)
+// - Caption: 16px/1.4 muted
+// - Source Label: mono 11px linking directly to repository evidence
+// - Omission rule: If value is null or undefined, cell renders NOTHING.
+// ──────────────────────────────────────────────────────────────────────────────
+
+interface Props {
+  value?: number | string | null;
+  caption: string;
+  sourceLabel: string;
+  sourceHref?: string;
+}
+
+const { value, caption, sourceLabel, sourceHref } = Astro.props;
+
+if (value === null || value === undefined || value === '') {
+  // Strict honesty rule: omit uncomputed facts entirely
+  return null;
+}
+---
+
+<div class="rx-stat-cell">
+  <div class="rx-stat-cell__numeral" aria-label={`${value} ${caption}`}>
+    {value}
+  </div>
+  <p class="rx-stat-cell__caption">{caption}</p>
+  {
+    sourceHref ? (
+      <a href={sourceHref} class="rx-stat-cell__source">
+        Source: {sourceLabel} &rarr;
+      </a>
+    ) : (
+      <span class="rx-stat-cell__source">Source: {sourceLabel}</span>
+    )
+  }
+</div>
+
+<style>
+  .rx-stat-cell {
+    padding: 32px 24px;
+    background: var(--rx-canvas);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  /* Big Numeral: clamp(56px, 7vw, 88px) / 1 / 500 / -0.03em tabular */
+  .rx-stat-cell__numeral {
+    font-family: var(--rx-font-sans);
+    font-size: clamp(56px, 7vw, 88px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--rx-ink);
+    margin: 0 0 12px 0;
+  }
+
+  /* Caption: 16px / 1.4 muted */
+  .rx-stat-cell__caption {
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--rx-ink-soft);
+    margin: 0 0 16px 0;
+  }
+
+  /* Source: mono 11px uppercase */
+  .rx-stat-cell__source {
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    color: var(--rx-ink-soft);
+    text-decoration: none;
+    margin-top: auto;
+    transition: color var(--rx-dur-fast) var(--rx-ease-out);
+    display: inline-block;
+  }
+
+  a.rx-stat-cell__source:hover {
+    color: var(--rx-accent);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .rx-stat-cell {
+      padding: 24px 16px;
+    }
+
+    .rx-stat-cell__numeral {
+      font-size: 56px;
+    }
+
+    .rx-stat-cell__caption {
+      font-size: 15px;
+    }
+  }
+</style>

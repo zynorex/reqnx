@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Footers Mock (Full & Slim) — REQNX Chrome System</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .mock-preview-section {
+      padding: 3rem 1.5rem;
+      max-width: var(--container-max);
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--rx-accent-cyan);
+      margin-bottom: 0.75rem;
+    }
+    .toolbar-dock {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--rx-surface-2);
+      border: 1px solid var(--header-border);
+      border-radius: var(--radius-full);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      z-index: 1000;
+      font-size: 0.8125rem;
+      font-family: var(--font-mono);
+    }
+    .toolbar-dock button {
+      background: var(--rx-surface-3);
+      border: 1px solid var(--header-border);
+      color: var(--rx-text-1);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .toolbar-dock button.active {
+      background: var(--rx-accent-cyan);
+      color: #000;
+      border-color: var(--rx-accent-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full Marketing Footer Mock -->
+  <div id="full-footer-preview">
+    <div class="mock-preview-section">
+      <div class="section-label">Variant 1: Full Marketing Footer</div>
+      <p style="color: var(--rx-text-3); font-size: 0.875rem;">12-column engineering matrix with optional time-ruler top edge, brand block, 3 link groups, and preferences strip.</p>
+    </div>
+
+    <footer class="site-footer-full" role="contentinfo">
+      <!-- 12px Ruler Edge Top Strip (Decision 6) -->
+      <div class="footer-ruler-strip" id="footer-ruler-strip"></div>
+
+      <div class="site-footer-full__inner">
+        <div class="footer-12-grid">
+          
+          <!-- Brand Block (5 cols) -->
+          <div class="footer-brand-block">
+            <a href="/" class="brand-lockup" aria-label="REQNX home">
+              <div class="brand-icon-box" style="width: 28px; height: 28px;">
+                <img src="../../../../brand/logo.png" alt="" width="28" height="28">
+              </div>
+              <span class="brand-name">REQN<span class="brand-name-gold">X</span></span>
+            </a>
+
+            <p class="footer-tagline">
+              Predictable rate limiting for Node.js. Five algorithms, two stores, zero core dependencies.
+            </p>
+
+            <div class="footer-badge-row">
+              <span class="version-chip">v0.x</span>
+              <span class="status-chip-mini status-chip-mini--available">Pre-release</span>
+            </div>
+
+            <!-- Hairline Meter: N of M Features Available -->
+            <div class="footer-meter">
+              <div class="meter-track">
+                <div class="meter-fill"></div>
+              </div>
+              <span>2 of 5 algorithms available</span>
+            </div>
+
+            <div class="footer-facts-line">
+              Built from git commit <code>5548141</code> · Clean Tree
+            </div>
+
+            <!-- Mascot Cameo at 44px -->
+            <div style="margin-top: 0.5rem;">
+              <img src="../../../../brand/mascot.png" alt="REQNX Mascot" width="44" height="44" style="display: block; opacity: 0.9;">
+            </div>
+          </div>
+
+          <!-- Col 1: Project (2 cols) -->
+          <div class="footer-link-col">
+            <h2 class="footer-col-heading">Project</h2>
+            <ul class="footer-link-list" role="list">
+              <li><a href="/getting-started/">Docs</a></li>
+              <li><a href="/algorithms/">Algorithms</a></li>
+              <li><a href="/playground/">Playground</a></li>
+              <li><a href="#status">Status</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 2: Learn (2 cols) -->
+          <div class="footer-link-col">
+            <h2 class="footer-col-heading">Learn</h2>
+            <ul class="footer-link-list" role="list">
+              <li><a href="/getting-started/">Quickstart</a></li>
+              <li><a href="/algorithms/">Algorithms Guide</a></li>
+              <li><a href="/design/architecture/">Architecture</a></li>
+              <li><a href="/design/adr/">Decisions (ADRs)</a></li>
+              <li><a href="/design/benchmarks/day-04/">Benchmarks</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 3: Source (2 cols) -->
+          <div class="footer-link-col">
+            <h2 class="footer-col-heading">Source</h2>
+            <ul class="footer-link-list" role="list">
+              <li><a href="https://github.com/zynorex/reqnx" target="_blank" rel="noreferrer">GitHub <span style="font-size: 0.75rem;">↗</span></a></li>
+              <li><a href="https://github.com/zynorex/reqnx/issues" target="_blank" rel="noreferrer">Issues <span style="font-size: 0.75rem;">↗</span></a></li>
+              <li><a href="https://github.com/zynorex/reqnx/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Contributing <span style="font-size: 0.75rem;">↗</span></a></li>
+              <li><a href="https://github.com/zynorex/reqnx/blob/main/CHANGELOG.md" target="_blank" rel="noreferrer">Changelog <span style="font-size: 0.75rem;">↗</span></a></li>
+              <li><a href="https://github.com/zynorex/reqnx/blob/main/LICENSE" target="_blank" rel="noreferrer">MIT License <span style="font-size: 0.75rem;">↗</span></a></li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Footer Bottom Legal & Preferences Strip -->
+        <div class="footer-bottom-strip">
+          <div class="footer-legal-row">
+            <div>
+              <p style="margin-bottom: 0.35rem;">Software licensed under MIT. Reqnx logo, mascot, and character illustrations are copyright the project maintainers.</p>
+              <p style="color: var(--rx-text-3);">Redis is a registered trademark of Redis Ltd. Express and Fastify are trademarks of their respective owners. REQNX has no official affiliation.</p>
+            </div>
+            <a href="#top" style="color: var(--rx-text-3); text-decoration: none; font-family: var(--font-mono); font-size: 0.75rem;">
+              Back to top &uarr;
+            </a>
+          </div>
+
+          <div class="footer-legal-row" style="padding-top: 1rem; border-top: 1px dashed var(--header-border-subtle);">
+            <span>No cookies. No tracking.</span>
+
+            <div class="footer-preferences-row">
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; color: var(--rx-text-3);">Theme</span>
+              <div class="segmented-theme-control">
+                <div class="segmented-theme-thumb" style="transform: translateX(28px);"></div>
+                <button type="button" class="segmented-theme-option" title="System">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                  </svg>
+                </button>
+                <button type="button" class="segmented-theme-option is-selected" title="Dark">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                  </svg>
+                </button>
+                <button type="button" class="segmented-theme-option" title="Light">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                  </svg>
+                </button>
+              </div>
+
+              <span>&copy; 2026 REQNX Project Contributors</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+  </div>
+
+  <div style="height: 4rem;"></div>
+
+  <!-- Slim Docs Footer Mock -->
+  <div id="slim-footer-preview">
+    <div class="mock-preview-section">
+      <div class="section-label">Variant 2: Slim Docs Footer</div>
+      <p style="color: var(--rx-text-3); font-size: 0.875rem;">Compact 72px bar attached below the Starlight docs container.</p>
+    </div>
+
+    <footer class="site-footer-slim" role="contentinfo">
+      <div class="site-footer-slim__inner">
+        
+        <!-- Left: Logo & License -->
+        <div class="slim-footer-left">
+          <div class="brand-icon-box" style="width: 22px; height: 22px;">
+            <img src="../../../../brand/logo.png" alt="" width="22" height="22">
+          </div>
+          <span>MIT Licensed · REQNX Contributors</span>
+        </div>
+
+        <!-- Middle: Quick Links -->
+        <ul class="slim-footer-links" role="list">
+          <li><a href="/getting-started/">Docs Home</a></li>
+          <li><a href="https://github.com/zynorex/reqnx/blob/main/CHANGELOG.md" target="_blank" rel="noreferrer">Changelog</a></li>
+          <li><a href="https://github.com/zynorex/reqnx" target="_blank" rel="noreferrer">GitHub</a></li>
+          <li><a href="https://github.com/zynorex/reqnx/issues" target="_blank" rel="noreferrer">Issues</a></li>
+          <li><a href="https://github.com/zynorex/reqnx/blob/main/LICENSE" target="_blank" rel="noreferrer">License</a></li>
+        </ul>
+
+        <!-- Right: Preferences -->
+        <div class="footer-preferences-row">
+          <div class="segmented-theme-control">
+            <div class="segmented-theme-thumb" style="transform: translateX(28px);"></div>
+            <button type="button" class="segmented-theme-option" title="System">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              </svg>
+            </button>
+            <button type="button" class="segmented-theme-option is-selected" title="Dark">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </button>
+            <button type="button" class="segmented-theme-option" title="Light">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+  </div>
+
+  <!-- Interactive Controls Dock -->
+  <div class="toolbar-dock">
+    <span>Ruler Edge:</span>
+    <button id="btn-ruler-on" class="active" onclick="toggleRuler(true)">Ruler On</button>
+    <button id="btn-ruler-off" onclick="toggleRuler(false)">Ruler Off</button>
+    <span>Theme:</span>
+    <button id="btn-theme-dark" class="active" onclick="setTheme('dark')">Dark</button>
+    <button id="btn-theme-light" onclick="setTheme('light')">Light</button>
+  </div>
+
+  <script>
+    function toggleRuler(show) {
+      document.getElementById('footer-ruler-strip').style.display = show ? 'block' : 'none';
+      document.getElementById('btn-ruler-on').classList.toggle('active', show);
+      document.getElementById('btn-ruler-off').classList.toggle('active', !show);
+    }
+
+    function setTheme(th) {
+      document.documentElement.setAttribute('data-theme', th);
+      document.querySelectorAll('#btn-theme-dark, #btn-theme-light').forEach(b => b.classList.remove('active'));
+      if (th === 'dark') {
+        document.getElementById('btn-theme-dark').classList.add('active');
+      } else {
+        document.getElementById('btn-theme-light').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>

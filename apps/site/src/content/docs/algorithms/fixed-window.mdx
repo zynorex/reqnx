@@ -4,6 +4,23 @@ description: 'High-throughput rate limiter dividing time into non-overlapping ep
 ---
 
 import ScenarioPlayer from '../../../components/playground/ScenarioPlayer';
+import AtAGlance from '../../../components/docs/AtAGlance.astro';
+import DecisionFields from '../../../components/docs/DecisionFields.astro';
+import ConfigTable from '../../../components/docs/ConfigTable.astro';
+import StatusChip from '../../../components/common/StatusChip.astro';
+
+<div style="display: flex; gap: 0.5rem; align-items: center; margin: 0.75rem 0 1.25rem 0;">
+  <StatusChip status="available" label="Available in @reqnx/core" />
+</div>
+
+<AtAGlance
+  algorithm="Fixed Window Counter"
+  memory="O(1) (64 B per key)"
+  time="O(1) amortized"
+  burst="2x boundary burst potential"
+  boundary="Epoch-aligned fixed window"
+  storage="Memory / Redis (INCR + PEXPIRE)"
+/>
 
 The **Fixed Window Counter** algorithm is the simplest and highest-throughput rate-limiting strategy available in REQNX. It partitions time into consecutive, non-overlapping windows of duration $W$ aligned to the Unix epoch. Each key is granted up to $L$ units of capacity per window. When a window expires, a fresh window begins immediately with full quota.
 
@@ -54,26 +71,35 @@ const limiter = createLimiter({
 });
 ```
 
-### Config Validation Rules
+### Config Options & Validation Rules
 
-- `limit`: Must be a safe positive integer between `1` and `2,147,483,647` ($2^{31} - 1$).
-- `window`: String duration (e.g., `'500ms'`, `'10s'`, `'1m'`, `'2h'`) or integer milliseconds in `[1, 366 days]`.
-- Unknown properties are strictly rejected with `ConfigError`.
+<ConfigTable
+  title="Fixed Window Configuration Schema"
+  items={[
+    {
+      name: 'limit',
+      type: 'number',
+      defaultVal: 'required',
+      constraints: '1 to 2,147,483,647 (2^31 - 1)',
+      description: 'Maximum permitted request units within the window. Must be a positive integer.'
+    },
+    {
+      name: 'window',
+      type: 'Duration | number',
+      defaultVal: 'required',
+      constraints: '1ms to 366 days',
+      description: 'Duration string (e.g. "500ms", "10s", "1m", "2h") or integer milliseconds.'
+    }
+  ]}
+/>
 
 ---
 
 ## Decision Semantics
 
-When `limiter.check()` executes, the returned `Decision` fields convey specific semantics for Fixed Window:
+When `limiter.check()` executes, the returned `Decision` conveys the following semantics:
 
-| Field          | Type      | Meaning in Fixed Window                                                                                                       |
-| -------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `allowed`      | `boolean` | `true` if $\text{count} + \text{cost} \le \text{limit}$; `false` otherwise.                                                   |
-| `limit`        | `number`  | The configured window limit.                                                                                                  |
-| `remaining`    | `number`  | Remaining admitted capacity in the active window ($\text{limit} - \text{count}$). Minimum `0`.                                |
-| `resetAtMs`    | `number`  | Epoch millisecond timestamp when the active window closes ($\text{windowStart} + \text{windowMs}$).                           |
-| `retryAfterMs` | `number`  | `0` when `allowed: true`. When denied, milliseconds remaining until window reset: $\max(1, \text{resetAtMs} - \text{nowMs})$. |
-| `degraded`     | `boolean` | `true` only if the backing store failed and fallback policy applied; `false` in normal operation.                             |
+<DecisionFields highlight="resetAtMs" />
 
 ---
 
@@ -81,7 +107,7 @@ When `limiter.check()` executes, the returned `Decision` fields convey specific 
 
 Because fixed window boundaries are rigid, a burst of traffic centered at a window boundary can admit twice the configured limit across a very short interval:
 
-```
+```text
 Window 1 [00:00 -> 01:00)           Window 2 [01:00 -> 02:00)
 --------------------------|--------------------------
 ... [100 requests at 00:59.999] | [100 requests at 01:00.000] ...

@@ -1,0 +1,423 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/StatusMatrix.astro
+//
+// Landing v3 Honest Status Matrix (S7):
+// - Label Chip: HONEST STATUS
+// - H2: Current implementation progress.
+// - Lede: We track all features in a strict public status registry. Nothing is marked available until test suites pass.
+// - 2-Column Hairline Grid: Available Today vs In Active Development
+// - Strict traceability: every available item links to a real source file on disk
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Section from './Section.astro';
+import { withBase } from '../../site.config';
+
+interface StatusItem {
+  id: string;
+  name: string;
+  desc: string;
+  tag: string;
+  evidenceLabel?: string;
+  evidenceHref?: string;
+}
+
+const availableItems: StatusItem[] = [
+  {
+    id: 'algo-fixed-window',
+    name: 'Fixed Window Counter',
+    desc: 'Pure step() state machine with epoch window alignment and NTP monotonicity.',
+    tag: 'Algorithm',
+    evidenceLabel: 'fixed-window.ts',
+    evidenceHref: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/algorithms/fixed-window.ts',
+  },
+  {
+    id: 'algo-token-bucket',
+    name: 'Token Bucket',
+    desc: 'Continuous fractional token replenishment with bucket capacity burst control.',
+    tag: 'Algorithm',
+    evidenceLabel: 'token-bucket.ts',
+    evidenceHref: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/algorithms/token-bucket.ts',
+  },
+  {
+    id: 'store-memory',
+    name: 'MemoryStore + LRU',
+    desc: 'Atomic in-memory store with bounded key capacity and strict LRU eviction.',
+    tag: 'Store',
+    evidenceLabel: 'memory-store.ts',
+    evidenceHref: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/memory-store.ts',
+  },
+  {
+    id: 'primitive-clock',
+    name: 'Injected Clock Interface',
+    desc: 'Decoupled time abstraction for deterministic testing without sleeping.',
+    tag: 'Primitive',
+    evidenceLabel: 'clock.ts',
+    evidenceHref: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/clock.ts',
+  },
+  {
+    id: 'primitive-testkit',
+    name: 'Contract Testkit',
+    desc: 'Reusable conformance test suites verifying any store or algorithm implementation.',
+    tag: 'Testkit',
+    evidenceLabel: 'conformance.ts',
+    evidenceHref: 'https://github.com/zynorex/reqnx/blob/main/packages/testkit/src/conformance.ts',
+  },
+  {
+    id: 'rfc-headers',
+    name: 'Standard RFC Headers',
+    desc: 'Automatic formatting of IETF draft RateLimit-Limit, Remaining, and Reset headers.',
+    tag: 'HTTP',
+    evidenceLabel: 'limiter.ts',
+    evidenceHref: 'https://github.com/zynorex/reqnx/blob/main/packages/core/src/limiter.ts',
+  },
+];
+
+const plannedItems: StatusItem[] = [
+  {
+    id: 'store-redis',
+    name: 'RedisStore + Lua (EVALSHA)',
+    desc: 'Distributed atomic rate limiting running via cached Lua scripts on Redis and Valkey.',
+    tag: 'Day 6 Milestone',
+    evidenceLabel: 'ADR-0002 Atomicity',
+    evidenceHref: withBase('/design/adr/0002-algorithm-contract-and-atomicity/'),
+  },
+  {
+    id: 'algo-sliding-log',
+    name: 'Sliding Window Log',
+    desc: 'Timestamp log recording exact request arrivals with zero boundary seam bursts.',
+    tag: 'Day 6 Milestone',
+    evidenceLabel: 'ADR-0002 Atomicity',
+    evidenceHref: withBase('/design/adr/0002-algorithm-contract-and-atomicity/'),
+  },
+  {
+    id: 'algo-sliding-counter',
+    name: 'Sliding Window Counter',
+    desc: 'Weighted estimation from adjacent window counters with constant O(1) space.',
+    tag: 'Day 6 Milestone',
+    evidenceLabel: 'ADR-0002 Atomicity',
+    evidenceHref: withBase('/design/adr/0002-algorithm-contract-and-atomicity/'),
+  },
+  {
+    id: 'algo-leaky-bucket',
+    name: 'Leaky Bucket',
+    desc: 'Constant drain rate output smoothing preventing traffic burst amplification.',
+    tag: 'Day 7 Milestone',
+    evidenceLabel: 'ADR-0002 Atomicity',
+    evidenceHref: withBase('/design/adr/0002-algorithm-contract-and-atomicity/'),
+  },
+  {
+    id: 'adapter-express',
+    name: 'Express Middleware',
+    desc: 'Drop-in middleware for Node.js Express routes with custom key extractors.',
+    tag: 'Day 7 Milestone',
+    evidenceLabel: 'Roadmap Milestone',
+  },
+  {
+    id: 'adapter-fastify',
+    name: 'Fastify Plugin',
+    desc: 'High-performance Fastify plugin attaching to onRequest lifecycle hook.',
+    tag: 'Day 7 Milestone',
+    evidenceLabel: 'Roadmap Milestone',
+  },
+];
+---
+
+<Section
+  id="status"
+  label="HONEST STATUS"
+  h2="Current implementation progress."
+  lede="We track all features in a strict public status registry. Nothing is marked available until test suites pass."
+  align="left"
+  class="rx-status-section"
+  isBelowFold={true}
+>
+  <div class="rx-status-grid">
+    <!-- Column 1: Available Today -->
+    <div class="rx-status-col rx-status-col--available">
+      <div class="rx-status-col__header">
+        <div class="rx-status-col__badge-wrap">
+          <span class="rx-status-col__dot rx-status-col__dot--green" aria-hidden="true"></span>
+          <h3 class="rx-status-col__title">Available Today</h3>
+        </div>
+        <span class="rx-status-col__count">6 features passed</span>
+      </div>
+      <p class="rx-status-col__subhead">
+        Tested against unit, property, and model conformance suites. Ready for evaluation.
+      </p>
+
+      <div class="rx-status-items">
+        {
+          availableItems.map((item) => (
+            <div class="rx-status-item">
+              <div class="rx-status-item__header">
+                <span class="rx-status-item__name">{item.name}</span>
+                <span class="rx-status-item__tag">{item.tag}</span>
+              </div>
+              <p class="rx-status-item__desc">{item.desc}</p>
+              {item.evidenceHref && (
+                <div class="rx-status-item__footer">
+                  <a
+                    href={item.evidenceHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="rx-status-evidence-link"
+                  >
+                    <span class="rx-status-evidence-check" aria-hidden="true">&#x2713;</span>
+                    <span>Evidence: <code>{item.evidenceLabel}</code></span>
+                    <span class="rx-status-arrow" aria-hidden="true">&nearr;</span>
+                  </a>
+                </div>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Column 2: In Active Development -->
+    <div class="rx-status-col rx-status-col--planned">
+      <div class="rx-status-col__header">
+        <div class="rx-status-col__badge-wrap">
+          <span class="rx-status-col__dot rx-status-col__dot--amber" aria-hidden="true"></span>
+          <h3 class="rx-status-col__title">In Active Development</h3>
+        </div>
+        <span class="rx-status-col__count">6 roadmap items</span>
+      </div>
+      <p class="rx-status-col__subhead">
+        Scheduled in formal architectural decision records and committed roadmap milestones.
+      </p>
+
+      <div class="rx-status-items">
+        {
+          plannedItems.map((item) => (
+            <div class="rx-status-item rx-status-item--planned">
+              <div class="rx-status-item__header">
+                <span class="rx-status-item__name">{item.name}</span>
+                <span class="rx-status-item__tag rx-status-item__tag--planned">{item.tag}</span>
+              </div>
+              <p class="rx-status-item__desc">{item.desc}</p>
+              {item.evidenceHref ? (
+                <div class="rx-status-item__footer">
+                  <a href={item.evidenceHref} class="rx-status-evidence-link">
+                    <span class="rx-status-evidence-plan" aria-hidden="true">&bull;</span>
+                    <span>Spec: <code>{item.evidenceLabel}</code></span>
+                    <span class="rx-status-arrow" aria-hidden="true">&rarr;</span>
+                  </a>
+                </div>
+              ) : (
+                <div class="rx-status-item__footer">
+                  <span class="rx-status-evidence-plain">
+                    <span class="rx-status-evidence-plan" aria-hidden="true">&bull;</span>
+                    <span>{item.evidenceLabel}</span>
+                  </span>
+                </div>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-status-section {
+    position: relative;
+    width: 100%;
+  }
+
+  .rx-status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    width: 100%;
+  }
+
+  .rx-status-col {
+    display: flex;
+    flex-direction: column;
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-md, 8px);
+    padding: 32px;
+    box-sizing: border-box;
+  }
+
+  .rx-status-col__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .rx-status-col__badge-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .rx-status-col__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .rx-status-col__dot--green {
+    background: #3fb950;
+    box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.2);
+  }
+
+  .rx-status-col__dot--amber {
+    background: #d29922;
+    box-shadow: 0 0 0 3px rgba(210, 153, 34, 0.2);
+  }
+
+  .rx-status-col__title {
+    font-family: var(--rx-font-sans);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--rx-ink);
+    margin: 0;
+  }
+
+  .rx-status-col__count {
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--rx-ink-soft);
+  }
+
+  .rx-status-col__subhead {
+    font-family: var(--rx-font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--rx-ink-soft);
+    margin: 0 0 24px 0;
+  }
+
+  .rx-status-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rx-status-item {
+    background: var(--rx-canvas);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-md, 8px);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition:
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      transform var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-status-item:hover {
+    border-color: var(--rx-hairline-strong);
+    transform: translateY(-1px);
+  }
+
+  .rx-status-item__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .rx-status-item__name {
+    font-family: var(--rx-font-sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rx-ink);
+  }
+
+  .rx-status-item__tag {
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    background: var(--rx-accent-soft);
+    color: var(--rx-accent);
+    border: 1px solid var(--rx-hairline-strong);
+    letter-spacing: 0.02em;
+  }
+
+  .rx-status-item__tag--planned {
+    background: var(--rx-surface-2, rgba(255, 255, 255, 0.03));
+    color: var(--rx-muted);
+    border: 1px solid var(--rx-hairline);
+  }
+
+  .rx-status-item__desc {
+    font-family: var(--rx-font-sans);
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--rx-ink-soft);
+    margin: 0;
+  }
+
+  .rx-status-item__footer {
+    padding-top: 6px;
+    border-top: 1px solid var(--rx-hairline);
+  }
+
+  .rx-status-evidence-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--rx-font-mono);
+    font-size: 11.5px;
+    color: var(--rx-ink-soft);
+    text-decoration: none;
+    transition: color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-status-evidence-link:hover {
+    color: var(--rx-accent);
+  }
+
+  .rx-status-evidence-link code {
+    font-family: var(--rx-font-mono);
+    color: var(--rx-ink);
+  }
+
+  .rx-status-evidence-check {
+    color: #3fb950;
+    font-weight: 700;
+  }
+
+  .rx-status-evidence-plan {
+    color: #d29922;
+    font-weight: 700;
+  }
+
+  .rx-status-evidence-plain {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--rx-font-mono);
+    font-size: 11.5px;
+    color: var(--rx-muted);
+  }
+
+  .rx-status-arrow {
+    color: var(--rx-accent);
+    font-size: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .rx-status-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .rx-status-col {
+      padding: 24px;
+    }
+  }
+</style>

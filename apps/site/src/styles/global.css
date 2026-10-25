@@ -8,6 +8,7 @@
 @layer reset, tokens, base, layout, components, utilities;
 
 @import './buttons.css';
+@import './docs-theme.css';
 
 @layer tokens {
   :root {
@@ -240,6 +241,48 @@
 
     /* ─── Focus Ring ─────────────────────────────────────────────────────── */
     --rx-focus-ring: 0 0 0 2px var(--rx-surface-1), 0 0 0 4px var(--rx-accent-indigo);
+
+    /* ─── Chrome Geometry & Z-Index Tokens ───────────────────────────────── */
+    --rx-header-height: 56px;
+    --rx-header-height-mobile: 52px;
+    --rx-header-bg: transparent;
+    --rx-header-bg-solid: color-mix(in srgb, var(--rx-surface-1) 92%, transparent);
+    --rx-header-border: var(--rx-border-subtle);
+    --rx-footer-bg: var(--rx-surface-1);
+    --rx-footer-border: var(--rx-border-subtle);
+
+    --header-height: var(--rx-header-height);
+    --header-height-mobile: var(--rx-header-height-mobile);
+
+    --z-header: 40;
+    --z-flyout: 50;
+    --z-sheet: 60;
+    --z-palette: 70;
+    --z-tooltip: 80;
+    --z-skip-link: 100;
+
+    /* ─── Landing v3 Semantic Tokens (Dark Default) ─────────────────────── */
+    --rx-canvas: #0b0d13;
+    --rx-canvas-sunken: #08090d;
+    --rx-ink: #f8fafc;
+    --rx-ink-soft: #cbd5e1;
+    --rx-muted: #94a3b8;
+    --rx-hairline: rgba(255, 255, 255, 0.1);
+    --rx-hairline-strong: rgba(255, 255, 255, 0.2);
+    --rx-accent: var(--rx-accent-cyan);
+    --rx-accent-hover: #38bdf8;
+    --rx-accent-soft: rgba(20, 221, 253, 0.12);
+    --rx-on-accent: #0b0d13;
+    --rx-stage-bg: #0b0d13;
+    --rx-stage-fg: #f8fafc;
+    --rx-terminal-bg: #07090e;
+    --rx-terminal-fg: #f8fafc;
+    --rx-terminal-border: rgba(255, 255, 255, 0.12);
+
+    /* Diagram hues (for diagrams only) */
+    --rx-diagram-1: #14ddfd;
+    --rx-diagram-2: #818cf8;
+    --rx-diagram-3: #34d399;
   }
 
   /* ─── Light Mode Definitions ───────────────────────────────────────────── */
@@ -270,6 +313,10 @@
     --rx-border: rgba(99, 102, 241, 0.2);
     --rx-border-subtle: rgba(15, 23, 42, 0.08);
     --rx-border-hover: rgba(99, 102, 241, 0.45);
+    --rx-header-bg-solid: color-mix(in srgb, #ffffff 92%, transparent);
+    --rx-header-border: var(--rx-border-subtle);
+    --rx-footer-bg: var(--rx-surface-1);
+    --rx-footer-border: var(--rx-border-subtle);
 
     --rx-tick-color: rgba(99, 102, 241, 0.05);
     --rx-tick-major-color: rgba(99, 102, 241, 0.15);
@@ -298,6 +345,29 @@
     --rx-btn-disabled-bg: var(--rx-surface-3);
     --rx-btn-disabled-text: var(--rx-text-3);
     --rx-btn-disabled-border: var(--rx-border-subtle);
+
+    /* ─── Landing v3 Semantic Tokens (Warm Cream Light) ─────────────────── */
+    --rx-canvas: #fffbf5;
+    --rx-canvas-sunken: #f6f1e7;
+    --rx-ink: #262626;
+    --rx-ink-soft: #525252;
+    --rx-muted: #737373;
+    --rx-hairline: rgba(180, 160, 140, 0.22);
+    --rx-hairline-strong: rgba(160, 140, 120, 0.35);
+    --rx-accent: var(--rx-accent-indigo);
+    --rx-accent-hover: #3730a3;
+    --rx-accent-soft: rgba(67, 56, 202, 0.08);
+    --rx-on-accent: #ffffff;
+    --rx-stage-bg: #fffbf5;
+    --rx-stage-fg: #262626;
+    --rx-terminal-bg: #141720;
+    --rx-terminal-fg: #f8fafc;
+    --rx-terminal-border: rgba(255, 255, 255, 0.12);
+
+    /* Diagram hues (for diagrams only) */
+    --rx-diagram-1: #0284c7;
+    --rx-diagram-2: #4338ca;
+    --rx-diagram-3: #059669;
   }
 }
 

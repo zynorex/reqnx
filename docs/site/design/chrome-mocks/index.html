@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REQNX Chrome System — Hi-Fi Design Mocks & Gate 1 Review Workbench</title>
+  <style>
+    :root {
+      --bg: #090a0f;
+      --surface: #111319;
+      --surface-raised: #181c28;
+      --border: rgba(255, 255, 255, 0.08);
+      --text-1: #f8fafc;
+      --text-2: #cbd5e1;
+      --text-3: #94a3b8;
+      --cyan: #14ddfd;
+      --indigo: #4f46e5;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text-2);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 2.5rem;
+    }
+    header.workbench-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    h1 {
+      font-family: var(--font-mono);
+      font-size: 1.75rem;
+      color: var(--text-1);
+      margin-bottom: 0.5rem;
+    }
+    h1 span {
+      color: var(--cyan);
+    }
+    p.lead {
+      color: var(--text-3);
+      font-size: 0.95rem;
+      max-width: 65ch;
+      line-height: 1.6;
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      background: rgba(20, 221, 253, 0.12);
+      color: var(--cyan);
+      border: 1px solid rgba(20, 221, 253, 0.25);
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .nav-tab-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .nav-tab-btn:hover, .nav-tab-btn.active {
+      background: var(--cyan);
+      color: #000;
+      border-color: var(--cyan);
+      font-weight: 600;
+    }
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 1.125rem;
+      color: var(--text-1);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-desc {
+      font-size: 0.875rem;
+      color: var(--text-3);
+      margin-bottom: 1.5rem;
+    }
+    .preview-frame-wrap {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 16px 32px rgba(0,0,0,0.4);
+    }
+    iframe {
+      width: 100%;
+      border: none;
+      display: block;
+      transition: filter 0.2s ease;
+    }
+    body.is-squint iframe { filter: blur(4px); }
+    body.is-greyscale iframe { filter: grayscale(100%); }
+    .toolbar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-action {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      color: var(--text-1);
+      padding: 0.35rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+    .btn-action:hover {
+      border-color: var(--cyan);
+    }
+    .viewports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="workbench-header">
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+        <span class="badge">GATE 1 REVIEW</span>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-3);">THE INSTRUMENT DESIGN SYSTEM</span>
+      </div>
+      <h1>REQNX Chrome System <span>// Design Mocks</span></h1>
+      <p class="lead">
+        Unified, theme-matched header and footer architecture for Marketing and Documentation. High-fidelity static prototypes validating the 7 Gate 1 design decisions.
+      </p>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn-action" onclick="document.body.classList.toggle('is-squint')">Squint Test (Blur)</button>
+      <button class="btn-action" onclick="document.body.classList.toggle('is-greyscale')">Greyscale Test</button>
+      <button class="btn-action" onclick="document.body.className = ''">Reset Filters</button>
+    </div>
+  </header>
+
+  <!-- Navigation Links to Dedicated Mocks -->
+  <div class="nav-tabs">
+    <a href="#marketing-header" class="nav-tab-btn active">1. Marketing Header</a>
+    <a href="#docs-header" class="nav-tab-btn">2. Docs Header</a>
+    <a href="#mobile-chrome" class="nav-tab-btn">3. Mobile Bar & Sheet</a>
+    <a href="#footers" class="nav-tab-btn">4. Footers (Full & Slim)</a>
+    <a href="marketing-header.html" target="_blank" class="nav-tab-btn" style="margin-left: auto;">Open Marketing &nearr;</a>
+    <a href="docs-header.html" target="_blank" class="nav-tab-btn">Open Docs &nearr;</a>
+    <a href="mobile-chrome.html" target="_blank" class="nav-tab-btn">Open Mobile &nearr;</a>
+    <a href="footers.html" target="_blank" class="nav-tab-btn">Open Footers &nearr;</a>
+  </div>
+
+  <!-- Section 1: Marketing Header -->
+  <section class="section-card" id="marketing-header">
+    <div class="section-title">
+      <span>1. Marketing Header</span>
+      <span style="font-size: 0.75rem; color: var(--cyan); font-weight: normal;">(Decisions 1, 2, 3, 4, 5)</span>
+    </div>
+    <p class="section-desc">
+      56px height, transparent over hero transitioning to 92% opaque solid with 12px blur. Features the 2px bottom cyan marker, hybrid disclosure Algorithms flyout, theme segmented control, and search icon button.
+    </p>
+    <div class="preview-frame-wrap">
+      <iframe src="marketing-header.html" height="520" loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <!-- Section 2: Docs Header -->
+  <section class="section-card" id="docs-header">
+    <div class="section-title">
+      <span>2. Documentation Header</span>
+      <span style="font-size: 0.75rem; color: var(--cyan); font-weight: normal;">(Decisions 1, 2, 3, 7)</span>
+    </div>
+    <p class="section-desc">
+      Solid 56px hairline bar. Area tabs (Start, Guides, Algorithms, Reference, Design, Project) at &ge; 1280px; "Section" disclosure dropdown at 1024–1279px. Full 260px search trigger with Ctrl+K shortcut and no CTA.
+    </p>
+    <div class="preview-frame-wrap">
+      <iframe src="docs-header.html" height="420" loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <!-- Section 3: Mobile Chrome & Sheet -->
+  <section class="section-card" id="mobile-chrome">
+    <div class="section-title">
+      <span>3. Mobile Bar (52px) & Modal Sheet Dialog</span>
+      <span style="font-size: 0.75rem; color: var(--cyan); font-weight: normal;">(Decisions 1, 5)</span>
+    </div>
+    <p class="section-desc">
+      Slim 52px mobile bar with logo, search icon, and 44px Menu button. Sliding native &lt;dialog&gt; sheet drawer with focus trap, full-width search, 48px link rows, Algorithms accordion, and preferences.
+    </p>
+    <div class="preview-frame-wrap" style="max-width: 440px; margin: 0 auto; background: #090b10;">
+      <iframe src="mobile-chrome.html" height="920" loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <!-- Section 4: Footers -->
+  <section class="section-card" id="footers">
+    <div class="section-title">
+      <span>4. Footers: Full Marketing & Slim Docs</span>
+      <span style="font-size: 0.75rem; color: var(--cyan); font-weight: normal;">(Decision 6)</span>
+    </div>
+    <p class="section-desc">
+      Full 12-column footer with optional 12px ruler edge, brand block, 3 link columns, and bottom legal/preferences strip. Slim 72px docs footer attached to docs container.
+    </p>
+    <div class="preview-frame-wrap">
+      <iframe src="footers.html" height="880" loading="lazy"></iframe>
+    </div>
+  </section>
+
+</body>
+</html>

@@ -41,7 +41,7 @@ Between peek and consume, another request could have consumed tokens, causing a 
 
 If child limiters use different algorithm IDs, their Redis keys will naturally land on different shards:
 
-```
+```text
 reqnx:api:fixed-window:user-123    → shard A
 reqnx:api:token-bucket:user-123   → shard B
 ```

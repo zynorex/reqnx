@@ -21,6 +21,9 @@
     "bench": "vitest bench --run && node --expose-gc --import tsx scripts/bench-memory.ts",
     "bench:vitest": "vitest bench --run",
     "bench:memory": "node --expose-gc --import tsx scripts/bench-memory.ts",
+    "redis:up": "docker compose up -d",
+    "redis:down": "docker compose down -v",
+    "test:redis": "pnpm --filter @reqnx/redis test",
     "verify": "pnpm install && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check-packages"
   },
   "devDependencies": {

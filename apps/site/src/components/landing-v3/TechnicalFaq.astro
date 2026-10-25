@@ -1,0 +1,211 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/TechnicalFaq.astro
+//
+// Landing v3 Technical FAQ (S8):
+// - Label Chip: FREQUENTLY ASKED
+// - H2: Technical questions and trade-offs.
+// - Lede: Answers to architecture questions, trade-offs, and operational mechanics.
+// - Semantic <details> / <summary> accordions with keyboard navigation
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Section from './Section.astro';
+
+const faqs = [
+  {
+    id: 'why-not-redis-rate-limiter',
+    question: 'Why not use redis-rate-limiter or hand-rolled Redis counters?',
+    answer:
+      'Most existing Redis limiters use decoupled read-compute-write transactions or naive INCR counters that permit double-spend race conditions and 2x traffic bursts at window seams. REQNX executes the entire algorithm inside the store boundary in a single atomic step (synchronous in-memory transaction or Redis Lua script via EVALSHA). Furthermore, REQNX has zero runtime dependencies and decouples algorithms from persistence, allowing you to run identical logic in unit tests and production clusters.',
+  },
+  {
+    id: 'floating-point-drift',
+    question: 'How does REQNX prevent floating-point drift in token replenishment?',
+    answer:
+      'Many Token Bucket libraries multiply timestamps by floating-point rates, accumulating IEEE 754 precision drift over millions of checks. REQNX computes token replenishment strictly using integer millisecond arithmetic and rational fractions (integer numerator and denominator per ADR-0002). This guarantees zero drift, zero phantom tokens, and 100% deterministic state transitions across indefinite operational runtimes.',
+  },
+  {
+    id: 'run-without-redis',
+    question: 'Can I run this without Redis or external infrastructure?',
+    answer:
+      'Yes. REQNX includes a production-grade MemoryStore with LRU eviction and configurable maximum key capacity. It operates entirely in-memory with zero network overhead and zero external dependencies. If your service runs on a single node, handles rate limiting per-container, or runs in serverless edge runtimes (Node.js, Bun, Deno, Cloudflare Workers), you do not need Redis.',
+  },
+  {
+    id: 'fail-open-behavior',
+    question: 'How does fail-open behave during store disconnection or network timeouts?',
+    answer:
+      'Per ADR-0004, REQNX provides configurable failure policies. Under the default fail-open policy, if a store throws an exception or network timeout, the limiter safely returns { allowed: true, degraded: true } so your API never crashes or hangs. You can also configure fail-closed or provide a custom fallback decision handler to degrade to cached tier limits.',
+  },
+  {
+    id: 'virtual-clocks-testing',
+    question: 'How do virtual clocks work in unit tests?',
+    answer:
+      'Time is never read from global Date.now() directly; it is injected via an explicit Clock interface ({ now(): number }). The testkit provides a deterministic FakeClock whose time you can advance by arbitrary durations (e.g. clock.advance(30_000)). Tests verifying a 30-day rate limit window or continuous token replenishment complete in sub-millisecond execution times without sleeping.',
+  },
+];
+---
+
+<Section
+  id="faq"
+  label="FREQUENTLY ASKED"
+  h2="Technical questions and trade-offs."
+  lede="Answers to architecture questions, trade-offs, and operational mechanics."
+  align="left"
+  sunken={true}
+  class="rx-faq-section"
+  isBelowFold={true}
+>
+  <div class="rx-faq-container">
+    <div class="rx-faq-list">
+      {
+        faqs.map((faq, idx) => (
+          <details class="rx-faq-item" id={faq.id} open={idx === 0}>
+            <summary class="rx-faq-summary">
+              <span class="rx-faq-num" aria-hidden="true">0{idx + 1}</span>
+              <span class="rx-faq-question">{faq.question}</span>
+              <span class="rx-faq-toggle" aria-hidden="true">
+                <span class="rx-faq-icon">+</span>
+              </span>
+            </summary>
+            <div class="rx-faq-body">
+              <p class="rx-faq-answer">{faq.answer}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-faq-section {
+    position: relative;
+    width: 100%;
+  }
+
+  .rx-faq-container {
+    max-width: 960px;
+    width: 100%;
+  }
+
+  .rx-faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rx-faq-item {
+    background: var(--rx-canvas);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-md, 8px);
+    overflow: hidden;
+    transition:
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      background-color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-faq-item:hover {
+    border-color: var(--rx-hairline-strong);
+  }
+
+  .rx-faq-item[open] {
+    border-color: var(--rx-accent);
+    background: var(--rx-canvas);
+  }
+
+  .rx-faq-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    outline: none;
+  }
+
+  .rx-faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .rx-faq-summary:focus-visible {
+    outline: 2px solid var(--rx-accent);
+    outline-offset: -2px;
+  }
+
+  .rx-faq-num {
+    font-family: var(--rx-font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--rx-accent);
+    min-width: 24px;
+  }
+
+  .rx-faq-question {
+    font-family: var(--rx-font-sans);
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--rx-ink);
+    flex: 1;
+    margin: 0;
+  }
+
+  .rx-faq-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline);
+    color: var(--rx-ink-soft);
+    font-family: var(--rx-font-mono);
+    font-size: 16px;
+    font-weight: 500;
+    transition:
+      transform var(--rx-dur-fast) var(--rx-ease-out),
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-faq-item[open] .rx-faq-toggle {
+    transform: rotate(45deg);
+    background: var(--rx-accent);
+    color: var(--rx-on-accent);
+    border-color: var(--rx-accent);
+  }
+
+  .rx-faq-body {
+    padding: 0 24px 24px 64px;
+  }
+
+  .rx-faq-answer {
+    font-family: var(--rx-font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--rx-ink-soft);
+    margin: 0;
+    max-width: 72ch;
+  }
+
+  @media (max-width: 640px) {
+    .rx-faq-summary {
+      padding: 18px 16px;
+      gap: 12px;
+    }
+
+    .rx-faq-question {
+      font-size: 15px;
+    }
+
+    .rx-faq-body {
+      padding: 0 16px 20px 48px;
+    }
+
+    .rx-faq-answer {
+      font-size: 14px;
+    }
+  }
+</style>

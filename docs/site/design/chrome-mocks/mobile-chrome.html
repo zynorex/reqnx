@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Chrome & Sheet Mock — REQNX Chrome System</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Phone Viewport Simulator Stage */
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 6rem;
+      background: #090b10;
+      min-height: 100vh;
+    }
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      background: var(--rx-surface-1);
+      border: 1px solid var(--header-border);
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+    }
+    .phone-status-bar {
+      height: 44px;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--rx-text-2);
+      flex-shrink: 0;
+    }
+    .phone-screen {
+      flex: 1;
+      overflow-y: auto;
+      position: relative;
+    }
+    .phone-body {
+      padding: 1.5rem;
+    }
+    .toolbar-dock {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--rx-surface-2);
+      border: 1px solid var(--header-border);
+      border-radius: var(--radius-full);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      z-index: 1000;
+      font-size: 0.8125rem;
+      font-family: var(--font-mono);
+    }
+    .toolbar-dock button {
+      background: var(--rx-surface-3);
+      border: 1px solid var(--header-border);
+      color: var(--rx-text-1);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .toolbar-dock button.active {
+      background: var(--rx-accent-cyan);
+      color: #000;
+      border-color: var(--rx-accent-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-frame">
+    <!-- Phone Top Status Bar -->
+    <div class="phone-status-bar">
+      <span>9:41</span>
+      <div style="display: flex; gap: 4px;">
+        <span>5G</span>
+        <span>100%</span>
+      </div>
+    </div>
+
+    <!-- Phone Screen with Header -->
+    <div class="phone-screen" id="phone-screen">
+      
+      <!-- 52px Mobile Header Bar -->
+      <header class="site-header site-header--solid" style="height: var(--header-height-mobile);">
+        <div class="site-header__container" style="padding: 0 1rem;">
+          
+          <div class="site-header__left">
+            <a href="/" class="brand-lockup" aria-label="REQNX home">
+              <div class="brand-icon-box" style="width: 24px; height: 24px;">
+                <img src="../../../../brand/logo.png" alt="" width="24" height="24">
+              </div>
+              <span class="brand-name" style="font-size: 1rem;">REQN<span class="brand-name-gold">X</span></span>
+            </a>
+          </div>
+
+          <div class="site-header__right" style="gap: 0.5rem;">
+            <!-- Mobile Search Icon Button -->
+            <button type="button" class="icon-btn" aria-label="Search docs">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+
+            <!-- Mobile Menu Trigger Button -->
+            <button type="button" class="mobile-menu-btn" id="open-sheet-btn" onclick="openSheet()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+              <span>Menu</span>
+            </button>
+          </div>
+
+        </div>
+      </header>
+
+      <!-- Simulated Page Body -->
+      <div class="phone-body">
+        <h2 style="font-family: var(--font-mono); font-size: 1.25rem; color: var(--rx-text-1); margin-bottom: 0.75rem;">
+          Rate Limiting Architecture
+        </h2>
+        <p style="color: var(--rx-text-2); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1rem;">
+          Deterministic rate limiting state machine. Tap the menu button to open the mobile drawer sheet.
+        </p>
+      </div>
+
+      <!-- Backdrop Scrim -->
+      <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+
+      <!-- Native/Styled Mobile Sheet Modal Dialog -->
+      <dialog class="mobile-sheet-dialog" id="mobile-sheet-dialog" aria-modal="true" aria-labelledby="sheet-title">
+        <!-- Header Row -->
+        <div class="sheet-header-row">
+          <div class="brand-lockup">
+            <div class="brand-icon-box" style="width: 24px; height: 24px;">
+              <img src="../../../../brand/logo.png" alt="" width="24" height="24">
+            </div>
+            <span class="brand-name" style="font-size: 1rem;" id="sheet-title">REQN<span class="brand-name-gold">X</span></span>
+          </div>
+          <button type="button" class="icon-btn" onclick="closeSheet()" aria-label="Close menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="sheet-content">
+          <!-- Full-width 44px Search Trigger -->
+          <button type="button" class="sheet-search-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Search docs...</span>
+          </button>
+
+          <!-- Primary Links (48px target rows) -->
+          <ul class="sheet-nav-list" role="list">
+            <li>
+              <a href="/getting-started/" class="sheet-nav-row">
+                <span>Docs</span>
+                <span style="color: var(--rx-text-3);">&rarr;</span>
+              </a>
+            </li>
+
+            <!-- Algorithms Accordion Row -->
+            <li>
+              <div style="background: var(--rx-surface-1); border: 1px solid var(--header-border-subtle); border-radius: var(--radius-sm); overflow: hidden;">
+                <div style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 0.85rem; cursor: pointer;" onclick="toggleAccordion()">
+                  <span style="font-weight: 500; color: var(--rx-text-1);">Algorithms</span>
+                  <svg id="acc-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform 0.2s;">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+                <div id="acc-content" style="display: none; padding: 0.5rem 0.85rem 0.75rem; border-top: 1px solid var(--header-border-subtle); display: none; flex-direction: column; gap: 0.5rem; font-size: 0.875rem;">
+                  <a href="/algorithms/fixed-window/" style="color: var(--rx-text-2); text-decoration: none;">Fixed Window Counter</a>
+                  <a href="/algorithms/token-bucket/" style="color: var(--rx-text-2); text-decoration: none;">Token Bucket</a>
+                  <a href="/algorithms/" style="color: var(--rx-accent-cyan); text-decoration: none; font-weight: 500; margin-top: 0.25rem;">Compare all algorithms &rarr;</a>
+                </div>
+              </div>
+            </li>
+
+            <li>
+              <a href="/playground/" class="sheet-nav-row">
+                <span>Playground</span>
+                <span style="color: var(--rx-text-3);">&rarr;</span>
+              </a>
+            </li>
+            <li>
+              <a href="#status" class="sheet-nav-row">
+                <span>Status</span>
+                <span style="color: var(--rx-text-3);">&rarr;</span>
+              </a>
+            </li>
+          </ul>
+
+          <!-- Action / CTA (Marketing) -->
+          <div id="sheet-cta-box" style="margin-top: 0.5rem;">
+            <a href="/getting-started/" class="btn-primary-sm" style="display: flex; height: 44px; width: 100%; font-size: 0.9375rem;">
+              Get started
+            </a>
+          </div>
+
+          <!-- Preferences Group -->
+          <div class="sheet-pref-group">
+            <div class="sheet-pref-label">Theme Preference</div>
+            <div class="segmented-theme-control" style="width: fit-content;">
+              <div class="segmented-theme-thumb" id="sheet-theme-thumb" style="transform: translateX(28px);"></div>
+              <button type="button" class="segmented-theme-option" onclick="setSheetTheme('system')" title="System">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+              </button>
+              <button type="button" class="segmented-theme-option is-selected" onclick="setSheetTheme('dark')" title="Dark">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+              </button>
+              <button type="button" class="segmented-theme-option" onclick="setSheetTheme('light')" title="Light">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </dialog>
+
+    </div>
+  </div>
+
+  <!-- Interactive Controls Dock -->
+  <div class="toolbar-dock">
+    <span>Drawer:</span>
+    <button id="btn-drawer-closed" class="active" onclick="closeSheet()">Closed</button>
+    <button id="btn-drawer-open" onclick="openSheet()">Open Sheet</button>
+    <span>Theme:</span>
+    <button id="btn-theme-dark" class="active" onclick="setAppTheme('dark')">Dark</button>
+    <button id="btn-theme-light" onclick="setAppTheme('light')">Light</button>
+  </div>
+
+  <script>
+    const dialog = document.getElementById('mobile-sheet-dialog');
+    const backdrop = document.getElementById('sheet-backdrop');
+
+    function openSheet() {
+      dialog.classList.add('is-open');
+      backdrop.style.display = 'block';
+      document.getElementById('btn-drawer-open').classList.add('active');
+      document.getElementById('btn-drawer-closed').classList.remove('active');
+    }
+
+    function closeSheet() {
+      dialog.classList.remove('is-open');
+      backdrop.style.display = 'none';
+      document.getElementById('btn-drawer-closed').classList.add('active');
+      document.getElementById('btn-drawer-open').classList.remove('active');
+    }
+
+    function toggleAccordion() {
+      const acc = document.getElementById('acc-content');
+      const chev = document.getElementById('acc-chevron');
+      const isVisible = acc.style.display === 'flex';
+      acc.style.display = isVisible ? 'none' : 'flex';
+      chev.style.transform = isVisible ? 'none' : 'rotate(180deg)';
+    }
+
+    function setAppTheme(th) {
+      document.documentElement.setAttribute('data-theme', th);
+      document.querySelectorAll('#btn-theme-dark, #btn-theme-light').forEach(b => b.classList.remove('active'));
+      if (th === 'dark') {
+        document.getElementById('btn-theme-dark').classList.add('active');
+        document.getElementById('sheet-theme-thumb').style.transform = 'translateX(28px)';
+      } else {
+        document.getElementById('btn-theme-light').classList.add('active');
+        document.getElementById('sheet-theme-thumb').style.transform = 'translateX(56px)';
+      }
+    }
+
+    function setSheetTheme(mode) {
+      if (mode === 'system') {
+        document.getElementById('sheet-theme-thumb').style.transform = 'translateX(0px)';
+        setAppTheme('dark');
+      } else if (mode === 'dark') {
+        setAppTheme('dark');
+      } else {
+        setAppTheme('light');
+      }
+    }
+  </script>
+</body>
+</html>

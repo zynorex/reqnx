@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-10-14T16:45:13.742Z",
+  "performance": {
+    "landing": {
+      "cls": 0.006194922728989841,
+      "fcp": 1456,
+      "domContentLoaded": 956,
+      "load": 1438,
+      "totalWallClockMs": 2110
+    },
+    "docs": {
+      "cls": 0.003485001091767404,
+      "fcp": 420,
+      "domContentLoaded": 473,
+      "load": 670,
+      "totalWallClockMs": 1178
+    }
+  },
+  "sizes": {
+    "runtimeJs": {
+      "headerJs": {
+        "raw": 2778,
+        "gzip": 1129
+      },
+      "footerJs": {
+        "raw": 233,
+        "gzip": 185
+      },
+      "themeToggleJs": {
+        "raw": 1212,
+        "gzip": 629
+      },
+      "totalChromeJsGzip": 1943
+    },
+    "sourceStylesAndComponents": {
+      "headerAstro": {
+        "raw": 19270,
+        "gzip": 4532
+      },
+      "footerAstro": {
+        "raw": 7535,
+        "gzip": 2116
+      },
+      "buttonsCss": {
+        "raw": 21026,
+        "gzip": 3481
+      },
+      "docsThemeCss": {
+        "raw": 19808,
+        "gzip": 3257
+      },
+      "globalCss": {
+        "raw": 20956,
+        "gzip": 4484
+      }
+    }
+  }
+}

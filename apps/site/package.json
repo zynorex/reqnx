@@ -5,8 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
+    "predev": "tsx scripts/ingest-docs.ts",
     "build": "astro build",
+    "prebuild": "tsx scripts/ingest-docs.ts",
     "preview": "astro preview",
+    "docs:ingest": "tsx scripts/ingest-docs.ts",
+    "docs:lint": "tsx scripts/lint-docs.ts",
     "astro": "astro",
     "snippets:run": "tsx src/snippets/generate-output.ts",
     "facts": "tsx scripts/print-facts.ts",

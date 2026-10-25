@@ -1,0 +1,68 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/chrome/StarlightHeader.astro
+//
+// Starlight Header Override Component:
+// Composes our unified SiteHeader (variant="docs") with Starlight's Search
+// dialog and mobile sidebar toggle.
+// ──────────────────────────────────────────────────────────────────────────────
+
+import SiteHeader from './SiteHeader.astro';
+import Search from '@astrojs/starlight/components/Search.astro';
+import MobileMenuToggle from '@astrojs/starlight/components/MobileMenuToggle.astro';
+
+const currentPath = Astro.url.pathname;
+---
+
+<div class="rx-starlight-header-wrapper">
+  <SiteHeader variant="docs" currentPath={currentPath} />
+
+  <!-- Hidden bridge to preserve Starlight's Search and Mobile Menu wiring -->
+  <div class="rx-starlight-bridge" aria-hidden="true">
+    <Search {...Astro.props} />
+    <MobileMenuToggle {...Astro.props} />
+  </div>
+</div>
+
+<style>
+  .rx-starlight-header-wrapper {
+    width: 100%;
+    position: relative;
+  }
+
+  /* Keep Search dialog in DOM, but hide Starlight's default trigger button since SiteHeader triggers it */
+  .rx-starlight-bridge :global(site-search button[data-open-modal]) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    pointer-events: none;
+  }
+
+  /* Clip Starlight mobile menu button so its click listener stays functional */
+  .rx-starlight-bridge :global(starlight-menu-button) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  // Forward custom open-search events to Starlight's native search button
+  window.addEventListener('rx-open-search', () => {
+    const searchBtn = document.querySelector<HTMLButtonElement>('site-search button[data-open-modal]');
+    searchBtn?.click();
+  });
+</script>

@@ -1,0 +1,219 @@
+{
+  "timestamp": "2026-10-19T04:42:35.033Z",
+  "stage": "stage-0-orient",
+  "branch": "landing-v3",
+  "metrics": {
+    "desktop": {
+      "fcp": 296,
+      "lcp": 296,
+      "cls": 0.012,
+      "domContentLoaded": 280,
+      "load": 344,
+      "loadDurationMs": 852
+    },
+    "mobile": {
+      "fcp": 252,
+      "lcp": 252,
+      "cls": 0.132,
+      "domContentLoaded": 248,
+      "load": 321,
+      "loadDurationMs": 830
+    }
+  },
+  "bundles": {
+    "indexHtml": {
+      "raw": 165871,
+      "gzip": 26534
+    },
+    "totalClientJs": {
+      "raw": 181638,
+      "gzip": 62462
+    },
+    "totalClientCss": {
+      "raw": 200873,
+      "gzip": 36690
+    }
+  },
+  "assetSizes": {
+    "404.BQuHnvOm.png": {
+      "raw": 122358,
+      "gzip": 122064
+    },
+    "404.BvBWC3Fs_Z2hp9l7.webp": {
+      "raw": 35410,
+      "gzip": 35423
+    },
+    "banner.B_qucDd4.webp": {
+      "raw": 23676,
+      "gzip": 23704
+    },
+    "banner.CA1TRRgl.png": {
+      "raw": 389087,
+      "gzip": 389225
+    },
+    "Button.lZOInytB.js": {
+      "raw": 15017,
+      "gzip": 5400
+    },
+    "client.CZ6l4rWy.js": {
+      "raw": 1251,
+      "gzip": 734
+    },
+    "CopyButton.gp7OF4eg.js": {
+      "raw": 1603,
+      "gzip": 779
+    },
+    "ec.0vx5m.js": {
+      "raw": 2523,
+      "gzip": 1164
+    },
+    "ec.v4551.css": {
+      "raw": 18222,
+      "gzip": 3958
+    },
+    "Footer.astro_astro_type_script_index_0_lang.ywftWkzS.js": {
+      "raw": 233,
+      "gzip": 185
+    },
+    "Header.astro_astro_type_script_index_0_lang.TtTD3xWi.js": {
+      "raw": 3797,
+      "gzip": 1367
+    },
+    "Hero.astro_astro_type_script_index_0_lang.BDzjxCkL.js": {
+      "raw": 464,
+      "gzip": 291
+    },
+    "hooks.module.DR8Xx9YK.js": {
+      "raw": 2661,
+      "gzip": 1183
+    },
+    "index.BbTFDsYf.css": {
+      "raw": 72289,
+      "gzip": 12802
+    },
+    "index.BBx60ds7.css": {
+      "raw": 37952,
+      "gzip": 7226
+    },
+    "index.BtdRv35F.css": {
+      "raw": 10407,
+      "gzip": 1996
+    },
+    "index.DzD0mTyL.css": {
+      "raw": 34990,
+      "gzip": 4653
+    },
+    "jsxRuntime.module.Dqw-6DmR.js": {
+      "raw": 415,
+      "gzip": 301
+    },
+    "kill-switch.uiuFbOe7.js": {
+      "raw": 874,
+      "gzip": 405
+    },
+    "LiveConsole.UHvqwwdm.js": {
+      "raw": 16968,
+      "gzip": 5961
+    },
+    "logo.BP4nN82D.png": {
+      "raw": 11188,
+      "gzip": 11211
+    },
+    "logo.fqQSGszL_206RFP.webp": {
+      "raw": 342,
+      "gzip": 365
+    },
+    "logo.fqQSGszL_Z1HT8Xx.webp": {
+      "raw": 244,
+      "gzip": 267
+    },
+    "logo.fqQSGszL_Z4rAya.webp": {
+      "raw": 334,
+      "gzip": 357
+    },
+    "mascot.Mo98yDzF_XlpYt.webp": {
+      "raw": 1336,
+      "gzip": 1359
+    },
+    "mascot.Mo98yDzF_YEv0r.webp": {
+      "raw": 13854,
+      "gzip": 13877
+    },
+    "mascot.Mo98yDzF_Z1yazA.webp": {
+      "raw": 9124,
+      "gzip": 9147
+    },
+    "mascot.Mo98yDzF_Z2a1Xhf.webp": {
+      "raw": 11448,
+      "gzip": 11471
+    },
+    "mascot.xhiUGBGm.png": {
+      "raw": 115330,
+      "gzip": 114843
+    },
+    "MobileTableOfContents.astro_astro_type_script_index_0_lang.C181hMzK.js": {
+      "raw": 667,
+      "gzip": 403
+    },
+    "MotionControl.astro_astro_type_script_index_0_lang.DVYueOmL.js": {
+      "raw": 717,
+      "gzip": 412
+    },
+    "page.B1D-nYk3.js": {
+      "raw": 2242,
+      "gzip": 1013
+    },
+    "pointer.DvE2cqjP.js": {
+      "raw": 793,
+      "gzip": 463
+    },
+    "preact.module.BTqC4RwC.js": {
+      "raw": 10569,
+      "gzip": 4477
+    },
+    "preload-helper.BlTxHScW.js": {
+      "raw": 1110,
+      "gzip": 650
+    },
+    "print.DNXP8c50.css": {
+      "raw": 3554,
+      "gzip": 993
+    },
+    "ScenarioPlayer.ueoq2xXV.js": {
+      "raw": 8804,
+      "gzip": 2920
+    },
+    "Search.astro_astro_type_script_index_0_lang.CLg7mG-P.js": {
+      "raw": 1799,
+      "gzip": 932
+    },
+    "signals.module.C7q4IzcB.js": {
+      "raw": 7915,
+      "gzip": 3077
+    },
+    "TableOfContents.astro_astro_type_script_index_0_lang.CKWWgpjV.js": {
+      "raw": 1673,
+      "gzip": 863
+    },
+    "ThemeControl.CpA-TL7J.js": {
+      "raw": 4167,
+      "gzip": 1528
+    },
+    "ThemeToggle.BZgLiYow.js": {
+      "raw": 1212,
+      "gzip": 629
+    },
+    "ui-core.D7EsID-j.js": {
+      "raw": 94164,
+      "gzip": 27325
+    },
+    "_slug_.BvR_Q7xS.css": {
+      "raw": 5742,
+      "gzip": 1345
+    },
+    "_slug_.FAb3ujfO.css": {
+      "raw": 17717,
+      "gzip": 3717
+    }
+  }
+}

@@ -3,6 +3,9 @@ title: 'Getting Started'
 description: 'Install REQNX, create a limiter, and protect your first endpoint in under two minutes.'
 ---
 
+import InstallSnippet from '../../components/InstallSnippet.astro';
+import DecisionFields from '../../components/docs/DecisionFields.astro';
+
 REQNX is a pluggable, distributed-ready rate limiter library for Node.js. The core package (`@reqnx/core`) has **zero runtime dependencies** and runs seamlessly in Node.js, Bun, Deno, and modern edge environments.
 
 ---
@@ -11,16 +14,9 @@ REQNX is a pluggable, distributed-ready rate limiter library for Node.js. The co
 
 Install `@reqnx/core` using your preferred package manager:
 
-```bash
-# pnpm
-pnpm add @reqnx/core
-
-# npm
-npm install @reqnx/core
-
-# yarn
-yarn add @reqnx/core
-```
+<div style="margin: 1.5rem 0;">
+  <InstallSnippet />
+</div>
 
 ---
 
@@ -59,24 +55,9 @@ if (!decision.allowed) {
 
 ## Understanding the Decision Object
 
-Every check returns an immutable `Decision` object:
+Every check returns an immutable, strongly-typed `Decision` response:
 
-```typescript
-interface Decision {
-  /** Whether the request was admitted (true) or denied (false). */
-  readonly allowed: boolean;
-  /** Maximum capacity configured for this window. */
-  readonly limit: number;
-  /** Remaining admitted capacity in the current window. */
-  readonly remaining: number;
-  /** Unix epoch timestamp (ms) when the current window expires. */
-  readonly resetAtMs: number;
-  /** Milliseconds until the caller should retry (0 if admitted). */
-  readonly retryAfterMs: number;
-  /** True if store failed and fallback policy admitted the request. */
-  readonly degraded: boolean;
-}
-```
+<DecisionFields highlight="allowed" />
 
 ### Setting Standard Rate Limit Headers
 

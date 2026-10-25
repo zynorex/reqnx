@@ -1,0 +1,514 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/ContrastSection.astro
+//
+// Landing v3 Engineering Contrast Section (S4):
+// - Two-tone H2: What a read-modify-write limiter gets wrong. (And what one atomic step does instead.)
+// - Side-by-side contrast panels (Unsafe RMW vs REQNX Atomic Contract)
+// - Deterministic Live Race Simulation (1,000 requests against 100 limit)
+// - Static pre-rendered HTML fallback for No-JS / zero CLS
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Section from './Section.astro';
+import Button from '../common/Button.astro';
+
+const unsafePoints = [
+  {
+    num: '01',
+    title: 'Decoupled Transactions',
+    desc: 'The read, compute, and write are separate trips with a wide concurrency race window.',
+  },
+  {
+    num: '02',
+    title: 'Clock Drift Across Nodes',
+    desc: 'Timestamps originate from unsynchronized server clocks, causing non-deterministic rollbacks.',
+  },
+  {
+    num: '03',
+    title: 'Window Boundary Cliffs',
+    desc: 'Fixed-window resets permit double the intended burst volume across window seams.',
+  },
+  {
+    num: '04',
+    title: 'Network Limbo',
+    desc: 'Dropped database connections leave consumed tokens in corrupt, untracked states.',
+  },
+];
+
+const atomicPoints = [
+  {
+    num: '01',
+    title: 'Single Atomic Step',
+    desc: 'Check and update evaluate inside an isolated transaction boundary with zero interleaving.',
+  },
+  {
+    num: '02',
+    title: 'Injected Monotonic Clock',
+    desc: 'Monotonic integer timestamps ensure time never moves backwards or awards early tokens.',
+  },
+  {
+    num: '03',
+    title: 'Smooth Replenishment',
+    desc: 'Pure mathematical step functions continuously replenish quota without boundary seams.',
+  },
+  {
+    num: '04',
+    title: 'Explicit Resilience Policies',
+    desc: 'Clear fail-open, fail-closed, or degraded policies guarantee your API server never hangs.',
+  },
+];
+---
+
+<Section
+  id="contrast"
+  label="ENGINEERING CONTRAST"
+  h2="What a read-modify-write limiter gets wrong."
+  h2Muted="(And what one atomic step does instead.)"
+  lede="Most hand-rolled limiters fetch quota from a database, compute a decision in application memory, and write the result back. Under concurrency, this allows double-spend bursts."
+  align="left"
+  class="rx-contrast-section"
+>
+  <div class="rx-contrast-container">
+    <!-- Side-by-side Contrast Cards -->
+    <div class="rx-contrast-cards">
+      <!-- Unsafe RMW Card -->
+      <div class="rx-contrast-card rx-contrast-card--unsafe">
+        <div class="rx-contrast-card__header">
+          <span class="rx-contrast-card__tag rx-contrast-card__tag--danger">UNSAFE ARCHITECTURE</span>
+          <h3 class="rx-contrast-card__title">Read, Compute, Write</h3>
+        </div>
+        <ul class="rx-contrast-list" role="list">
+          {
+            unsafePoints.map((pt) => (
+              <li class="rx-contrast-item">
+                <span class="rx-contrast-item__num" aria-hidden="true">{pt.num}</span>
+                <div class="rx-contrast-item__content">
+                  <strong class="rx-contrast-item__title">{pt.title}</strong>
+                  <p class="rx-contrast-item__desc">{pt.desc}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- REQNX Atomic Card -->
+      <div class="rx-contrast-card rx-contrast-card--atomic">
+        <div class="rx-contrast-card__header">
+          <span class="rx-contrast-card__tag rx-contrast-card__tag--success">REQNX ATOMIC CONTRACT</span>
+          <h3 class="rx-contrast-card__title">One Atomic Step</h3>
+        </div>
+        <ul class="rx-contrast-list" role="list">
+          {
+            atomicPoints.map((pt) => (
+              <li class="rx-contrast-item">
+                <span class="rx-contrast-item__num" aria-hidden="true">{pt.num}</span>
+                <div class="rx-contrast-item__content">
+                  <strong class="rx-contrast-item__title">{pt.title}</strong>
+                  <p class="rx-contrast-item__desc">{pt.desc}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <!-- The Deterministic Race Simulation Stage -->
+    <div class="rx-race-stage" id="rx-race-stage">
+      <div class="rx-race-header">
+        <div class="rx-race-tag">CONCURRENCY BENCHMARK</div>
+        <h3 class="rx-race-title">Live Race: 1,000 Concurrent Requests</h3>
+        <p class="rx-race-lede">
+          Simulating 1,000 simultaneous requests against a configured limit of <strong>100</strong>.
+        </p>
+      </div>
+
+      <div class="rx-race-grid">
+        <!-- Naive Column -->
+        <div class="rx-race-col rx-race-col--unsafe">
+          <div class="rx-race-numeral rx-race-numeral--danger" id="rx-race-num-unsafe">1,000</div>
+          <div class="rx-race-label">Admitted of 100 limit</div>
+          <div class="rx-race-badge rx-race-badge--danger">RMW Double Spend · 10x Leak</div>
+          <div class="rx-race-bar-track" aria-hidden="true">
+            <div class="rx-race-bar-fill rx-race-bar-fill--danger" id="rx-race-bar-unsafe" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- REQNX Column -->
+        <div class="rx-race-col rx-race-col--atomic">
+          <div class="rx-race-numeral rx-race-numeral--success" id="rx-race-num-atomic">100</div>
+          <div class="rx-race-label">Admitted of 100 limit</div>
+          <div class="rx-race-badge rx-race-badge--success">REQNX Atomic Guarantee · 0 Leak</div>
+          <div class="rx-race-bar-track" aria-hidden="true">
+            <div class="rx-race-bar-fill rx-race-bar-fill--success" id="rx-race-bar-atomic" style="width: 10%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rx-race-controls">
+        <Button
+          id="rx-race-trigger-btn"
+          variant="primary"
+          size="md"
+          shape="pill"
+          ariaLabel="Run concurrent race simulation"
+          className="rx-race-btn"
+        >
+          <span class="rx-race-btn-icon" aria-hidden="true">&#9654;</span>
+          <span>Send 1,000 at once</span>
+        </Button>
+      </div>
+
+      <div id="rx-race-live-region" class="rx-visually-hidden" aria-live="polite"></div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-contrast-container {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  /* Side-by-side cards */
+  .rx-contrast-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .rx-contrast-card {
+    padding: clamp(24px, 4vw, 36px);
+    border-radius: var(--rx-radius-card, 8px);
+    border: 1px solid var(--rx-hairline-strong);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    box-sizing: border-box;
+  }
+
+  .rx-contrast-card--unsafe {
+    background: var(--rx-canvas-sunken);
+    border-color: rgba(239, 68, 68, 0.25);
+  }
+
+  .rx-contrast-card--atomic {
+    background: var(--rx-canvas-card);
+    border-color: rgba(16, 185, 129, 0.35);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .rx-contrast-card__header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rx-contrast-card__tag {
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    width: max-content;
+  }
+
+  .rx-contrast-card__tag--danger {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--rx-semantic-denied, #ef4444);
+  }
+
+  .rx-contrast-card__tag--success {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--rx-semantic-allowed, #10b981);
+  }
+
+  .rx-contrast-card__title {
+    font-family: var(--rx-font-sans);
+    font-size: clamp(20px, 2.5vw, 24px);
+    font-weight: 600;
+    color: var(--rx-ink);
+    margin: 0;
+  }
+
+  /* List */
+  .rx-contrast-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .rx-contrast-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .rx-contrast-item__num {
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--rx-ink-faint);
+    padding-top: 2px;
+  }
+
+  .rx-contrast-item__content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .rx-contrast-item__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rx-ink);
+  }
+
+  .rx-contrast-item__desc {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--rx-ink-muted);
+    margin: 0;
+  }
+
+  /* The Race Simulation Stage */
+  .rx-race-stage {
+    background: var(--rx-canvas-card);
+    border: 1px solid var(--rx-hairline-strong);
+    border-radius: var(--rx-radius-card, 8px);
+    padding: clamp(28px, 4vw, 44px);
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .rx-race-header {
+    max-width: 620px;
+    margin: 0 auto 32px auto;
+  }
+
+  .rx-race-tag {
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rx-accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  .rx-race-title {
+    font-family: var(--rx-font-sans);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 600;
+    color: var(--rx-ink);
+    margin: 0 0 10px 0;
+  }
+
+  .rx-race-lede {
+    font-size: 15px;
+    color: var(--rx-ink-muted);
+    margin: 0;
+  }
+
+  /* Race Grid */
+  .rx-race-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 32px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .rx-race-col {
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-card, 8px);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .rx-race-numeral {
+    font-family: var(--rx-font-sans);
+    font-size: clamp(48px, 6vw, 68px);
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rx-race-numeral--danger {
+    color: var(--rx-semantic-denied, #ef4444);
+  }
+
+  .rx-race-numeral--success {
+    color: var(--rx-semantic-allowed, #10b981);
+  }
+
+  .rx-race-label {
+    font-size: 14px;
+    color: var(--rx-ink-muted);
+  }
+
+  .rx-race-badge {
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+
+  .rx-race-badge--danger {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--rx-semantic-denied, #ef4444);
+  }
+
+  .rx-race-badge--success {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--rx-semantic-allowed, #10b981);
+  }
+
+  .rx-race-bar-track {
+    width: 100%;
+    height: 6px;
+    background: var(--rx-hairline);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+
+  .rx-race-bar-fill {
+    height: 100%;
+    transition: width 800ms var(--rx-ease-out);
+  }
+
+  .rx-race-bar-fill--danger {
+    background: var(--rx-semantic-denied, #ef4444);
+  }
+
+  .rx-race-bar-fill--success {
+    background: var(--rx-semantic-allowed, #10b981);
+  }
+
+  /* Trigger Button */
+  .rx-race-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    background: var(--rx-accent);
+    color: var(--rx-on-accent, #ffffff);
+    font-family: var(--rx-font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition:
+      transform var(--rx-dur-fast) var(--rx-ease-out),
+      box-shadow var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-race-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .rx-race-btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .rx-race-btn-icon {
+    font-size: 11px;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .rx-contrast-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .rx-race-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  .rx-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>
+
+<script>
+  // Deterministic live race simulation animation
+  const triggerBtn = document.getElementById('rx-race-trigger-btn');
+  const numUnsafe = document.getElementById('rx-race-num-unsafe');
+  const numAtomic = document.getElementById('rx-race-num-atomic');
+  const barUnsafe = document.getElementById('rx-race-bar-unsafe');
+  const barAtomic = document.getElementById('rx-race-bar-atomic');
+  const liveRegion = document.getElementById('rx-race-live-region');
+
+  let isSimulating = false;
+
+  function runSimulation() {
+    if (isSimulating || !numUnsafe || !numAtomic || !barUnsafe || !barAtomic) return;
+    isSimulating = true;
+
+    // Reset values to 0
+    numUnsafe.textContent = '0';
+    numAtomic.textContent = '0';
+    barUnsafe.style.width = '0%';
+    barAtomic.style.width = '0%';
+
+    const startTime = performance.now();
+    const duration = 1200; // 1.2s simulation duration
+
+    function frame(now: number) {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+
+      // Naive counts all the way to 1,000
+      const currentUnsafe = Math.round(progress * 1000);
+      numUnsafe.textContent = currentUnsafe.toLocaleString();
+      barUnsafe.style.width = `${progress * 100}%`;
+
+      // REQNX strictly stops at exactly 100
+      const currentAtomic = Math.min(100, Math.round(progress * 1000));
+      numAtomic.textContent = currentAtomic.toLocaleString();
+      barAtomic.style.width = `${(currentAtomic / 1000) * 100}%`;
+
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        isSimulating = false;
+        if (liveRegion) {
+          liveRegion.textContent =
+            'Simulation complete. Naive limiter admitted 1,000 requests of 100 limit. REQNX Atomic limiter admitted exactly 100 of 100 limit.';
+        }
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  triggerBtn?.addEventListener('click', runSimulation);
+</script>

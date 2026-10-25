@@ -1,0 +1,238 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/ClosingBand.astro
+//
+// Landing v3 Closing Band (S9):
+// - H2: Predictable rate limiting. Run it from source today.
+// - Lede: No account. No credit card. Zero telemetry. MIT licensed.
+// - Primary Pill CTA: Get started (/getting-started/)
+// - Quiet Link: Browse GitHub source (external link)
+// - Installation command chip with interactive CopyButton
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Section from './Section.astro';
+import Button from '../common/Button.astro';
+import CopyButton from '../common/CopyButton';
+import { siteConfig, withBase } from '../../site.config';
+
+const cloneCommand = 'git clone https://github.com/zynorex/reqnx.git';
+---
+
+<Section
+  id="closing"
+  align="center"
+  class="rx-closing-section"
+  isBelowFold={true}
+>
+  <div class="rx-closing-card">
+    <div class="rx-closing-inner">
+      <span class="rx-closing-label" aria-hidden="true">OPEN SOURCE · MIT</span>
+      <h2 class="rx-closing-h2">Predictable rate limiting. Run it from source today.</h2>
+      <p class="rx-closing-lede">
+        No account. No credit card. Zero telemetry. MIT licensed.
+      </p>
+
+      <div class="rx-closing-actions">
+        <Button
+          href={withBase('/getting-started/')}
+          variant="primary"
+          size="lg"
+          shape="pill"
+          trailingIcon="arrow-right"
+        >
+          Get started
+        </Button>
+        <a
+          href="https://github.com/zynorex/reqnx"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rx-closing-quiet-link"
+        >
+          <span>Browse GitHub source</span>
+          <span class="rx-closing-arrow" aria-hidden="true">&nearr;</span>
+        </a>
+      </div>
+
+      <div class="rx-closing-cmd-chip">
+        <span class="rx-closing-cmd-prompt" aria-hidden="true">$</span>
+        <code class="rx-closing-cmd-code" tabindex="0" role="region" aria-label="Git clone command">{cloneCommand}</code>
+        <CopyButton client:idle text={cloneCommand} />
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .rx-closing-section {
+    padding-top: clamp(80px, 10vw, 140px);
+    padding-bottom: clamp(96px, 12vw, 160px);
+    position: relative;
+    width: 100%;
+  }
+
+  .rx-closing-card {
+    max-width: 960px;
+    margin: 0 auto;
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline);
+    border-radius: var(--rx-radius-md, 8px);
+    padding: clamp(48px, 6vw, 80px) 24px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .rx-closing-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--rx-accent), transparent);
+  }
+
+  .rx-closing-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .rx-closing-label {
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    background: var(--rx-accent-soft);
+    color: var(--rx-accent);
+    border: 1px solid var(--rx-hairline-strong);
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    user-select: none;
+  }
+
+  .rx-closing-h2 {
+    font-family: var(--rx-font-sans);
+    font-size: clamp(32px, 4.4vw, 48px);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: var(--rx-ink);
+    margin: 0 0 16px 0;
+    text-wrap: balance;
+  }
+
+  .rx-closing-lede {
+    font-family: var(--rx-font-sans);
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--rx-ink-soft);
+    margin: 0 0 36px 0;
+    text-wrap: pretty;
+  }
+
+  .rx-closing-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .rx-closing-quiet-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--rx-font-sans);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--rx-ink-soft);
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    transition:
+      color var(--rx-dur-fast) var(--rx-ease-out),
+      background-color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-closing-quiet-link:hover {
+    color: var(--rx-ink);
+    background: var(--rx-surface-2, rgba(255, 255, 255, 0.04));
+  }
+
+  .rx-closing-quiet-link:focus-visible {
+    outline: 2px solid var(--rx-accent);
+    outline-offset: 2px;
+  }
+
+  .rx-closing-arrow {
+    color: var(--rx-accent);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .rx-closing-cmd-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    padding: 0 14px;
+    background: var(--rx-canvas);
+    border: 1px solid var(--rx-hairline-strong);
+    border-radius: var(--rx-radius-pill, 9999px);
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .rx-closing-cmd-prompt {
+    font-family: var(--rx-font-mono);
+    font-size: 13px;
+    color: var(--rx-accent);
+    user-select: none;
+  }
+
+  .rx-closing-cmd-code {
+    font-family: var(--rx-font-mono);
+    font-size: 12.5px;
+    color: var(--rx-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    outline: none;
+  }
+
+  .rx-closing-cmd-code:focus-visible {
+    outline: 1px solid var(--rx-accent);
+    border-radius: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .rx-closing-card {
+      padding: 36px 16px;
+    }
+
+    .rx-closing-lede {
+      font-size: 18px;
+    }
+
+    .rx-closing-actions {
+      flex-direction: column;
+      width: 100%;
+      gap: 12px;
+    }
+
+    .rx-closing-actions :global(.btn) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

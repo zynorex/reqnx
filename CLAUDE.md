@@ -164,9 +164,9 @@ type StoreErrorPolicy = 'fail-open' | 'fail-closed' | ((error, ctx) => Decision)
 - [x] Day 3B: Website foundation (Astro + Starlight docs, Preact interactive playground, browser FakeClock, ADRs 0011-0013)
 - [x] Day 3C / Landing v2: Production landing page at `/` (14 sections, live instrument Preact islands, Bento grid, Boundary burst, honest trade-offs) and branded 404 recovery page at `/404`, brand asset pipeline, Axe a11y 0 violations, ADRs 0015-0018
 - [x] Day 4: Token bucket algorithm (pure step, rational fixed-point arithmetic, model oracle, property tests, integration tests, contract suite, docs, benchmark entry; Lua port pending Day 6)
-- [ ] Day 5: Sliding window (log + counter)
-- [ ] Day 6: Leaky bucket + RedisStore + Lua
-- [ ] Day 7: Express/Fastify adapters + headers
+- [x] Day 5: Sliding window (log + counter in core, unit tests, Redis port specs)
+- [x] Day 6: RedisStore + Lua ports (fixedWindow, tokenBucket, slidingWindowLog, slidingWindowCounter, differential tests, contract suites, atomicity, ADRs 0020-0026)
+- [ ] Day 7: Leaky bucket + Express/Fastify adapters + headers + cluster/sentinel chaos
 - [ ] Day 8: Tiered/composite limits, admin API
 - [ ] Day 9: Prometheus, structured logs, Grafana
 - [ ] Day 10: Load tests, benchmarks, TypeDoc, npm publish v0.1.0

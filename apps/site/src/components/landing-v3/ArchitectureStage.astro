@@ -1,0 +1,634 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/landing-v3/ArchitectureStage.astro
+//
+// Landing v3 Platform Section (S2):
+// - Section primitive with standard header hierarchy
+// - Top padding accommodates the 64px hero stage overhang
+// - UI-native SegmentedControl: Store: Memory | Redis (Planned)
+// - Framed interactive SVG Architecture Diagram with request packet & gate recoil (E9, E20)
+// - SpecGrid wired with live computed facts from repository
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Section from './Section.astro';
+import SpecGrid from './SpecGrid.astro';
+import type { StatItem, PillarItem } from './SpecGrid.astro';
+import Button from '../common/Button.astro';
+import { computeFacts } from '../../facts.js';
+
+const facts = computeFacts();
+
+const runtimeDeps = facts.find((f) => f.id === 'runtime-deps')?.value ?? '0';
+const adrCount = facts.find((f) => f.id === 'adr-count')?.value ?? '19';
+const availableAlgos = facts.find((f) => f.id === 'available-algos')?.value ?? '2 of 5';
+const formattedAlgos = availableAlgos.replace(' of ', ' / ');
+
+const stats: StatItem[] = [
+  {
+    value: runtimeDeps,
+    caption: 'Runtime dependencies in core library',
+    sourceLabel: 'packages/core/package.json',
+    sourceHref: 'https://github.com/zynorex/reqnx/blob/main/packages/core/package.json',
+  },
+  {
+    value: formattedAlgos,
+    caption: 'Algorithms verified and available today',
+    sourceLabel: 'features.ts registry',
+    sourceHref: '/algorithms/',
+  },
+  {
+    value: adrCount,
+    caption: 'Architectural decision records committed',
+    sourceLabel: 'docs/adr/*.md',
+    sourceHref: '/design/adr/0001-package-boundaries/',
+  },
+];
+
+const pillars: PillarItem[] = [
+  {
+    index: '01 · PURE TRANSITIONS',
+    title: 'Pure Step Functions',
+    description:
+      'State transitions take current state and time, returning new state and quota without side effects or hidden I/O.',
+  },
+  {
+    index: '02 · MONOTONIC TIME',
+    title: 'Injected Clocks',
+    description:
+      'Time is an injected integer. Multi-year drift tests complete in sub-millisecond unit runs without sleeping.',
+  },
+  {
+    index: '03 · ATOMIC PERSISTENCE',
+    title: 'Atomic Store Contract',
+    description:
+      'Store operations execute inside isolated transaction boundaries, eliminating window-edge double-spend races.',
+  },
+];
+---
+
+<Section
+  id="architecture"
+  label="ARCHITECTURE"
+  h2="One engine. Decoupled algorithms, clocks, and stores."
+  lede="Your application code never touches rate limiting logic directly. A single check command executes a pure state transition against your chosen store."
+  align="left"
+  class="rx-platform-section"
+>
+  <div class="rx-arch-stage">
+    <!-- Top Bar with Segmented Store Control & Packet Trigger -->
+    <div class="rx-arch-toolbar">
+      <div class="rx-arch-segmented" role="tablist" aria-label="Store selection">
+        <span class="rx-arch-segmented__label">Store:</span>
+        <button
+          type="button"
+          role="tab"
+          id="tab-store-memory"
+          aria-selected="true"
+          aria-controls="rx-arch-diagram"
+          class="rx-arch-segmented__btn is-active"
+          data-store="memory"
+        >
+          Memory <span class="rx-arch-badge rx-arch-badge--live">Live</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="tab-store-redis"
+          aria-selected="false"
+          aria-controls="rx-arch-diagram"
+          class="rx-arch-segmented__btn"
+          data-store="redis"
+        >
+          Redis <span class="rx-arch-badge rx-arch-badge--planned">Planned</span>
+        </button>
+      </div>
+
+      <div class="rx-arch-actions">
+        <Button
+          id="rx-arch-packet-btn"
+          variant="tertiary"
+          size="sm"
+          shape="pill"
+          ariaLabel="Send test request packet through architecture"
+          className="rx-arch-action-btn"
+        >
+          <span class="rx-arch-action-icon" aria-hidden="true">&#9654;</span>
+          <span>Send request packet</span>
+        </Button>
+      </div>
+    </div>
+
+    <!-- Interactive Architecture Diagram Frame -->
+    <div
+      class="rx-arch-diagram"
+      id="rx-arch-diagram"
+      role="region"
+      aria-label="Architecture diagram showing decoupled HTTP Ingress, Limiter Engine, Pure Algorithm Step Function, Injected Clock, and Atomic Store Contract."
+    >
+      <div class="rx-arch-grid">
+        <!-- Node 1: Ingress -->
+        <div class="rx-arch-node rx-arch-node--ingress">
+          <div class="rx-arch-node__tag">01 · INGRESS</div>
+          <div class="rx-arch-node__title">HTTP Request</div>
+          <div class="rx-arch-node__code">
+            POST /api/chat<br />
+            Key: ip:198.51.100.1<br />
+            Cost: 1 token
+          </div>
+        </div>
+
+        <!-- Flow Arrow 1 -->
+        <div class="rx-arch-connector" aria-hidden="true">
+          <div class="rx-arch-connector__line">
+            <span class="rx-arch-packet" id="rx-arch-packet-dot"></span>
+          </div>
+          <span class="rx-arch-connector__label">limiter.check()</span>
+        </div>
+
+        <!-- Node 2: The Core Engine Pipeline -->
+        <div class="rx-arch-node rx-arch-node--engine">
+          <div class="rx-arch-node__tag">02 · REQNX CORE</div>
+          <div class="rx-arch-node__title">Pure State Transition</div>
+
+          <div class="rx-arch-subnodes">
+            <!-- Algorithm Subnode -->
+            <div class="rx-arch-subnode">
+              <span class="rx-arch-subnode__label">Algorithm (Pure Step)</span>
+              <code>(state, now) &rarr; (nextState, decision)</code>
+            </div>
+
+            <!-- Injected Clock Subnode -->
+            <div class="rx-arch-subnode">
+              <span class="rx-arch-subnode__label">Clock (Injected Integer)</span>
+              <code>clock.now() &rarr; 1776470400000 ms</code>
+            </div>
+
+            <!-- Atomic Store Subnode -->
+            <div class="rx-arch-subnode rx-arch-subnode--store" id="rx-arch-store-desc">
+              <span class="rx-arch-subnode__label">Store (Atomic Isolation)</span>
+              <code id="rx-arch-store-code">MemoryStore · Lock-free In-Process JS Map</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flow Arrow 2 -->
+        <div class="rx-arch-connector" aria-hidden="true">
+          <div class="rx-arch-connector__line"></div>
+          <span class="rx-arch-connector__label">atomic decision</span>
+        </div>
+
+        <!-- Node 3: Decision Gate -->
+        <div class="rx-arch-node rx-arch-node--gate" id="rx-arch-gate-node">
+          <div class="rx-arch-node__tag">03 · DECISION</div>
+          <div class="rx-arch-node__title" id="rx-arch-decision-title">Allowed (200 OK)</div>
+          <div class="rx-arch-node__readout" id="rx-arch-decision-readout">
+            <div>Remaining: <strong id="rx-arch-val-rem">9 / 10</strong></div>
+            <div>Reset: <strong id="rx-arch-val-reset">in 920 ms</strong></div>
+            <div class="rx-arch-latency">Store latency: <strong>0.04 ms</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live status message for assistive tech -->
+      <div id="rx-arch-live-region" class="rx-visually-hidden" aria-live="polite"></div>
+    </div>
+
+    <!-- Spec Grid (3x2 joined by hairlines) -->
+    <div class="rx-arch-spec-wrapper">
+      <SpecGrid stats={stats} pillars={pillars} />
+    </div>
+  </div>
+</Section>
+
+<style>
+  /* Platform section padding accommodates 64px hero stage overhang */
+  .rx-platform-section {
+    padding-top: clamp(108px, 14vw, 156px);
+  }
+
+  .rx-arch-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* Toolbar */
+  .rx-arch-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .rx-arch-segmented {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline-strong);
+    border-radius: var(--rx-radius-pill, 9999px);
+  }
+
+  .rx-arch-segmented__label {
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--rx-ink-faint);
+    padding: 0 6px 0 10px;
+  }
+
+  .rx-arch-segmented__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 14px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    background: transparent;
+    border: none;
+    color: var(--rx-ink-muted);
+    font-family: var(--rx-font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-arch-segmented__btn:hover {
+    color: var(--rx-ink);
+  }
+
+  .rx-arch-segmented__btn.is-active {
+    background: var(--rx-canvas-card);
+    color: var(--rx-ink);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+  }
+
+  .rx-arch-badge {
+    font-family: var(--rx-font-mono);
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+
+  .rx-arch-badge--live {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--rx-semantic-allowed, #10b981);
+  }
+
+  .rx-arch-badge--planned {
+    background: var(--rx-hairline);
+    color: var(--rx-ink-faint);
+  }
+
+  /* Action button to trigger packet */
+  .rx-arch-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: var(--rx-radius-pill, 9999px);
+    background: var(--rx-accent-soft);
+    border: 1px solid var(--rx-hairline-strong);
+    color: var(--rx-ink);
+    font-family: var(--rx-font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      transform var(--rx-dur-instant) var(--rx-ease-out);
+  }
+
+  .rx-arch-action-btn:hover {
+    border-color: var(--rx-accent);
+    transform: translateY(-1px);
+  }
+
+  .rx-arch-action-btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .rx-arch-action-icon {
+    font-size: 10px;
+    color: var(--rx-accent);
+  }
+
+  /* Diagram Frame */
+  .rx-arch-diagram {
+    background: var(--rx-canvas-card);
+    border: 1px solid var(--rx-hairline-strong);
+    border-radius: var(--rx-radius-card, 8px);
+    padding: clamp(24px, 4vw, 40px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rx-arch-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr 340px 1fr 240px;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Node Common */
+  .rx-arch-node {
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline-strong);
+    border-radius: var(--rx-radius-card, 8px);
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    transition:
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      transform var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-arch-node__tag {
+    font-family: var(--rx-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rx-accent);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .rx-arch-node__title {
+    font-family: var(--rx-font-sans);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--rx-ink);
+    margin-bottom: 8px;
+  }
+
+  .rx-arch-node__code {
+    font-family: var(--rx-font-mono);
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--rx-ink-muted);
+    background: var(--rx-canvas-card);
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--rx-hairline);
+  }
+
+  /* Engine Node (Center) */
+  .rx-arch-node--engine {
+    background: var(--rx-canvas-card);
+    border-color: var(--rx-hairline-strong);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .rx-arch-subnodes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .rx-arch-subnode {
+    padding: 8px 12px;
+    background: var(--rx-canvas-sunken);
+    border: 1px solid var(--rx-hairline);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .rx-arch-subnode__label {
+    font-family: var(--rx-font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--rx-ink-faint);
+  }
+
+  .rx-arch-subnode code {
+    font-family: var(--rx-font-mono);
+    font-size: 11.5px;
+    color: var(--rx-ink);
+  }
+
+  /* Decision Gate Node */
+  .rx-arch-node--gate {
+    border-color: var(--rx-semantic-allowed, #10b981);
+    background: var(--rx-canvas-sunken);
+  }
+
+  .rx-arch-node--gate.is-denied {
+    border-color: var(--rx-semantic-denied, #ef4444);
+    animation: rx-gate-recoil 240ms var(--rx-ease-out);
+  }
+
+  @keyframes rx-gate-recoil {
+    0% {
+      transform: translateX(0);
+    }
+    30% {
+      transform: translateX(-6px);
+    }
+    70% {
+      transform: translateX(3px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .rx-arch-node__readout {
+    font-family: var(--rx-font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--rx-ink-muted);
+  }
+
+  .rx-arch-node__readout strong {
+    color: var(--rx-ink);
+  }
+
+  .rx-arch-latency {
+    font-size: 11px;
+    color: var(--rx-ink-faint);
+    margin-top: 4px;
+  }
+
+  /* Connectors */
+  .rx-arch-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 0 4px;
+  }
+
+  .rx-arch-connector__line {
+    width: 100%;
+    height: 2px;
+    background: var(--rx-hairline-strong);
+    position: relative;
+  }
+
+  .rx-arch-connector__label {
+    font-family: var(--rx-font-mono);
+    font-size: 10.5px;
+    color: var(--rx-ink-faint);
+    margin-top: 6px;
+    white-space: nowrap;
+  }
+
+  /* Packet Dot (E20) */
+  .rx-arch-packet {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--rx-accent);
+    box-shadow: 0 0 8px var(--rx-accent);
+    opacity: 0;
+  }
+
+  .rx-arch-packet.is-animating {
+    animation: rx-packet-travel 700ms var(--rx-ease-out) forwards;
+  }
+
+  @keyframes rx-packet-travel {
+    0% {
+      left: 0;
+      opacity: 1;
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      left: 100%;
+      opacity: 0;
+    }
+  }
+
+  /* Spec Grid Wrapper */
+  .rx-arch-spec-wrapper {
+    margin-top: 16px;
+  }
+
+  /* Responsive Stacking */
+  @media (max-width: 1024px) {
+    .rx-arch-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .rx-arch-connector {
+      height: 28px;
+    }
+
+    .rx-arch-connector__line {
+      width: 2px;
+      height: 100%;
+    }
+  }
+
+  .rx-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>
+
+<script>
+  // Segmented store toggle and interactive packet simulation
+  const tabMemory = document.getElementById('tab-store-memory');
+  const tabRedis = document.getElementById('tab-store-redis');
+  const storeCode = document.getElementById('rx-arch-store-code');
+  const packetBtn = document.getElementById('rx-arch-packet-btn');
+  const packetDot = document.getElementById('rx-arch-packet-dot');
+  const gateNode = document.getElementById('rx-arch-gate-node');
+  const decisionTitle = document.getElementById('rx-arch-decision-title');
+  const valRem = document.getElementById('rx-arch-val-rem');
+  const liveRegion = document.getElementById('rx-arch-live-region');
+
+  let currentStore = 'memory';
+  let tokenCount = 9;
+
+  function setStore(store: 'memory' | 'redis') {
+    currentStore = store;
+    if (store === 'memory') {
+      tabMemory?.classList.add('is-active');
+      tabMemory?.setAttribute('aria-selected', 'true');
+      tabRedis?.classList.remove('is-active');
+      tabRedis?.setAttribute('aria-selected', 'false');
+      if (storeCode) {
+        storeCode.textContent = 'MemoryStore · Lock-free In-Process JS Map';
+      }
+    } else {
+      tabRedis?.classList.add('is-active');
+      tabRedis?.setAttribute('aria-selected', 'true');
+      tabMemory?.classList.remove('is-active');
+      tabMemory?.setAttribute('aria-selected', 'false');
+      if (storeCode) {
+        storeCode.textContent = 'RedisStore · Atomic Single-Shard Lua Script (Planned)';
+      }
+    }
+  }
+
+  tabMemory?.addEventListener('click', () => setStore('memory'));
+  tabRedis?.addEventListener('click', () => setStore('redis'));
+
+  function sendPacket() {
+    if (!packetDot || !gateNode || !decisionTitle || !valRem) return;
+
+    // Trigger packet animation
+    packetDot.classList.remove('is-animating');
+    void packetDot.offsetWidth;
+    packetDot.classList.add('is-animating');
+
+    setTimeout(() => {
+      if (tokenCount > 0) {
+        tokenCount--;
+        valRem.textContent = `${tokenCount} / 10`;
+        decisionTitle.textContent = 'Allowed (200 OK)';
+        decisionTitle.style.color = 'var(--rx-semantic-allowed, #10b981)';
+        gateNode.classList.remove('is-denied');
+        if (liveRegion) {
+          liveRegion.textContent = `Request allowed. Remaining tokens: ${tokenCount} of 10.`;
+        }
+      } else {
+        // Quota exhausted -> Denial recoil (E9)
+        decisionTitle.textContent = 'Denied (429 Too Many Requests)';
+        decisionTitle.style.color = 'var(--rx-semantic-denied, #ef4444)';
+        gateNode.classList.remove('is-denied');
+        void gateNode.offsetWidth;
+        gateNode.classList.add('is-denied');
+        if (liveRegion) {
+          liveRegion.textContent =
+            'Request denied. Quota exhausted. HTTP 429 Too Many Requests returned.';
+        }
+        // Auto reset after 3s
+        setTimeout(() => {
+          tokenCount = 9;
+          valRem.textContent = `${tokenCount} / 10`;
+          decisionTitle.textContent = 'Allowed (200 OK)';
+          decisionTitle.style.color = 'var(--rx-ink)';
+          gateNode.classList.remove('is-denied');
+        }, 3000);
+      }
+    }, 600);
+  }
+
+  packetBtn?.addEventListener('click', sendPacket);
+</script>
