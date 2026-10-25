@@ -7,6 +7,9 @@
 import { type AlgorithmId } from '@reqnx/core';
 import { type AlgorithmRedisPort } from '../types.js';
 import { fixedWindowRedisPort } from './fixed-window.js';
+import { tokenBucketRedisPort } from './token-bucket.js';
+import { slidingWindowLogRedisPort } from './sliding-window-log.js';
+import { slidingWindowCounterRedisPort } from './sliding-window-counter.js';
 import { RedisStoreError } from '../adapters/base.js';
 
 export class PortRegistry {
@@ -15,6 +18,9 @@ export class PortRegistry {
   constructor(initialPorts?: readonly AlgorithmRedisPort<any, any>[]) {
     // Register built-in ports
     this.register(fixedWindowRedisPort);
+    this.register(tokenBucketRedisPort);
+    this.register(slidingWindowLogRedisPort);
+    this.register(slidingWindowCounterRedisPort);
 
     // Register user/custom ports
     if (initialPorts) {
