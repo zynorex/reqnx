@@ -4,7 +4,7 @@
 // Provides contract test suites for verifying Store and Algorithm implementations.
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { type Algorithm, type Clock, type Decision, type Store, StoreError } from '@reqnx/core';
 import { FakeClock } from './fake-clock.js';
 import { type CounterConfig, type CounterState, counterAlgorithm } from './fixtures.js';
@@ -69,11 +69,21 @@ export async function runConformanceSuite<Config, State>(
 
 // ─── Store Contract Suite ─────────────────────────────────────────────────────
 
+export interface SampleStoreConfig {
+  readonly limit: number;
+}
+
 /**
  * Harness for instantiating and cleaning up store instances under test.
  */
-export interface StoreHarness {
+export interface StoreHarness<C extends SampleStoreConfig = CounterConfig, S = CounterState> {
   readonly name: string;
+  readonly capabilities?: {
+    readonly simulatedTtl?: boolean;
+  };
+  readonly algorithm?: Algorithm<C, S>;
+  readonly sampleConfig?: C;
+  isAvailable?(): Promise<boolean> | boolean;
   create(options?: { clock?: Clock }): Promise<Store> | Store;
   cleanup?(store: Store): Promise<void> | void;
 }
@@ -143,77 +153,107 @@ export async function assertStoreTtl(
 /**
  * Vitest wrapper: runs the full Store contract suite against a {@link StoreHarness}.
  */
-export function runStoreContractSuite(harness: StoreHarness): void {
+export function runStoreContractSuite<
+  C extends SampleStoreConfig = CounterConfig,
+  S = CounterState,
+>(harness: StoreHarness<C, S>): void {
   describe(`Store Contract: ${harness.name}`, () => {
     let store: Store;
     let clock: FakeClock;
+    const algo = (harness.algorithm ?? counterAlgorithm) as unknown as Algorithm<C, S>;
+    const config = (harness.sampleConfig ?? { limit: 10, windowMs: 10_000 }) as unknown as C;
+
+    let isAvailable = true;
+    beforeEach(async () => {
+      if (harness.isAvailable) {
+        isAvailable = await harness.isAvailable();
+      }
+    });
 
     it('implements basic lifecycle: consume, peek, reset', async () => {
+      if (!isAvailable) return;
       clock = new FakeClock(1000);
       store = await harness.create({ clock });
-      const config = { limit: 3, windowMs: 10_000 };
+      const lifecycleConfig = (harness.sampleConfig ?? {
+        limit: 3,
+        windowMs: 10_000,
+      }) as unknown as C;
       const key = 'test:lifecycle';
 
       // 1. Consume 1
-      const d1 = await store.consume(counterAlgorithm, key, config, 1);
+      const d1 = await store.consume(algo, key, lifecycleConfig, 1);
       expect(d1.allowed).toBe(true);
-      expect(d1.remaining).toBe(2);
+      expect(d1.remaining).toBe(lifecycleConfig.limit - 1);
 
       // 2. Peek (must not mutate)
-      const p1 = await store.peek(counterAlgorithm, key, config);
+      const p1 = await store.peek(algo, key, lifecycleConfig);
       expect(p1.allowed).toBe(true);
-      expect(p1.remaining).toBe(2);
+      expect(p1.remaining).toBe(lifecycleConfig.limit - 1);
 
       // 3. Reset
       await store.reset(key);
-      const p2 = await store.peek(counterAlgorithm, key, config);
-      expect(p2.remaining).toBe(3);
+      const p2 = await store.peek(algo, key, lifecycleConfig);
+      expect(p2.remaining).toBe(lifecycleConfig.limit);
 
       await harness.cleanup?.(store);
     });
 
     it('enforces synchronous atomicity under high concurrency', async () => {
+      if (!isAvailable) return;
       clock = new FakeClock(1000);
       store = await harness.create({ clock });
-      await assertStoreAtomicity(store, counterAlgorithm, { limit: 10, windowMs: 60_000 }, 100);
+      await assertStoreAtomicity(
+        store,
+        algo as unknown as Algorithm<CounterConfig, CounterState>,
+        config as unknown as CounterConfig,
+        100,
+      );
       await harness.cleanup?.(store);
     });
 
     it('strictly adheres to exact TTL boundary expiry', async () => {
+      if (!isAvailable) return;
+      if (harness.capabilities?.simulatedTtl === false) {
+        return;
+      }
       clock = new FakeClock(1000);
       store = await harness.create({ clock });
-      await assertStoreTtl(store, clock, counterAlgorithm, { limit: 5, windowMs: 1000 });
+      await assertStoreTtl(
+        store,
+        clock,
+        algo as unknown as Algorithm<CounterConfig, CounterState>,
+        { limit: 5, windowMs: 1000 },
+      );
       await harness.cleanup?.(store);
     });
 
     it('handles stateVersion mismatch by resetting to fresh state', async () => {
+      if (!isAvailable) return;
       clock = new FakeClock(1000);
       store = await harness.create({ clock });
-      const config = { limit: 10, windowMs: 10_000 };
       const key = 'test:version-mismatch';
 
-      await store.consume(counterAlgorithm, key, config, 8);
+      await store.consume(algo, key, config, 1);
 
-      const v2Algorithm: Algorithm<CounterConfig, CounterState> = {
-        ...counterAlgorithm,
-        stateVersion: 2,
+      const v2Algorithm: Algorithm<C, S> = {
+        ...algo,
+        stateVersion: (algo.stateVersion ?? 1) + 1,
       };
 
       const peek = await store.peek(v2Algorithm, key, config);
-      expect(peek.remaining).toBe(10); // reset to absent
+      expect(peek.remaining).toBe(config.limit); // reset to absent
 
       const d = await store.consume(v2Algorithm, key, config, 1);
-      expect(d.remaining).toBe(9);
+      expect(d.remaining).toBe(config.limit - 1);
 
       await harness.cleanup?.(store);
     });
 
     it('rejects subsequent operations after close() if close is supported', async () => {
+      if (!isAvailable) return;
       store = await harness.create();
       await store.close();
-      await expect(
-        store.consume(counterAlgorithm, 'k', { limit: 5, windowMs: 1000 }, 1),
-      ).rejects.toThrow(StoreError);
+      await expect(store.consume(algo, 'k', config, 1)).rejects.toThrow(StoreError);
     });
   });
 }

@@ -41,7 +41,7 @@ describe('slidingWindowLog', () => {
     });
 
     it('enforces limit across sliding window', () => {
-      let state: any = undefined;
+      let state: ReturnType<typeof slidingWindowLog.step>['nextState'] | undefined = undefined;
       const c1 = slidingWindowLog.step(state, config, 1_000, 3);
       state = c1.nextState;
       expect(c1.decision.allowed).toBe(true);
@@ -65,7 +65,7 @@ describe('slidingWindowLog', () => {
     });
 
     it('maintains monotonicity under backwards clock jump', () => {
-      let state: any = undefined;
+      let state: ReturnType<typeof slidingWindowLog.step>['nextState'] | undefined = undefined;
       const c1 = slidingWindowLog.step(state, config, 10_000, 2);
       state = c1.nextState;
 

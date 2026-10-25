@@ -21,7 +21,11 @@ export const tokenBucketRedisPort: AlgorithmRedisPort<TokenBucketConfig> = {
   peekScript: TOKEN_BUCKET_PEEK_SCRIPT,
   peekSha: TOKEN_BUCKET_PEEK_SHA,
 
-  buildConsumeArgs(config: TokenBucketConfig, cost: number, nowMsOverride?: number): (string | number)[] {
+  buildConsumeArgs(
+    config: TokenBucketConfig,
+    cost: number,
+    nowMsOverride?: number,
+  ): (string | number)[] {
     return [
       config.capacity,
       config.a,

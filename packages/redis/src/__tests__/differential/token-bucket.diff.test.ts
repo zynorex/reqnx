@@ -15,7 +15,7 @@ import {
   neutraliseTtl,
   type DifferentialContext,
 } from './harness.js';
-import { RedisStoreError } from '../../src/adapters/base.js';
+import { RedisStoreError } from '../../adapters/base.js';
 
 describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
   let redisOnline = false;
@@ -50,7 +50,11 @@ describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
       it('Golden Case 1: Smooth countdown to empty (5 calls of cost 1 with capacity 5)', async () => {
         if (!redisOnline) return;
 
-        const config = tokenBucket.parseConfig({ capacity: 5, refillTokens: 1, refillInterval: '1s' });
+        const config = tokenBucket.parseConfig({
+          capacity: 5,
+          refillTokens: 1,
+          refillInterval: '1s',
+        });
         const steps = [
           { advanceMs: 0, cost: 1 },
           { advanceMs: 10, cost: 1 },
@@ -60,27 +64,47 @@ describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
           { advanceMs: 10, cost: 1 }, // 6th call: denied (remaining: 0, retryAfterMs approx 950ms)
         ];
 
-        await runDifferentialSequence(ctx, tokenBucket, config, steps, `test:tb:golden1:${adapterType}`);
+        await runDifferentialSequence(
+          ctx,
+          tokenBucket,
+          config,
+          steps,
+          `test:tb:golden1:${adapterType}`,
+        );
       });
 
       it('Golden Case 2: Partial refill and consumption', async () => {
         if (!redisOnline) return;
 
-        const config = tokenBucket.parseConfig({ capacity: 10, refillTokens: 2, refillInterval: '1s' });
+        const config = tokenBucket.parseConfig({
+          capacity: 10,
+          refillTokens: 2,
+          refillInterval: '1s',
+        });
         const steps = [
-          { advanceMs: 0, cost: 8 },      // consumes 8, 2 remaining
-          { advanceMs: 1000, cost: 3 },   // refills 2 -> 4 available, consumes 3 -> 1 remaining
-          { advanceMs: 250, cost: 2 },    // refills 0 (need 500ms for 1 token) -> denied
-          { advanceMs: 500, cost: 2 },    // refills 1 -> 2 available, consumes 2 -> 0 remaining
+          { advanceMs: 0, cost: 8 }, // consumes 8, 2 remaining
+          { advanceMs: 1000, cost: 3 }, // refills 2 -> 4 available, consumes 3 -> 1 remaining
+          { advanceMs: 250, cost: 2 }, // refills 0 (need 500ms for 1 token) -> denied
+          { advanceMs: 500, cost: 2 }, // refills 1 -> 2 available, consumes 2 -> 0 remaining
         ];
 
-        await runDifferentialSequence(ctx, tokenBucket, config, steps, `test:tb:golden2:${adapterType}`);
+        await runDifferentialSequence(
+          ctx,
+          tokenBucket,
+          config,
+          steps,
+          `test:tb:golden2:${adapterType}`,
+        );
       });
 
       it('Golden Case 3: Extreme cost > capacity is denied without state mutation', async () => {
         if (!redisOnline) return;
 
-        const config = tokenBucket.parseConfig({ capacity: 5, refillTokens: 1, refillInterval: '1s' });
+        const config = tokenBucket.parseConfig({
+          capacity: 5,
+          refillTokens: 1,
+          refillInterval: '1s',
+        });
         const key = `test:tb:extreme:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
         const wrappedAlgo = neutraliseTtl(tokenBucket);
 
@@ -105,17 +129,21 @@ describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
       it('Golden Case 4: Backwards clock protection (NTP backward jump)', async () => {
         if (!redisOnline) return;
 
-        const config = tokenBucket.parseConfig({ capacity: 10, refillTokens: 1, refillInterval: '1s' });
+        const config = tokenBucket.parseConfig({
+          capacity: 10,
+          refillTokens: 1,
+          refillInterval: '1s',
+        });
         const key = `test:tb:backwards:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
         const wrappedAlgo = neutraliseTtl(tokenBucket);
 
-        ctx.clock.reset(1_000_000);
+        ctx.clock.set(1_000_000);
         const d1 = await ctx.store.consume(wrappedAlgo, key, config, 5);
         expect(d1.allowed).toBe(true);
         expect(d1.remaining).toBe(5);
 
         // Clock moves backwards by 2000ms
-        ctx.clock.reset(998_000);
+        ctx.clock.set(998_000);
 
         const expected = tokenBucket.step(
           { level: 5 * config.b, at: 1_000_000, a: config.a, b: config.b },
@@ -135,10 +163,18 @@ describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
         if (!redisOnline) return;
 
         const key = `test:tb:ratechange:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
-        const configA = tokenBucket.parseConfig({ capacity: 10, refillTokens: 1, refillInterval: '1s' });
-        const configB = tokenBucket.parseConfig({ capacity: 10, refillTokens: 5, refillInterval: '1s' });
+        const configA = tokenBucket.parseConfig({
+          capacity: 10,
+          refillTokens: 1,
+          refillInterval: '1s',
+        });
+        const configB = tokenBucket.parseConfig({
+          capacity: 10,
+          refillTokens: 5,
+          refillInterval: '1s',
+        });
 
-        ctx.clock.reset(1_000_000);
+        ctx.clock.set(1_000_000);
         const d1 = await ctx.store.consume(neutraliseTtl(tokenBucket), key, configA, 4);
         expect(d1.remaining).toBe(6);
 
@@ -153,19 +189,27 @@ describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
       it('Handles corrupt state by raising REQNX_CORRUPT_STATE StoreError', async () => {
         if (!redisOnline) return;
 
-        const config = tokenBucket.parseConfig({ capacity: 10, refillTokens: 1, refillInterval: '1s' });
+        const config = tokenBucket.parseConfig({
+          capacity: 10,
+          refillTokens: 1,
+          refillInterval: '1s',
+        });
         const key = `test:tb:corrupt:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
 
-        await ctx.adapter.eval("redis.call('HSET', KEYS[1], 'v', 1, 'l', 'INVALID', 'at', 1000, 'a', 1, 'b', 1)", [key], []);
+        await ctx.adapter.eval(
+          "redis.call('HSET', KEYS[1], 'v', 1, 'l', 'INVALID', 'at', 1000, 'a', 1, 'b', 1)",
+          [key],
+          [],
+        );
 
-        await expect(
-          ctx.store.consume(tokenBucket, key, config, 1),
-        ).rejects.toThrowError(RedisStoreError);
+        await expect(ctx.store.consume(tokenBucket, key, config, 1)).rejects.toThrowError(
+          RedisStoreError,
+        );
 
         try {
           await ctx.store.consume(tokenBucket, key, config, 1);
-        } catch (err: any) {
-          expect(err.code).toBe('REQNX_CORRUPT_STATE');
+        } catch (err: unknown) {
+          expect((err as RedisStoreError).code).toBe('REQNX_CORRUPT_STATE');
         }
 
         await ctx.store.reset(key);
@@ -174,11 +218,19 @@ describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
       it('Treats state with mismatched version as fresh capacity', async () => {
         if (!redisOnline) return;
 
-        const config = tokenBucket.parseConfig({ capacity: 10, refillTokens: 1, refillInterval: '1s' });
+        const config = tokenBucket.parseConfig({
+          capacity: 10,
+          refillTokens: 1,
+          refillInterval: '1s',
+        });
         const key = `test:tb:version:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
 
         // Version 50 with 0 level
-        await ctx.adapter.eval("redis.call('HSET', KEYS[1], 'v', 50, 'l', 0, 'at', 1000, 'a', 1, 'b', 1)", [key], []);
+        await ctx.adapter.eval(
+          "redis.call('HSET', KEYS[1], 'v', 50, 'l', 0, 'at', 1000, 'a', 1, 'b', 1)",
+          [key],
+          [],
+        );
 
         const decision = await ctx.store.consume(tokenBucket, key, config, 3);
         expect(decision.allowed).toBe(true);
@@ -211,7 +263,13 @@ describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
                 refillTokens: cfg.refillTokens,
                 refillInterval: `${cfg.refillIntervalMs}ms`,
               });
-              await runDifferentialSequence(ctx, tokenBucket, config, steps, `test:tb:fc:${adapterType}`);
+              await runDifferentialSequence(
+                ctx,
+                tokenBucket,
+                config,
+                steps,
+                `test:tb:fc:${adapterType}`,
+              );
             },
           ),
           { numRuns: 300 },

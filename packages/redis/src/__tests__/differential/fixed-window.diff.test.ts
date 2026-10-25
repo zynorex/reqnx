@@ -6,7 +6,7 @@
 
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 import fc from 'fast-check';
-import { fixedWindow, StoreError } from '@reqnx/core';
+import { fixedWindow } from '@reqnx/core';
 import {
   isRedisAvailable,
   setupDifferentialStore,
@@ -15,7 +15,7 @@ import {
   neutraliseTtl,
   type DifferentialContext,
 } from './harness.js';
-import { RedisStoreError } from '../../src/adapters/base.js';
+import { RedisStoreError } from '../../adapters/base.js';
 
 describe('fixedWindow Differential Suite (TypeScript vs Redis Lua)', () => {
   let redisOnline = false;
@@ -60,7 +60,13 @@ describe('fixedWindow Differential Suite (TypeScript vs Redis Lua)', () => {
           { advanceMs: 100, cost: 1 }, // 6th call: denied
         ];
 
-        await runDifferentialSequence(ctx, fixedWindow, config, steps, `test:fw:golden1:${adapterType}`);
+        await runDifferentialSequence(
+          ctx,
+          fixedWindow,
+          config,
+          steps,
+          `test:fw:golden1:${adapterType}`,
+        );
       });
 
       it('Golden Case 2: Rollover to fresh window', async () => {
@@ -70,11 +76,17 @@ describe('fixedWindow Differential Suite (TypeScript vs Redis Lua)', () => {
         const steps = [
           { advanceMs: 0, cost: 2 },
           { advanceMs: 1000, cost: 1 }, // reaches 3
-          { advanceMs: 500, cost: 1 },  // rejected
+          { advanceMs: 500, cost: 1 }, // rejected
           { advanceMs: 10_000, cost: 2 }, // rolled into fresh window -> accepted
         ];
 
-        await runDifferentialSequence(ctx, fixedWindow, config, steps, `test:fw:golden2:${adapterType}`);
+        await runDifferentialSequence(
+          ctx,
+          fixedWindow,
+          config,
+          steps,
+          `test:fw:golden2:${adapterType}`,
+        );
       });
 
       it('Golden Case 3: Denied requests never write state and never touch TTL', async () => {
@@ -114,13 +126,13 @@ describe('fixedWindow Differential Suite (TypeScript vs Redis Lua)', () => {
         const wrappedAlgo = neutraliseTtl(fixedWindow);
 
         // Current time: 1_000_000 (window: 1_000_000 to 1_010_000)
-        ctx.clock.reset(1_000_000);
+        ctx.clock.set(1_000_000);
         const d1 = await ctx.store.consume(wrappedAlgo, key, config, 2);
         expect(d1.allowed).toBe(true);
         expect(d1.remaining).toBe(2);
 
         // Clock moves backwards by 500ms
-        ctx.clock.reset(999_500);
+        ctx.clock.set(999_500);
 
         // Step through TS algorithm to get expected outcome
         const expected = fixedWindow.step({ windowStart: 1_000_000, count: 2 }, config, 999_500, 1);
@@ -139,16 +151,20 @@ describe('fixedWindow Differential Suite (TypeScript vs Redis Lua)', () => {
         const key = `test:fw:corrupt:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
 
         // Write corrupt non-numeric count directly into the Redis hash
-        await ctx.adapter.eval("redis.call('HSET', KEYS[1], 'v', 1, 'ws', 1000, 'c', 'NOT_A_NUMBER')", [key], []);
+        await ctx.adapter.eval(
+          "redis.call('HSET', KEYS[1], 'v', 1, 'ws', 1000, 'c', 'NOT_A_NUMBER')",
+          [key],
+          [],
+        );
 
-        await expect(
-          ctx.store.consume(fixedWindow, key, config, 1),
-        ).rejects.toThrowError(RedisStoreError);
+        await expect(ctx.store.consume(fixedWindow, key, config, 1)).rejects.toThrowError(
+          RedisStoreError,
+        );
 
         try {
           await ctx.store.consume(fixedWindow, key, config, 1);
-        } catch (err: any) {
-          expect(err.code).toBe('REQNX_CORRUPT_STATE');
+        } catch (err: unknown) {
+          expect((err as RedisStoreError).code).toBe('REQNX_CORRUPT_STATE');
         }
 
         await ctx.store.reset(key);
@@ -161,7 +177,11 @@ describe('fixedWindow Differential Suite (TypeScript vs Redis Lua)', () => {
         const key = `test:fw:version:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
 
         // Write future version 99 with full count
-        await ctx.adapter.eval("redis.call('HSET', KEYS[1], 'v', 99, 'ws', 1000, 'c', 10)", [key], []);
+        await ctx.adapter.eval(
+          "redis.call('HSET', KEYS[1], 'v', 99, 'ws', 1000, 'c', 10)",
+          [key],
+          [],
+        );
 
         // Next call should treat state as fresh and admit the request
         const decision = await ctx.store.consume(fixedWindow, key, config, 3);
@@ -193,7 +213,13 @@ describe('fixedWindow Differential Suite (TypeScript vs Redis Lua)', () => {
                 limit: cfg.limit,
                 window: `${cfg.windowMs}ms`,
               });
-              await runDifferentialSequence(ctx, fixedWindow, config, steps, `test:fw:fc:${adapterType}`);
+              await runDifferentialSequence(
+                ctx,
+                fixedWindow,
+                config,
+                steps,
+                `test:fw:fc:${adapterType}`,
+              );
             },
           ),
           { numRuns: 300 },

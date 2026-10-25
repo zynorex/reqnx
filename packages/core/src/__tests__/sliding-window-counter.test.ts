@@ -46,7 +46,7 @@ describe('slidingWindowCounter', () => {
 
     it('weights previous window count across boundary', () => {
       // In window [0, 10_000], consume 8 tokens
-      let state: any = undefined;
+      let state: ReturnType<typeof slidingWindowCounter.step>['nextState'] | undefined = undefined;
       const c1 = slidingWindowCounter.step(state, config, 5_000, 8);
       state = c1.nextState;
 
@@ -68,7 +68,7 @@ describe('slidingWindowCounter', () => {
     });
 
     it('maintains monotonicity under backwards clock jump', () => {
-      let state: any = undefined;
+      let state: ReturnType<typeof slidingWindowCounter.step>['nextState'] | undefined = undefined;
       const c1 = slidingWindowCounter.step(state, config, 10_000, 3);
       state = c1.nextState;
 

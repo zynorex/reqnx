@@ -65,13 +65,17 @@ export function createRedisStore(options: RedisStoreOptions): RedisStore {
           await client.connect();
           const { createNodeRedisAdapter } = await import('./adapters/node-redis.js');
           internallyOwned = true;
-          internalAdapter = createNodeRedisAdapter(client as any);
+          internalAdapter = createNodeRedisAdapter(
+            client as unknown as Parameters<typeof createNodeRedisAdapter>[0],
+          );
           return internalAdapter;
         } catch {
           // Fall back to ioredis
           try {
             const { default: Redis } = await import('ioredis');
-            const client = new (Redis as any)(clientOption);
+            const client = new (
+              Redis as unknown as { new (url: string): Parameters<typeof createIORedisAdapter>[0] }
+            )(clientOption);
             const { createIORedisAdapter } = await import('./adapters/ioredis.js');
             internallyOwned = true;
             internalAdapter = createIORedisAdapter(client);
@@ -183,7 +187,7 @@ export function createRedisStore(options: RedisStoreOptions): RedisStore {
       return scriptRunner.getStats();
     },
 
-    registerPort(port: AlgorithmRedisPort<any, any>): void {
+    registerPort<C = unknown, S = unknown>(port: AlgorithmRedisPort<C, S>): void {
       registry.register(port);
     },
 

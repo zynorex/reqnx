@@ -15,7 +15,7 @@ import {
   neutraliseTtl,
   type DifferentialContext,
 } from './harness.js';
-import { RedisStoreError } from '../../src/adapters/base.js';
+import { RedisStoreError } from '../../adapters/base.js';
 
 describe('slidingWindowCounter Differential Suite (TypeScript vs Redis Lua)', () => {
   let redisOnline = false;
@@ -52,12 +52,18 @@ describe('slidingWindowCounter Differential Suite (TypeScript vs Redis Lua)', ()
 
         const config = slidingWindowCounter.parseConfig({ limit: 10, window: '10s' });
         const steps = [
-          { advanceMs: 0, cost: 8 },      // consumes 8 in window 1
+          { advanceMs: 0, cost: 8 }, // consumes 8 in window 1
           { advanceMs: 12_500, cost: 2 }, // advances 12.5s into window 2 (25% elapsed, previous weight 75%)
-          { advanceMs: 2500, cost: 2 },   // advances to 50% elapsed, previous weight 50%
+          { advanceMs: 2500, cost: 2 }, // advances to 50% elapsed, previous weight 50%
         ];
 
-        await runDifferentialSequence(ctx, slidingWindowCounter, config, steps, `test:swc:golden1:${adapterType}`);
+        await runDifferentialSequence(
+          ctx,
+          slidingWindowCounter,
+          config,
+          steps,
+          `test:swc:golden1:${adapterType}`,
+        );
       });
 
       it('Golden Case 2: Denied requests never write state and never touch TTL', async () => {
@@ -95,11 +101,11 @@ describe('slidingWindowCounter Differential Suite (TypeScript vs Redis Lua)', ()
         const key = `test:swc:backwards:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
         const wrappedAlgo = neutraliseTtl(slidingWindowCounter);
 
-        ctx.clock.reset(1_000_000);
+        ctx.clock.set(1_000_000);
         await ctx.store.consume(wrappedAlgo, key, config, 4);
 
         // Clock moves backwards by 500ms
-        ctx.clock.reset(999_500);
+        ctx.clock.set(999_500);
 
         const expected = slidingWindowCounter.step(
           { currentWindowStart: 1_000_000, currentCount: 4, previousCount: 0 },
@@ -120,16 +126,20 @@ describe('slidingWindowCounter Differential Suite (TypeScript vs Redis Lua)', ()
         const config = slidingWindowCounter.parseConfig({ limit: 10, window: '10s' });
         const key = `test:swc:corrupt:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
 
-        await ctx.adapter.eval("redis.call('HSET', KEYS[1], 'v', 1, 'ws', 1000, 'cc', 'BAD', 'pc', 0)", [key], []);
+        await ctx.adapter.eval(
+          "redis.call('HSET', KEYS[1], 'v', 1, 'ws', 1000, 'cc', 'BAD', 'pc', 0)",
+          [key],
+          [],
+        );
 
-        await expect(
-          ctx.store.consume(slidingWindowCounter, key, config, 1),
-        ).rejects.toThrowError(RedisStoreError);
+        await expect(ctx.store.consume(slidingWindowCounter, key, config, 1)).rejects.toThrowError(
+          RedisStoreError,
+        );
 
         try {
           await ctx.store.consume(slidingWindowCounter, key, config, 1);
-        } catch (err: any) {
-          expect(err.code).toBe('REQNX_CORRUPT_STATE');
+        } catch (err: unknown) {
+          expect((err as RedisStoreError).code).toBe('REQNX_CORRUPT_STATE');
         }
 
         await ctx.store.reset(key);
@@ -142,7 +152,11 @@ describe('slidingWindowCounter Differential Suite (TypeScript vs Redis Lua)', ()
         const key = `test:swc:version:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
 
         // Version 12 with full count
-        await ctx.adapter.eval("redis.call('HSET', KEYS[1], 'v', 12, 'ws', 1000, 'cc', 10, 'pc', 10)", [key], []);
+        await ctx.adapter.eval(
+          "redis.call('HSET', KEYS[1], 'v', 12, 'ws', 1000, 'cc', 10, 'pc', 10)",
+          [key],
+          [],
+        );
 
         const decision = await ctx.store.consume(slidingWindowCounter, key, config, 3);
         expect(decision.allowed).toBe(true);
@@ -173,7 +187,13 @@ describe('slidingWindowCounter Differential Suite (TypeScript vs Redis Lua)', ()
                 limit: cfg.limit,
                 window: `${cfg.windowMs}ms`,
               });
-              await runDifferentialSequence(ctx, slidingWindowCounter, config, steps, `test:swc:fc:${adapterType}`);
+              await runDifferentialSequence(
+                ctx,
+                slidingWindowCounter,
+                config,
+                steps,
+                `test:swc:fc:${adapterType}`,
+              );
             },
           ),
           { numRuns: 300 },

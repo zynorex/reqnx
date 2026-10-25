@@ -4,12 +4,7 @@
 // Defines the client adapter interface, configuration options, and stats types.
 // ──────────────────────────────────────────────────────────────────────────────
 
-import {
-  type AlgorithmId,
-  type Clock,
-  type Decision,
-  type Store,
-} from '@reqnx/core';
+import { type AlgorithmId, type Clock, type Decision, type Store } from '@reqnx/core';
 
 /**
  * Minimal structural client adapter interface.
@@ -236,5 +231,5 @@ export interface RedisStore extends Store {
   /**
    * Register a custom Lua port definition for an algorithm ID.
    */
-  registerPort(port: AlgorithmRedisPort<any, any>): void;
+  registerPort<C = unknown, S = unknown>(port: AlgorithmRedisPort<C, S>): void;
 }

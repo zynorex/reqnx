@@ -15,7 +15,7 @@ import {
   neutraliseTtl,
   type DifferentialContext,
 } from './harness.js';
-import { RedisStoreError } from '../../src/adapters/base.js';
+import { RedisStoreError } from '../../adapters/base.js';
 
 describe('slidingWindowLog Differential Suite (TypeScript vs Redis Lua)', () => {
   let redisOnline = false;
@@ -59,7 +59,13 @@ describe('slidingWindowLog Differential Suite (TypeScript vs Redis Lua)', () => 
           { advanceMs: 6000, cost: 1 }, // at 11s, first 2 tokens (at 0s) expired -> admitted
         ];
 
-        await runDifferentialSequence(ctx, slidingWindowLog, config, steps, `test:swl:golden1:${adapterType}`);
+        await runDifferentialSequence(
+          ctx,
+          slidingWindowLog,
+          config,
+          steps,
+          `test:swl:golden1:${adapterType}`,
+        );
       });
 
       it('Golden Case 2: Denied requests never write state and never touch TTL', async () => {
@@ -97,11 +103,11 @@ describe('slidingWindowLog Differential Suite (TypeScript vs Redis Lua)', () => 
         const key = `test:swl:backwards:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
         const wrappedAlgo = neutraliseTtl(slidingWindowLog);
 
-        ctx.clock.reset(1_000_000);
+        ctx.clock.set(1_000_000);
         await ctx.store.consume(wrappedAlgo, key, config, 2);
 
         // Clock moves backwards by 500ms
-        ctx.clock.reset(999_500);
+        ctx.clock.set(999_500);
 
         const expected = slidingWindowLog.step(
           { logs: [{ timestamp: 1_000_000, cost: 2 }] },
@@ -123,16 +129,20 @@ describe('slidingWindowLog Differential Suite (TypeScript vs Redis Lua)', () => 
         const key = `test:swl:corrupt:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
 
         // Write corrupt unparseable member into ZSET
-        await ctx.adapter.eval("redis.call('ZADD', KEYS[1], 1000, 'CORRUPT_MEMBER_STRING')", [key], []);
+        await ctx.adapter.eval(
+          "redis.call('ZADD', KEYS[1], 1000, 'CORRUPT_MEMBER_STRING')",
+          [key],
+          [],
+        );
 
-        await expect(
-          ctx.store.consume(slidingWindowLog, key, config, 1),
-        ).rejects.toThrowError(RedisStoreError);
+        await expect(ctx.store.consume(slidingWindowLog, key, config, 1)).rejects.toThrowError(
+          RedisStoreError,
+        );
 
         try {
           await ctx.store.consume(slidingWindowLog, key, config, 1);
-        } catch (err: any) {
-          expect(err.code).toBe('REQNX_CORRUPT_STATE');
+        } catch (err: unknown) {
+          expect((err as RedisStoreError).code).toBe('REQNX_CORRUPT_STATE');
         }
 
         await ctx.store.reset(key);
@@ -160,7 +170,13 @@ describe('slidingWindowLog Differential Suite (TypeScript vs Redis Lua)', () => 
                 limit: cfg.limit,
                 window: `${cfg.windowMs}ms`,
               });
-              await runDifferentialSequence(ctx, slidingWindowLog, config, steps, `test:swl:fc:${adapterType}`);
+              await runDifferentialSequence(
+                ctx,
+                slidingWindowLog,
+                config,
+                steps,
+                `test:swl:fc:${adapterType}`,
+              );
             },
           ),
           { numRuns: 300 },

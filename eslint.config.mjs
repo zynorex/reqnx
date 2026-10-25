@@ -3,7 +3,7 @@ import parser from '@typescript-eslint/parser';
 
 export default [
   {
-    ignores: ['**/dist/**', '**/node_modules/**', '**/coverage/**', '**/.astro/**'],
+    ignores: ['**/dist/**', '**/node_modules/**', '**/coverage/**', '**/.astro/**', 'packages/redis/*.d.ts'],
   },
   {
     files: ['**/*.ts', '**/*.mts'],
@@ -11,12 +11,14 @@ export default [
       parser,
       parserOptions: {
         projectService: {
+          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 20,
           allowDefaultProject: [
             '*.config.ts',
             '*.config.mts',
             'vitest.config.ts',
             'packages/*/vitest.config.ts',
             'scripts/*.ts',
+            'packages/*/scripts/*.ts',
           ],
         },
       },

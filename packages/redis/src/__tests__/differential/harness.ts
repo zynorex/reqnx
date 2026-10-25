@@ -6,19 +6,16 @@
 // ──────────────────────────────────────────────────────────────────────────────
 
 import { expect } from 'vitest';
-import {
-  type Algorithm,
-  type Decision,
-  FakeClock,
-} from '@reqnx/core';
+import { type Algorithm, type Decision } from '@reqnx/core';
+import { FakeClock } from '@reqnx/testkit';
 import { createClient } from 'redis';
 import Redis from 'ioredis';
-import { createNodeRedisAdapter } from '../../src/adapters/node-redis.js';
-import { createIORedisAdapter } from '../../src/adapters/ioredis.js';
-import { createRedisStore } from '../../src/store.js';
-import { type RedisClientAdapter, type RedisStore } from '../../src/types.js';
+import { createNodeRedisAdapter } from '../../adapters/node-redis.js';
+import { createIORedisAdapter } from '../../adapters/ioredis.js';
+import { createRedisStore } from '../../store.js';
+import { type RedisClientAdapter, type RedisStore } from '../../types.js';
 
-export const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+export const REDIS_URL = process.env['REDIS_URL'] || 'redis://127.0.0.1:6379';
 
 let cachedAvailability: boolean | null = null;
 
@@ -70,21 +67,30 @@ export async function setupDifferentialStore(
   const clock = new FakeClock(initialTimeMs);
 
   let adapter: RedisClientAdapter;
-  let rawClient: any;
 
   if (adapterType === 'node-redis') {
-    rawClient = createClient({
+    const nodeClient = createClient({
       url: REDIS_URL,
       socket: { reconnectStrategy: false },
     });
-    await rawClient.connect();
-    adapter = createNodeRedisAdapter(rawClient);
+    await nodeClient.connect();
+    adapter = createNodeRedisAdapter(nodeClient);
   } else {
-    rawClient = new (Redis as any)(REDIS_URL, {
+    const ioClient = new (
+      Redis as unknown as {
+        new (
+          url: string,
+          opts?: unknown,
+        ): Parameters<typeof createIORedisAdapter>[0] & {
+          disconnect?: () => void;
+          quit?: () => Promise<unknown>;
+        };
+      }
+    )(REDIS_URL, {
       maxRetriesPerRequest: 1,
       retryStrategy: () => null,
     });
-    adapter = createIORedisAdapter(rawClient);
+    adapter = createIORedisAdapter(ioClient);
   }
 
   const store = createRedisStore({
@@ -165,7 +171,11 @@ export async function runDifferentialSequence<C, S>(
   await context.store.reset(key);
 }
 
-export function assertDecisionMatch(actual: Decision, expected: Decision, contextMsg: string): void {
+export function assertDecisionMatch(
+  actual: Decision,
+  expected: Decision,
+  contextMsg: string,
+): void {
   expect(actual.allowed, `${contextMsg} (allowed)`).toBe(expected.allowed);
   expect(actual.limit, `${contextMsg} (limit)`).toBe(expected.limit);
   expect(actual.remaining, `${contextMsg} (remaining)`).toBe(expected.remaining);

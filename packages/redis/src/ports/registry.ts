@@ -13,14 +13,14 @@ import { slidingWindowCounterRedisPort } from './sliding-window-counter.js';
 import { RedisStoreError } from '../adapters/base.js';
 
 export class PortRegistry {
-  private readonly ports = new Map<AlgorithmId, AlgorithmRedisPort<any, any>>();
+  private readonly ports = new Map<AlgorithmId, AlgorithmRedisPort<never, never>>();
 
-  constructor(initialPorts?: readonly AlgorithmRedisPort<any, any>[]) {
+  constructor(initialPorts?: readonly AlgorithmRedisPort<never, never>[]) {
     // Register built-in ports
-    this.register(fixedWindowRedisPort);
-    this.register(tokenBucketRedisPort);
-    this.register(slidingWindowLogRedisPort);
-    this.register(slidingWindowCounterRedisPort);
+    this.register(fixedWindowRedisPort as unknown as AlgorithmRedisPort<never, never>);
+    this.register(tokenBucketRedisPort as unknown as AlgorithmRedisPort<never, never>);
+    this.register(slidingWindowLogRedisPort as unknown as AlgorithmRedisPort<never, never>);
+    this.register(slidingWindowCounterRedisPort as unknown as AlgorithmRedisPort<never, never>);
 
     // Register user/custom ports
     if (initialPorts) {
@@ -30,11 +30,11 @@ export class PortRegistry {
     }
   }
 
-  register(port: AlgorithmRedisPort<any, any>): void {
-    this.ports.set(port.algorithmId, port);
+  register<C = unknown, S = unknown>(port: AlgorithmRedisPort<C, S>): void {
+    this.ports.set(port.algorithmId, port as unknown as AlgorithmRedisPort<never, never>);
   }
 
-  get(id: AlgorithmId): AlgorithmRedisPort<any, any> {
+  get<C = unknown, S = unknown>(id: AlgorithmId): AlgorithmRedisPort<C, S> {
     const port = this.ports.get(id);
     if (!port) {
       throw new RedisStoreError(
@@ -42,10 +42,10 @@ export class PortRegistry {
         { code: 'REQNX_UNSUPPORTED_ALGORITHM' },
       );
     }
-    return port;
+    return port as unknown as AlgorithmRedisPort<C, S>;
   }
 
-  getAll(): AlgorithmRedisPort<any, any>[] {
+  getAll(): AlgorithmRedisPort<never, never>[] {
     return Array.from(this.ports.values());
   }
 }

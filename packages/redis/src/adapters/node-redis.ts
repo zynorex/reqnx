@@ -18,7 +18,7 @@ export interface NodeRedisClientLike {
   unlink(keys: string | string[]): Promise<number>;
   pTTL(key: string): Promise<number>;
   scriptLoad?(script: string): Promise<string>;
-  time?(): Promise<[string, string] | [number, number]>;
+  time?(): Promise<unknown>;
   quit(): Promise<unknown>;
   disconnect?(): Promise<unknown>;
 }
@@ -100,9 +100,18 @@ export function createNodeRedisAdapter(client: NodeRedisClientLike): RedisClient
       }
       try {
         const res = await client.time();
-        const sec = Number(res[0]);
-        const usec = Number(res[1]);
-        return [sec, usec];
+        if (Array.isArray(res)) {
+          const sec = Number(res[0]);
+          const usec = Number(res[1]);
+          return [sec, usec];
+        }
+        if (res instanceof Date) {
+          const ms = res.getTime();
+          return [Math.floor(ms / 1000), (ms % 1000) * 1000];
+        }
+        throw new RedisStoreError('Unexpected TIME reply shape from Redis client.', {
+          code: 'REQNX_CORRUPT_STATE',
+        });
       } catch (err) {
         throw mapRedisError(err);
       }

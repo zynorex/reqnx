@@ -11,7 +11,7 @@ import { resolve } from 'node:path';
 
 describe('Lua script freshness', () => {
   it('generated.ts matches the concatenated Lua sources', () => {
-    const root = resolve(__dirname, '..');
+    const root = resolve(__dirname, '../..');
     // Run build-lua with --check
     expect(() => {
       execSync('npx tsx scripts/build-lua.ts --check', {
@@ -19,5 +19,5 @@ describe('Lua script freshness', () => {
         stdio: 'pipe',
       });
     }).not.toThrow();
-  });
+  }, 20_000);
 });

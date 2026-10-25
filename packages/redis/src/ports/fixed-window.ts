@@ -21,7 +21,11 @@ export const fixedWindowRedisPort: AlgorithmRedisPort<FixedWindowConfig> = {
   peekScript: FIXED_WINDOW_PEEK_SCRIPT,
   peekSha: FIXED_WINDOW_PEEK_SHA,
 
-  buildConsumeArgs(config: FixedWindowConfig, cost: number, nowMsOverride?: number): (string | number)[] {
+  buildConsumeArgs(
+    config: FixedWindowConfig,
+    cost: number,
+    nowMsOverride?: number,
+  ): (string | number)[] {
     return [config.limit, config.windowMs, cost, nowMsOverride ?? 0];
   },
 

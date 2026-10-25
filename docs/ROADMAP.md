@@ -94,24 +94,29 @@
 - Benchmarks: pure `step()` throughput (>17M ops/s), Limiter MemoryStore (>800k ops/s), memory footprint (~295.8 B/key)
 - Docs: user-facing guide (`docs/algorithms/token-bucket.md`), Redis port spec (`docs/algorithms/token-bucket.redis-port.md`), and ADR-0014
 
-## Day 5 — Sliding Window Algorithms
+## Day 5 — Sliding Window Algorithms ✅
 
-- Sliding Window Log — sorted-set-based state
-- Sliding Window Counter — dual-window weighted estimate
-- Conformance test cases for both
-- Unit tests + property-based tests
+- Pure TS `slidingWindowLog` algorithm with ordered log state and microsecond tie-breaking
+- Pure TS `slidingWindowCounter` algorithm with integer-weighted dual-window approximation
+- Strict `parseConfig()` validation and `stateTtlMs()` derivation for both algorithms
+- Unit tests, golden examples, and backwards clock monotonicity suites
+- Exported from `@reqnx/core` and documented in Redis port specs (`docs/algorithms/sliding-window-log.redis-port.md`, `docs/algorithms/sliding-window-counter.redis-port.md`)
 
-## Day 6 — Leaky Bucket + RedisStore + Lua
+## Day 6 — RedisStore & Lua Ports ✅
 
-- Leaky Bucket algorithm (pure TS)
-- `RedisStore` implementation (ioredis + EVALSHA)
-- Lua ports for Fixed Window and Token Bucket
-- Lua ports for Sliding Window Log, Sliding Window Counter, Leaky Bucket
-- Differential tests: TS step() vs Lua for all five algorithms
-- Redis integration tests (docker-compose)
-
-> ⚠️ **This is the heaviest day.** If Lua ports for all 5 algorithms don't fit,
-> the sliding-window and leaky-bucket Lua ports spill into Day 7 morning.
+- `RedisStore` implementation (`createRedisStore`) with zero runtime dependencies
+- Dual structural adapters: `@reqnx/redis/node-redis` and `@reqnx/redis/ioredis`
+- Script runner with local SHA1 generation, `EVALSHA` execution, automatic self-healing fallback to `EVAL` on `NOSCRIPT`, and script cache statistics
+- Concatenated modular Lua pipeline (`scripts/build-lua.ts`) with automated code generation (`generated.ts`) and script freshness regression test
+- Complete Lua ports for all 4 algorithms (`fixed-window.lua`, `token-bucket.lua`, `sliding-window-log.lua`, `sliding-window-counter.lua`)
+- Strict numerical guarantees: 64-bit integer fixed-point arithmetic, zero floating-point accumulation drift, and verified safe within $[-(2^{53}-1), 2^{53}-1]$
+- Time source modes: default server `redis.call('TIME')`, fallback pre-call `TIME`, explicit testing clock (`nowMs`), and `REQNX_TIME_REJECTED` mapping
+- Invariants strictly enforced: denied requests perform zero state writes and zero TTL touches; `peek()` is purely read-only (`flags=no-writes`)
+- Canonical Store contract suite run and passing for both adapters (`node-redis` and `ioredis`)
+- Differential testing suite: property-based generative replay (`fast-check`), golden sequences, and mutation testing with 17/17 mutants killed
+- High-concurrency atomicity test: 1,000 concurrent calls across 8 distinct client instances admitting exactly limit (20 and 100)
+- Benchmark report (`docs/benchmarks/day-06.md`), architecture decisions ADRs 0020–0026, and full TypeDoc/README documentation
+- Leaky bucket and Cluster/Sentinel chaos moved to Day 7 morning as planned
 
 ## Day 7 — Framework Adapters + Headers
 

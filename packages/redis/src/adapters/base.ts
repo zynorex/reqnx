@@ -206,10 +206,13 @@ export function mapRedisError(err: unknown): RedisStoreError {
 
   // 7. READONLY error (e.g. replica during write)
   if (rawMsg.includes('READONLY')) {
-    return new RedisStoreError(`Redis READONLY error: Cannot write to a read-only replica. ${rawMsg}`, {
-      code: 'REQNX_READONLY',
-      cause: err,
-    });
+    return new RedisStoreError(
+      `Redis READONLY error: Cannot write to a read-only replica. ${rawMsg}`,
+      {
+        code: 'REQNX_READONLY',
+        cause: err,
+      },
+    );
   }
 
   // Default: generic script or store error
