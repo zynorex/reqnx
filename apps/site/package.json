@@ -27,6 +27,7 @@
     "buttons:shots": "tsx scripts/take-button-shots.ts",
     "buttons:a11y": "tsx scripts/run-buttons-a11y.ts",
     "mobile:shots:before": "tsx scripts/take-mobile-before-shots.ts",
+    "mobile:shots:mocks": "tsx scripts/take-mobile-mock-shots.ts",
     "mobile:baseline": "tsx scripts/measure-mobile-baselines.ts"
   },
   "dependencies": {
