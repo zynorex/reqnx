@@ -1,0 +1,776 @@
+{
+  "timestamp": "2026-10-27T15:25:42.274Z",
+  "throttlingProfile": "Chromium 360x800, 4x CPU slowdown, Slow 4G (150ms RTT, 1.6Mbps down, 750kbps up)",
+  "assets": [
+    {
+      "pageUrl": "/",
+      "html": {
+        "raw": 126757,
+        "gzip": 23669
+      },
+      "js": {
+        "raw": 7501,
+        "gzip": 3277,
+        "files": 5
+      },
+      "css": {
+        "raw": 116605,
+        "gzip": 21369,
+        "files": 5
+      }
+    },
+    {
+      "pageUrl": "/getting-started/",
+      "html": {
+        "raw": 79338,
+        "gzip": 16148
+      },
+      "js": {
+        "raw": 12701,
+        "gzip": 5742,
+        "files": 6
+      },
+      "css": {
+        "raw": 143954,
+        "gzip": 27285,
+        "files": 5
+      }
+    },
+    {
+      "pageUrl": "/design/architecture/",
+      "html": {
+        "raw": 76513,
+        "gzip": 15558
+      },
+      "js": {
+        "raw": 12701,
+        "gzip": 5742,
+        "files": 6
+      },
+      "css": {
+        "raw": 143954,
+        "gzip": 27285,
+        "files": 5
+      }
+    },
+    {
+      "pageUrl": "/playground/",
+      "html": {
+        "raw": 60932,
+        "gzip": 14548
+      },
+      "js": {
+        "raw": 10178,
+        "gzip": 4578,
+        "files": 5
+      },
+      "css": {
+        "raw": 125732,
+        "gzip": 23327,
+        "files": 4
+      }
+    },
+    {
+      "pageUrl": "/404/",
+      "html": {
+        "raw": 0,
+        "gzip": 0
+      },
+      "js": {
+        "raw": 0,
+        "gzip": 0,
+        "files": 0
+      },
+      "css": {
+        "raw": 0,
+        "gzip": 0,
+        "files": 0
+      }
+    }
+  ],
+  "vitals": {
+    "/": {
+      "lcp": 1908,
+      "fcp": 1360,
+      "cls": 0,
+      "tbt": 0,
+      "longTaskCount": 0,
+      "interactionLatencyMs": 2950
+    },
+    "/getting-started/": {
+      "lcp": 1716,
+      "fcp": 1512,
+      "cls": 0.042,
+      "tbt": 39,
+      "longTaskCount": 1,
+      "interactionLatencyMs": null
+    },
+    "/playground/": {
+      "lcp": 1724,
+      "fcp": 1424,
+      "cls": 0.0032,
+      "tbt": 42,
+      "longTaskCount": 3,
+      "interactionLatencyMs": 164
+    }
+  },
+  "tapTargets": {
+    "/": {
+      "totalTargets": 88,
+      "violationCount": 78,
+      "sampleViolations": [
+        {
+          "element": "<a class=\"rx-skip-link astro-fsdfqqju\">",
+          "text": "Skip to main content",
+          "width": 160,
+          "height": 37,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"rx-brand-logo astro-fsdfqqju a\">",
+          "text": "REQN X",
+          "width": 97,
+          "height": 32,
+          "spacingViolations": []
+        },
+        {
+          "element": "<button class=\"rx-theme-toggle\">",
+          "text": "◐system",
+          "width": 80,
+          "height": 36,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"btn rx-header__cta astro-fsdfq\">",
+          "text": "Get started",
+          "width": 96,
+          "height": 32,
+          "spacingViolations": []
+        },
+        {
+          "element": "<button class=\"btn rx-header__menu-btn astro-\">",
+          "text": "",
+          "width": 32,
+          "height": 32,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"rx-status-pill astro-2ulvxqx5\">",
+          "text": "PRE-RELEASE | v0.x · What work",
+          "width": 311,
+          "height": 34,
+          "spacingViolations": []
+        },
+        {
+          "element": "<button class=\"rx-copy-btn \">",
+          "text": "Copy",
+          "width": 71,
+          "height": 26,
+          "spacingViolations": []
+        },
+        {
+          "element": "<button class=\"rx-console__tab is-active  \">",
+          "text": "Fixed Window Counter",
+          "width": 182,
+          "height": 31,
+          "spacingViolations": [
+            {
+              "nearby": "button (\"Token Bucket\")",
+              "distancePx": 4
+            }
+          ]
+        }
+      ]
+    },
+    "/getting-started/": {
+      "totalTargets": 42,
+      "violationCount": 39,
+      "sampleViolations": [
+        {
+          "element": "<a class=\"astro-kzjdult4\">",
+          "text": "Skip to content",
+          "width": 114,
+          "height": 28,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"rx-skip-link astro-fsdfqqju\">",
+          "text": "Skip to main content",
+          "width": 160,
+          "height": 39,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"rx-brand-logo astro-fsdfqqju a\">",
+          "text": "REQN X",
+          "width": 95,
+          "height": 33,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 8
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"rx-header__icon-btn rx-header_\">",
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 7
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"rx-header__icon-btn rx-header_\">",
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 7
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"rx-theme-toggle\">",
+          "text": "◐system",
+          "width": 97,
+          "height": 41,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 4
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"btn rx-header__menu-btn astro-\">",
+          "text": "",
+          "width": 32,
+          "height": 32,
+          "spacingViolations": []
+        },
+        {
+          "element": "<button class=\"astro-aerbeizn\">",
+          "text": "Search  CtrlK",
+          "width": 1,
+          "height": 1,
+          "spacingViolations": []
+        }
+      ]
+    },
+    "/design/architecture/": {
+      "totalTargets": 36,
+      "violationCount": 34,
+      "sampleViolations": [
+        {
+          "element": "<a class=\"astro-kzjdult4\">",
+          "text": "Skip to content",
+          "width": 114,
+          "height": 28,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"rx-skip-link astro-fsdfqqju\">",
+          "text": "Skip to main content",
+          "width": 160,
+          "height": 39,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"rx-brand-logo astro-fsdfqqju a\">",
+          "text": "REQN X",
+          "width": 95,
+          "height": 33,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 8
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"rx-header__icon-btn rx-header_\">",
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 7
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"rx-header__icon-btn rx-header_\">",
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 7
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"rx-theme-toggle\">",
+          "text": "◐system",
+          "width": 97,
+          "height": 41,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 4
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"btn rx-header__menu-btn astro-\">",
+          "text": "",
+          "width": 32,
+          "height": 32,
+          "spacingViolations": []
+        },
+        {
+          "element": "<button class=\"astro-aerbeizn\">",
+          "text": "Search  CtrlK",
+          "width": 1,
+          "height": 1,
+          "spacingViolations": []
+        }
+      ]
+    },
+    "/playground/": {
+      "totalTargets": 35,
+      "violationCount": 34,
+      "sampleViolations": [
+        {
+          "element": "<a class=\"astro-kzjdult4\">",
+          "text": "Skip to content",
+          "width": 114,
+          "height": 28,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"rx-skip-link astro-fsdfqqju\">",
+          "text": "Skip to main content",
+          "width": 160,
+          "height": 39,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"rx-brand-logo astro-fsdfqqju a\">",
+          "text": "REQN X",
+          "width": 95,
+          "height": 33,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 8
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"rx-header__icon-btn rx-header_\">",
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 7
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"rx-header__icon-btn rx-header_\">",
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 7
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"rx-theme-toggle\">",
+          "text": "◐system",
+          "width": 97,
+          "height": 41,
+          "spacingViolations": [
+            {
+              "nearby": "summary (\"On this page Overvie\")",
+              "distancePx": 4
+            }
+          ]
+        },
+        {
+          "element": "<button class=\"btn rx-header__menu-btn astro-\">",
+          "text": "",
+          "width": 32,
+          "height": 32,
+          "spacingViolations": []
+        },
+        {
+          "element": "<button class=\"astro-aerbeizn\">",
+          "text": "Search  CtrlK",
+          "width": 1,
+          "height": 1,
+          "spacingViolations": []
+        }
+      ]
+    },
+    "/404/": {
+      "totalTargets": 19,
+      "violationCount": 19,
+      "sampleViolations": [
+        {
+          "element": "<a class=\"rx-skip-link astro-fsdfqqju\">",
+          "text": "Skip to main content",
+          "width": 160,
+          "height": 37,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"rx-brand-logo astro-fsdfqqju a\">",
+          "text": "REQN X",
+          "width": 97,
+          "height": 32,
+          "spacingViolations": []
+        },
+        {
+          "element": "<button class=\"rx-theme-toggle\">",
+          "text": "◐system",
+          "width": 80,
+          "height": 36,
+          "spacingViolations": []
+        },
+        {
+          "element": "<button class=\"btn rx-header__menu-btn astro-\">",
+          "text": "",
+          "width": 32,
+          "height": 32,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"btn\">",
+          "text": "Back to home",
+          "width": 310,
+          "height": 40,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"btn\">",
+          "text": "Documentation",
+          "width": 104,
+          "height": 24,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"btn\">",
+          "text": "Algorithms",
+          "width": 75,
+          "height": 24,
+          "spacingViolations": []
+        },
+        {
+          "element": "<a class=\"btn\">",
+          "text": "Playground",
+          "width": 78,
+          "height": 24,
+          "spacingViolations": []
+        }
+      ]
+    }
+  },
+  "overflow": {
+    "/": [
+      {
+        "width": 320,
+        "hasOverflow": false,
+        "scrollWidth": 517,
+        "offendingElements": []
+      },
+      {
+        "width": 360,
+        "hasOverflow": false,
+        "scrollWidth": 517,
+        "offendingElements": []
+      },
+      {
+        "width": 375,
+        "hasOverflow": false,
+        "scrollWidth": 517,
+        "offendingElements": []
+      },
+      {
+        "width": 384,
+        "hasOverflow": false,
+        "scrollWidth": 517,
+        "offendingElements": []
+      },
+      {
+        "width": 390,
+        "hasOverflow": false,
+        "scrollWidth": 517,
+        "offendingElements": []
+      },
+      {
+        "width": 393,
+        "hasOverflow": false,
+        "scrollWidth": 517,
+        "offendingElements": []
+      },
+      {
+        "width": 414,
+        "hasOverflow": false,
+        "scrollWidth": 517,
+        "offendingElements": []
+      },
+      {
+        "width": 430,
+        "hasOverflow": false,
+        "scrollWidth": 517,
+        "offendingElements": []
+      },
+      {
+        "width": 480,
+        "hasOverflow": false,
+        "scrollWidth": 517,
+        "offendingElements": []
+      }
+    ],
+    "/getting-started/": [
+      {
+        "width": 320,
+        "hasOverflow": false,
+        "scrollWidth": 320,
+        "offendingElements": []
+      },
+      {
+        "width": 360,
+        "hasOverflow": false,
+        "scrollWidth": 360,
+        "offendingElements": []
+      },
+      {
+        "width": 375,
+        "hasOverflow": false,
+        "scrollWidth": 375,
+        "offendingElements": []
+      },
+      {
+        "width": 384,
+        "hasOverflow": false,
+        "scrollWidth": 384,
+        "offendingElements": []
+      },
+      {
+        "width": 390,
+        "hasOverflow": false,
+        "scrollWidth": 390,
+        "offendingElements": []
+      },
+      {
+        "width": 393,
+        "hasOverflow": false,
+        "scrollWidth": 393,
+        "offendingElements": []
+      },
+      {
+        "width": 414,
+        "hasOverflow": false,
+        "scrollWidth": 414,
+        "offendingElements": []
+      },
+      {
+        "width": 430,
+        "hasOverflow": false,
+        "scrollWidth": 430,
+        "offendingElements": []
+      },
+      {
+        "width": 480,
+        "hasOverflow": false,
+        "scrollWidth": 480,
+        "offendingElements": []
+      }
+    ],
+    "/design/architecture/": [
+      {
+        "width": 320,
+        "hasOverflow": false,
+        "scrollWidth": 320,
+        "offendingElements": []
+      },
+      {
+        "width": 360,
+        "hasOverflow": false,
+        "scrollWidth": 360,
+        "offendingElements": []
+      },
+      {
+        "width": 375,
+        "hasOverflow": false,
+        "scrollWidth": 375,
+        "offendingElements": []
+      },
+      {
+        "width": 384,
+        "hasOverflow": false,
+        "scrollWidth": 384,
+        "offendingElements": []
+      },
+      {
+        "width": 390,
+        "hasOverflow": false,
+        "scrollWidth": 390,
+        "offendingElements": []
+      },
+      {
+        "width": 393,
+        "hasOverflow": false,
+        "scrollWidth": 393,
+        "offendingElements": []
+      },
+      {
+        "width": 414,
+        "hasOverflow": false,
+        "scrollWidth": 414,
+        "offendingElements": []
+      },
+      {
+        "width": 430,
+        "hasOverflow": false,
+        "scrollWidth": 430,
+        "offendingElements": []
+      },
+      {
+        "width": 480,
+        "hasOverflow": false,
+        "scrollWidth": 480,
+        "offendingElements": []
+      }
+    ],
+    "/playground/": [
+      {
+        "width": 320,
+        "hasOverflow": false,
+        "scrollWidth": 320,
+        "offendingElements": []
+      },
+      {
+        "width": 360,
+        "hasOverflow": false,
+        "scrollWidth": 360,
+        "offendingElements": []
+      },
+      {
+        "width": 375,
+        "hasOverflow": false,
+        "scrollWidth": 375,
+        "offendingElements": []
+      },
+      {
+        "width": 384,
+        "hasOverflow": false,
+        "scrollWidth": 384,
+        "offendingElements": []
+      },
+      {
+        "width": 390,
+        "hasOverflow": false,
+        "scrollWidth": 390,
+        "offendingElements": []
+      },
+      {
+        "width": 393,
+        "hasOverflow": false,
+        "scrollWidth": 393,
+        "offendingElements": []
+      },
+      {
+        "width": 414,
+        "hasOverflow": false,
+        "scrollWidth": 414,
+        "offendingElements": []
+      },
+      {
+        "width": 430,
+        "hasOverflow": false,
+        "scrollWidth": 430,
+        "offendingElements": []
+      },
+      {
+        "width": 480,
+        "hasOverflow": false,
+        "scrollWidth": 480,
+        "offendingElements": []
+      }
+    ],
+    "/404/": [
+      {
+        "width": 320,
+        "hasOverflow": false,
+        "scrollWidth": 320,
+        "offendingElements": []
+      },
+      {
+        "width": 360,
+        "hasOverflow": false,
+        "scrollWidth": 360,
+        "offendingElements": []
+      },
+      {
+        "width": 375,
+        "hasOverflow": false,
+        "scrollWidth": 375,
+        "offendingElements": []
+      },
+      {
+        "width": 384,
+        "hasOverflow": false,
+        "scrollWidth": 384,
+        "offendingElements": []
+      },
+      {
+        "width": 390,
+        "hasOverflow": false,
+        "scrollWidth": 390,
+        "offendingElements": []
+      },
+      {
+        "width": 393,
+        "hasOverflow": false,
+        "scrollWidth": 393,
+        "offendingElements": []
+      },
+      {
+        "width": 414,
+        "hasOverflow": false,
+        "scrollWidth": 414,
+        "offendingElements": []
+      },
+      {
+        "width": 430,
+        "hasOverflow": false,
+        "scrollWidth": 430,
+        "offendingElements": []
+      },
+      {
+        "width": 480,
+        "hasOverflow": false,
+        "scrollWidth": 480,
+        "offendingElements": []
+      }
+    ]
+  }
+}
