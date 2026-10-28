@@ -31,5 +31,5 @@
      - If `allowed`:
        - `redis.call('ZADD', key, effectiveNow, member)`
        - `redis.call('PEXPIREAT', key, effectiveNow + windowMs)`
-     - Else: Zero writes!
+     - Else: Zero writes.
 7. Return `[allowed, limit, remaining, resetAtMs, retryAfterMs]`.

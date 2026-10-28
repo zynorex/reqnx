@@ -1,0 +1,309 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/common/Rail.astro
+//
+// Native Scroll-Snap Rail Primitive:
+// - Native touch momentum scrolling with scroll-snap
+// - Peek-ahead card staging (e.g. 86% width on mobile)
+// - Accessible 44px Previous/Next step buttons (WCAG 2.5.1 Drag Alternative)
+// - Dynamic dot pagination indicator
+// - Edge fade gradients for scroll affordance
+// ──────────────────────────────────────────────────────────────────────────────
+
+interface Props {
+  id?: string;
+  class?: string;
+  ariaLabel: string;
+  peek?: boolean;
+  showControls?: boolean;
+  showDots?: boolean;
+}
+
+const {
+  id = `rx-rail-${Math.random().toString(36).slice(2, 9)}`,
+  class: className = '',
+  ariaLabel,
+  peek = true,
+  showControls = true,
+  showDots = true,
+} = Astro.props;
+---
+
+<div class:list={['rx-rail-root', { 'is-peeking': peek }, className]} id={id}>
+  <div class="rx-rail-scroller" tabindex="0" role="region" aria-label={ariaLabel}>
+    <div class="rx-rail-track">
+      <slot />
+    </div>
+  </div>
+
+  {
+    (showControls || showDots) && (
+      <div class="rx-rail-footer" aria-hidden={!showControls && !showDots}>
+        {showDots && (
+          <div class="rx-rail-dots" role="tablist" aria-label={`${ariaLabel} items`}>
+            <!-- Dots populated or synchronized via client script -->
+          </div>
+        )}
+
+        {showControls && (
+          <div class="rx-rail-controls">
+            <button
+              type="button"
+              class="rx-rail-btn rx-rail-btn--prev"
+              aria-label={`Previous items in ${ariaLabel}`}
+              data-pressable
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="rx-rail-btn rx-rail-btn--next"
+              aria-label={`Next items in ${ariaLabel}`}
+              data-pressable
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .rx-rail-root {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .rx-rail-scroller {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    outline: none;
+    padding: 0.5rem 0 1rem;
+    position: relative;
+  }
+
+  .rx-rail-scroller::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rx-rail-scroller:focus-visible {
+    box-shadow: var(--rx-focus-ring);
+    border-radius: var(--rx-radius-md);
+  }
+
+  .rx-rail-track {
+    display: flex;
+    gap: 1rem;
+    padding: 0 1.25rem;
+    width: max-content;
+    box-sizing: border-box;
+  }
+
+  /* Slot item snapping: applied to direct children */
+  .rx-rail-track > :global(*) {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+    flex-shrink: 0;
+  }
+
+  /* Peeking mode: sizing cards so the next card peeks into view */
+  .rx-rail-root.is-peeking .rx-rail-track > :global(*) {
+    width: clamp(260px, 84vw, 360px);
+  }
+
+  @media (min-width: 768px) {
+    .rx-rail-root.is-peeking .rx-rail-track > :global(*) {
+      width: clamp(300px, 45vw, 420px);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .rx-rail-root.is-peeking .rx-rail-track > :global(*) {
+      width: clamp(320px, 30vw, 400px);
+    }
+  }
+
+  /* Footer Controls & Dots */
+  .rx-rail-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.25rem 1.25rem 0.5rem;
+    gap: 1rem;
+  }
+
+  .rx-rail-dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .rx-rail-dots :global(.rx-rail-dot) {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--rx-radius-full);
+    background: var(--rx-border-subtle);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background-color var(--rx-dur-fast) var(--rx-ease-out), transform var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-rail-dots :global(.rx-rail-dot.is-active) {
+    background: var(--rx-accent-cyan);
+    transform: scale(1.25);
+    width: 16px;
+  }
+
+  .rx-rail-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .rx-rail-btn {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--rx-surface-2);
+    border: 1px solid var(--rx-border-subtle);
+    border-radius: var(--rx-radius-full);
+    color: var(--rx-text-2);
+    cursor: pointer;
+    transition:
+      background-color var(--rx-dur-fast) var(--rx-ease-out),
+      border-color var(--rx-dur-fast) var(--rx-ease-out),
+      color var(--rx-dur-fast) var(--rx-ease-out),
+      transform var(--rx-dur-instant) var(--rx-ease-out);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .rx-rail-btn:hover {
+    background: var(--rx-surface-3);
+    border-color: var(--rx-border-hover);
+    color: var(--rx-text-1);
+  }
+
+  .rx-rail-btn:focus-visible {
+    box-shadow: var(--rx-focus-ring);
+    outline: none;
+  }
+
+  .rx-rail-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+</style>
+
+<script>
+  import { triggerHaptic } from '../../motion/mobile';
+
+  function initRails() {
+    const rails = document.querySelectorAll<HTMLElement>('.rx-rail-root');
+
+    rails.forEach((rail) => {
+      if (rail.dataset.initialized === 'true') return;
+      rail.dataset.initialized = 'true';
+
+      const scroller = rail.querySelector<HTMLElement>('.rx-rail-scroller');
+      const track = rail.querySelector<HTMLElement>('.rx-rail-track');
+      const prevBtn = rail.querySelector<HTMLButtonElement>('.rx-rail-btn--prev');
+      const nextBtn = rail.querySelector<HTMLButtonElement>('.rx-rail-btn--next');
+      const dotsContainer = rail.querySelector<HTMLElement>('.rx-rail-dots');
+
+      if (!scroller || !track) return;
+
+      const items = Array.from(track.children) as HTMLElement[];
+      if (items.length === 0) return;
+
+      // Populate dots
+      if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+        items.forEach((_, idx) => {
+          const dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = `rx-rail-dot ${idx === 0 ? 'is-active' : ''}`;
+          dot.setAttribute('role', 'tab');
+          dot.setAttribute('aria-selected', idx === 0 ? 'true' : 'false');
+          dot.setAttribute('aria-label', `Go to item ${idx + 1} of ${items.length}`);
+          dot.addEventListener('click', () => {
+            triggerHaptic('tap');
+            items[idx]?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+          });
+          dotsContainer.appendChild(dot);
+        });
+      }
+
+      const updateState = () => {
+        const scrollLeft = scroller.scrollLeft;
+        const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+
+        if (prevBtn) {
+          prevBtn.disabled = scrollLeft <= 4;
+        }
+        if (nextBtn) {
+          nextBtn.disabled = scrollLeft >= maxScroll - 4;
+        }
+
+        if (dotsContainer) {
+          const dots = Array.from(dotsContainer.querySelectorAll('.rx-rail-dot'));
+          let activeIndex = 0;
+          let minDistance = Infinity;
+
+          items.forEach((item, idx) => {
+            const distance = Math.abs(item.offsetLeft - scroller.offsetLeft - scrollLeft);
+            if (distance < minDistance) {
+              minDistance = distance;
+              activeIndex = idx;
+            }
+          });
+
+          dots.forEach((dot, idx) => {
+            const isActive = idx === activeIndex;
+            dot.classList.toggle('is-active', isActive);
+            dot.setAttribute('aria-selected', String(isActive));
+          });
+        }
+      };
+
+      prevBtn?.addEventListener('click', () => {
+        triggerHaptic('tap');
+        const cardWidth = items[0]?.offsetWidth || 300;
+        scroller.scrollBy({ left: -(cardWidth + 16), behavior: 'smooth' });
+      });
+
+      nextBtn?.addEventListener('click', () => {
+        triggerHaptic('tap');
+        const cardWidth = items[0]?.offsetWidth || 300;
+        scroller.scrollBy({ left: cardWidth + 16, behavior: 'smooth' });
+      });
+
+      scroller.addEventListener('scroll', updateState, { passive: true });
+      window.addEventListener('resize', updateState, { passive: true });
+      updateState();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRails);
+  } else {
+    initRails();
+  }
+</script>

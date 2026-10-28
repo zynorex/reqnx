@@ -39,5 +39,5 @@
      - `redis.call('HSET', key, 'v', 1, 'ws', currentWindowStart, 'cc', currentCount + cost, 'pc', previousCount)`
      - `redis.call('PEXPIREAT', key, currentWindowStart + 2 * windowMs)`
    - If `not allowed`:
-     - Zero writes!
+     - Zero writes.
 8. Return `[allowed, limit, remaining, windowEnd, retryAfterMs]`.

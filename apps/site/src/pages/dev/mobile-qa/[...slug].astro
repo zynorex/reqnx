@@ -1,0 +1,511 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/pages/dev/mobile-qa/[...slug].astro
+//
+// In-Browser Mobile QA Diagnostics & Primitive Workbench (Dev Only)
+// Zero output in production builds (getStaticPaths returns []).
+// ──────────────────────────────────────────────────────────────────────────────
+
+import Rail from '../../../components/common/Rail.astro';
+import Sheet from '../../../components/common/Sheet.astro';
+import Dock from '../../../components/chrome/Dock.astro';
+import StickyAction from '../../../components/common/StickyAction.astro';
+import Button from '../../../components/common/Button.astro';
+import StatusChip from '../../../components/common/StatusChip.astro';
+import '../../../styles/global.css';
+
+export function getStaticPaths() {
+  if (import.meta.env.PROD && !process.env.BUILD_DEV_STYLEGUIDE) {
+    return [];
+  }
+  return [{ params: { slug: undefined } }];
+}
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>REQNX — Mobile QA Diagnostics (Dev Only)</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    />
+    <style>
+      .qa-container {
+        padding: 1.5rem 1rem calc(var(--rx-dock-total-height, 56px) + 2rem);
+        max-width: 640px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+      .qa-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--rx-border-subtle);
+      }
+      .qa-title {
+        font-size: 1.5rem;
+        margin: 0.25rem 0;
+        font-family: var(--rx-font-mono);
+      }
+      .qa-badge {
+        display: inline-block;
+        font-family: var(--rx-font-mono);
+        font-size: 0.75rem;
+        color: var(--rx-accent-cyan);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .qa-section {
+        margin-bottom: 2.25rem;
+        background: var(--rx-surface-2);
+        border: 1px solid var(--rx-border-subtle);
+        border-radius: var(--rx-radius-md);
+        padding: 1.25rem;
+      }
+      .qa-section-title {
+        font-family: var(--rx-font-mono);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--rx-text-1);
+        margin: 0 0 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .qa-telemetry-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+      .qa-stat-box {
+        background: var(--rx-surface-1);
+        border: 1px solid var(--rx-border-subtle);
+        border-radius: var(--rx-radius-sm);
+        padding: 0.65rem 0.75rem;
+      }
+      .qa-stat-label {
+        font-family: var(--rx-font-mono);
+        font-size: 0.6875rem;
+        color: var(--rx-text-3);
+        text-transform: uppercase;
+      }
+      .qa-stat-value {
+        font-family: var(--rx-font-mono);
+        font-size: 0.9375rem;
+        color: var(--rx-accent-cyan);
+        font-weight: 600;
+        margin-top: 0.2rem;
+        word-break: break-all;
+      }
+      .qa-touch-box {
+        width: 100%;
+        min-height: 80px;
+        background: var(--rx-surface-3);
+        border: 2px dashed var(--rx-border);
+        border-radius: var(--rx-radius-md);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        touch-action: manipulation;
+        transition: background-color var(--rx-dur-fast) var(--rx-ease-out);
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+      .qa-touch-box:active,
+      .qa-touch-box[data-pressed="true"] {
+        background: var(--rx-surface-4);
+        border-color: var(--rx-accent-cyan);
+      }
+      .qa-latency-log {
+        margin-top: 0.75rem;
+        font-family: var(--rx-font-mono);
+        font-size: 0.75rem;
+        color: var(--rx-text-2);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .qa-btn-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.75rem;
+      }
+      .qa-demo-card {
+        background: var(--rx-surface-3);
+        border: 1px solid var(--rx-border-subtle);
+        border-radius: var(--rx-radius-md);
+        padding: 1.25rem;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .qa-demo-card-title {
+        font-family: var(--rx-font-mono);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--rx-text-1);
+        margin: 0;
+      }
+      .qa-demo-card-desc {
+        font-size: 0.8125rem;
+        color: var(--rx-text-2);
+        margin: 0;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="qa-container">
+      <header class="qa-header">
+        <span class="qa-badge">Internal Diagnostics</span>
+        <h1 class="qa-title">Mobile QA Workbench</h1>
+        <p style="color: var(--rx-text-2); font-size: 0.875rem; margin: 0.25rem 0 0;">
+          Real-time hardware telemetry, safe-area insets, touch latency measurement, and layout primitive testbed.
+        </p>
+      </header>
+
+      <!-- 1. Real-Time Telemetry HUD -->
+      <section class="qa-section" aria-labelledby="telemetry-title">
+        <h2 class="qa-section-title" id="telemetry-title">
+          <span>Viewport & Screen Telemetry</span>
+          <span style="font-size: 0.6875rem; color: var(--rx-semantic-allowed);">Live Updating</span>
+        </h2>
+        <div class="qa-telemetry-grid">
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Viewport Size</div>
+            <div class="qa-stat-value" id="qa-vp-size">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Visual Viewport</div>
+            <div class="qa-stat-value" id="qa-vv-size">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Device Pixel Ratio</div>
+            <div class="qa-stat-value" id="qa-dpr">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Orientation</div>
+            <div class="qa-stat-value" id="qa-orientation">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Touch Points</div>
+            <div class="qa-stat-value" id="qa-touch-points">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Pointer Coarse</div>
+            <div class="qa-stat-value" id="qa-pointer-type">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Safe-Area Top</div>
+            <div class="qa-stat-value" id="qa-safe-top">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Safe-Area Bottom</div>
+            <div class="qa-stat-value" id="qa-safe-bottom">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Hardware Concurrency</div>
+            <div class="qa-stat-value" id="qa-cores">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Device Memory</div>
+            <div class="qa-stat-value" id="qa-memory">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Save-Data</div>
+            <div class="qa-stat-value" id="qa-save-data">--</div>
+          </div>
+          <div class="qa-stat-box">
+            <div class="qa-stat-label">Lite Mode Active</div>
+            <div class="qa-stat-value" id="qa-lite-mode">--</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Touch Latency Benchmark -->
+      <section class="qa-section" aria-labelledby="latency-title">
+        <h2 class="qa-section-title" id="latency-title">
+          <span>Touch-to-Frame Response Benchmark</span>
+          <span style="font-size: 0.6875rem; color: var(--rx-text-3);">Target: ≤ 90 ms</span>
+        </h2>
+        <div class="qa-touch-box" id="qa-latency-box" data-pressable>
+          <strong style="color: var(--rx-text-1);">Tap / Press Here</strong>
+          <span style="font-size: 0.75rem; color: var(--rx-text-3); margin-top: 0.25rem;">
+            Measures pointerdown to render completion
+          </span>
+        </div>
+        <div class="qa-latency-log" id="qa-latency-log">
+          <div>Waiting for first tap...</div>
+        </div>
+      </section>
+
+      <!-- 3. Sheet Primitives Workbench -->
+      <section class="qa-section" aria-labelledby="sheet-title">
+        <h2 class="qa-section-title" id="sheet-title">
+          <span>Sheet Primitive Testbed</span>
+        </h2>
+        <p style="color: var(--rx-text-2); font-size: 0.8125rem; margin: 0 0 0.75rem;">
+          Test half-height (52dvh) and full-height (88dvh) sheets with drag-to-dismiss and hardware Back gesture.
+        </p>
+        <div class="qa-btn-row">
+          <Button variant="secondary" size="md" id="qa-open-half-sheet">
+            Open Half Sheet
+          </Button>
+          <Button variant="secondary" size="md" id="qa-open-full-sheet">
+            Open Full Sheet
+          </Button>
+        </div>
+      </section>
+
+      <!-- 4. Rail Primitives Workbench -->
+      <section class="qa-section" aria-labelledby="rail-title">
+        <h2 class="qa-section-title" id="rail-title">
+          <span>Rail Primitive Testbed</span>
+        </h2>
+        <p style="color: var(--rx-text-2); font-size: 0.8125rem; margin: 0 0 0.75rem;">
+          Native scroll-snap rail with 84vw peek staging, 44px step buttons, and dot indicators.
+        </p>
+
+        <Rail id="qa-demo-rail" ariaLabel="Demonstration Algorithm Cards" peek={true}>
+          <div class="qa-demo-card">
+            <span class="qa-badge">Tier 1 • Real-Time</span>
+            <h3 class="qa-demo-card-title">Token Bucket (Redis Port)</h3>
+            <p class="qa-demo-card-desc">
+              Smooth token replenishment with sub-millisecond evaluation. Ideal for bursty API traffic.
+            </p>
+            <div style="margin-top: 0.5rem;">
+              <StatusChip status="available" label="Active" />
+            </div>
+          </div>
+
+          <div class="qa-demo-card">
+            <span class="qa-badge">Tier 2 • Windowed</span>
+            <h3 class="qa-demo-card-title">Fixed Window Counter</h3>
+            <p class="qa-demo-card-desc">
+              Atomic atomic counters with fixed epoch boundaries. Zero state drift and predictable quotas.
+            </p>
+            <div style="margin-top: 0.5rem;">
+              <StatusChip status="available" label="Active" />
+            </div>
+          </div>
+
+          <div class="qa-demo-card">
+            <span class="qa-badge">Tier 3 • Sliding</span>
+            <h3 class="qa-demo-card-title">Sliding Window Log</h3>
+            <p class="qa-demo-card-desc">
+              Weighted boundary averaging to eliminate end-of-window stampedes with minimal overhead.
+            </p>
+            <div style="margin-top: 0.5rem;">
+              <StatusChip status="planned" label="Planned" />
+            </div>
+          </div>
+        </Rail>
+      </section>
+
+      <!-- 5. Keyboard Mode & Haptics Controls -->
+      <section class="qa-section" aria-labelledby="controls-title">
+        <h2 class="qa-section-title" id="controls-title">
+          <span>Keyboard & Haptic Simulation</span>
+        </h2>
+        <p style="color: var(--rx-text-2); font-size: 0.8125rem; margin: 0 0 0.75rem;">
+          Simulate virtual keyboard appearance and test Web Vibration API haptics.
+        </p>
+        <div class="qa-btn-row">
+          <Button variant="secondary" size="md" id="qa-toggle-keyboard">
+            Toggle Virtual Keyboard Mode
+          </Button>
+          <Button variant="secondary" size="md" id="qa-toggle-haptics">
+            Toggle Haptics (Off)
+          </Button>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <span style="font-family: var(--rx-font-mono); font-size: 0.75rem; color: var(--rx-text-3);">Test Haptic Pulses:</span>
+          <div class="qa-btn-row" style="margin-top: 0.5rem;">
+            <Button variant="tertiary" size="sm" id="qa-haptic-tap">Tap (10ms)</Button>
+            <Button variant="tertiary" size="sm" id="qa-haptic-success">Success</Button>
+            <Button variant="tertiary" size="sm" id="qa-haptic-warning">Warning</Button>
+            <Button variant="tertiary" size="sm" id="qa-haptic-error">Error</Button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Sticky Action Primitive Demonstration -->
+    <StickyAction>
+      <div>
+        <div style="font-family: var(--rx-font-mono); font-size: 0.75rem; color: var(--rx-text-3);">Sticky Action Test</div>
+        <div style="font-size: 0.875rem; font-weight: 600; color: var(--rx-text-1);">Fixed Above Dock</div>
+      </div>
+      <Button variant="primary" size="md" id="qa-sticky-btn">
+        Trigger Action
+      </Button>
+    </StickyAction>
+
+    <!-- Half Sheet Instance -->
+    <Sheet id="demo-sheet-half" title="Half-Height Sheet Specimen" size="half">
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <p style="color: var(--rx-text-2); font-size: 0.875rem; margin: 0; line-height: 1.5;">
+          This sheet tests the half-height (52dvh) layout mode. Try dragging the handle bar down to dismiss, or press the Android Back gesture.
+        </p>
+        <div class="qa-stat-box">
+          <div class="qa-stat-label">Height Constraint</div>
+          <div class="qa-stat-value">52dvh</div>
+        </div>
+        <Button variant="secondary" size="md" id="qa-close-half-btn">
+          Close Sheet
+        </Button>
+      </div>
+    </Sheet>
+
+    <!-- Full Sheet Instance -->
+    <Sheet id="demo-sheet-full" title="Full-Height Sheet Specimen" size="full">
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <p style="color: var(--rx-text-2); font-size: 0.875rem; margin: 0; line-height: 1.5;">
+          This sheet tests the full-height (88dvh) layout mode with safe area padding at the bottom.
+        </p>
+        <div class="qa-stat-box">
+          <div class="qa-stat-label">Height Constraint</div>
+          <div class="qa-stat-value">88dvh</div>
+        </div>
+        <div style="height: 400px; background: var(--rx-surface-2); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--rx-text-3); font-family: var(--rx-font-mono); font-size: 0.8125rem;">
+          [Scrollable Content Area]
+        </div>
+        <Button variant="secondary" size="md" id="qa-close-full-btn">
+          Close Sheet
+        </Button>
+      </div>
+    </Sheet>
+
+    <!-- Bottom Thumb Dock -->
+    <Dock currentPath="/dev/mobile-qa" />
+
+    <script>
+      import { triggerHaptic, isHapticsEnabled, setHapticsEnabled } from '../../../motion/mobile';
+
+      function updateTelemetry() {
+        const vpWidth = window.innerWidth;
+        const vpHeight = window.innerHeight;
+        const vvHeight = window.visualViewport ? Math.round(window.visualViewport.height) : vpHeight;
+
+        const vpEl = document.getElementById('qa-vp-size');
+        const vvEl = document.getElementById('qa-vv-size');
+        const dprEl = document.getElementById('qa-dpr');
+        const orientEl = document.getElementById('qa-orientation');
+        const touchEl = document.getElementById('qa-touch-points');
+        const pointerEl = document.getElementById('qa-pointer-type');
+        const safeTopEl = document.getElementById('qa-safe-top');
+        const safeBottomEl = document.getElementById('qa-safe-bottom');
+        const coresEl = document.getElementById('qa-cores');
+        const memEl = document.getElementById('qa-memory');
+        const saveEl = document.getElementById('qa-save-data');
+        const liteEl = document.getElementById('qa-lite-mode');
+
+        if (vpEl) vpEl.textContent = `${vpWidth} × ${vpHeight} px`;
+        if (vvEl) vvEl.textContent = `${window.visualViewport ? Math.round(window.visualViewport.width) : vpWidth} × ${vvHeight} px`;
+        if (dprEl) dprEl.textContent = `${window.devicePixelRatio.toFixed(2)}x`;
+        if (orientEl) orientEl.textContent = screen.orientation ? screen.orientation.type.replace('-primary', '') : (vpWidth > vpHeight ? 'landscape' : 'portrait');
+        if (touchEl) touchEl.textContent = String(navigator.maxTouchPoints || 0);
+        if (pointerEl) pointerEl.textContent = window.matchMedia('(pointer: coarse)').matches ? 'Coarse (Touch)' : 'Fine (Mouse)';
+
+        const computed = getComputedStyle(document.documentElement);
+        if (safeTopEl) safeTopEl.textContent = computed.getPropertyValue('--safe-top').trim() || '0px';
+        if (safeBottomEl) safeBottomEl.textContent = computed.getPropertyValue('--safe-bottom').trim() || '0px';
+
+        if (coresEl) coresEl.textContent = String(navigator.hardwareConcurrency || 'Unknown');
+        const navWithMem = navigator as unknown as { deviceMemory?: number; connection?: { saveData?: boolean } };
+        if (memEl) memEl.textContent = navWithMem.deviceMemory ? `${navWithMem.deviceMemory} GB` : 'N/A';
+        if (saveEl) saveEl.textContent = navWithMem.connection && navWithMem.connection.saveData ? 'Active' : 'Off';
+        if (liteEl) liteEl.textContent = document.documentElement.dataset.liteMode === 'true' ? 'Active' : 'Off';
+      }
+
+      window.addEventListener('resize', updateTelemetry, { passive: true });
+      window.visualViewport?.addEventListener('resize', updateTelemetry, { passive: true });
+      updateTelemetry();
+
+      // Touch Latency Benchmark
+      const latencyBox = document.getElementById('qa-latency-box');
+      const latencyLog = document.getElementById('qa-latency-log');
+      const history: number[] = [];
+
+      latencyBox?.addEventListener('pointerdown', () => {
+        const start = performance.now();
+        triggerHaptic('tap');
+
+        requestAnimationFrame(() => {
+          const delta = Math.round((performance.now() - start) * 10) / 10;
+          history.unshift(delta);
+          if (history.length > 5) history.pop();
+
+          if (latencyLog) {
+            latencyLog.innerHTML = history
+              .map(
+                (ms, i) =>
+                  `<div>Tap #${history.length - i}: <strong>${ms} ms</strong> ${
+                    ms <= 90 ? '<span style="color: var(--rx-semantic-allowed);">[PASS &le;90ms]</span>' : '<span style="color: var(--rx-semantic-warn);">[SLOWER]</span>'
+                  }</div>`
+              )
+              .join('');
+          }
+        });
+      });
+
+      // Sheet triggers
+      document.getElementById('qa-open-half-sheet')?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('rx-open-sheet-demo-sheet-half'));
+      });
+      document.getElementById('qa-open-full-sheet')?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('rx-open-sheet-demo-sheet-full'));
+      });
+      document.getElementById('qa-close-half-btn')?.addEventListener('click', () => {
+        const dialog = document.getElementById('demo-sheet-half') as HTMLDialogElement | null;
+        const closeBtn = document.getElementById('demo-sheet-half-close');
+        closeBtn?.click();
+      });
+      document.getElementById('qa-close-full-btn')?.addEventListener('click', () => {
+        const closeBtn = document.getElementById('demo-sheet-full-close');
+        closeBtn?.click();
+      });
+
+      // Keyboard simulation toggle
+      const kbBtn = document.getElementById('qa-toggle-keyboard');
+      kbBtn?.addEventListener('click', () => {
+        const isKb = document.body.classList.toggle('has-keyboard');
+        kbBtn.textContent = isKb ? 'Exit Virtual Keyboard Mode' : 'Toggle Virtual Keyboard Mode';
+        triggerHaptic('tap');
+      });
+
+      // Haptics Controls
+      const hapticsBtn = document.getElementById('qa-toggle-haptics');
+      const syncHapticsBtn = () => {
+        if (!hapticsBtn) return;
+        const enabled = isHapticsEnabled();
+        hapticsBtn.textContent = `Toggle Haptics (${enabled ? 'On' : 'Off'})`;
+      };
+      syncHapticsBtn();
+
+      hapticsBtn?.addEventListener('click', () => {
+        const current = isHapticsEnabled();
+        setHapticsEnabled(!current);
+        syncHapticsBtn();
+        if (!current) triggerHaptic('success');
+      });
+
+      document.getElementById('qa-haptic-tap')?.addEventListener('click', () => triggerHaptic('tap'));
+      document.getElementById('qa-haptic-success')?.addEventListener('click', () => triggerHaptic('success'));
+      document.getElementById('qa-haptic-warning')?.addEventListener('click', () => triggerHaptic('warning'));
+      document.getElementById('qa-haptic-error')?.addEventListener('click', () => triggerHaptic('error'));
+    </script>
+  </body>
+</html>

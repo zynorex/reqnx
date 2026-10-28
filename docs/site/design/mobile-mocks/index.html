@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REQNX Flagship Mobile Experience — Hi-Fi Design Mocks & Gate 1 Workbench</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="workbench-body">
+
+  <header class="workbench-bar">
+    <div class="wb-title">
+      <span>REQNX</span>
+      <span class="wb-badge">Mobile Vibe Mocks (Gate 1)</span>
+    </div>
+
+    <div class="wb-controls">
+      <button class="wb-btn active" id="btn-dev-iphone" onclick="setDevice('iphone')">iPhone 14/15 (390×844)</button>
+      <button class="wb-btn" id="btn-dev-android" onclick="setDevice('android')">Galaxy S24 (360×800)</button>
+      <button class="wb-btn" id="btn-theme-toggle" onclick="toggleTheme()">Theme: Dark</button>
+    </div>
+
+    <div class="wb-controls">
+      <button class="wb-btn active" onclick="showView('landing')">1. Landing Storyboard</button>
+      <button class="wb-btn" onclick="showView('dock')">2. Dock States</button>
+      <button class="wb-btn" onclick="showView('menu')">3. Menu Sheet</button>
+      <button class="wb-btn" onclick="showView('search')">4. Search Sheet</button>
+      <button class="wb-btn" onclick="showView('docs')">5. Docs & TOC</button>
+      <button class="wb-btn" onclick="showView('playground')">6. Playground</button>
+    </div>
+  </header>
+
+  <main class="wb-main">
+
+    <!-- Simulated Phone Frame -->
+    <div class="device-shell" id="phone-frame">
+      <div class="device-island"></div>
+      <div class="device-home-bar"></div>
+
+      <!-- Top Bar (Solid 52px + safe-top) -->
+      <header class="rx-top-bar" id="mock-top-bar">
+        <a href="#landing" class="rx-logo-group" onclick="showView('landing'); return false;">
+          <span class="rx-logo-text">REQN<span>X</span></span>
+          <span class="rx-ver-chip">v0.1.0</span>
+        </a>
+        <div class="rx-top-actions">
+          <button class="rx-icon-btn" aria-label="Toggle theme" onclick="toggleTheme()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Screen Content -->
+      <div class="phone-screen" id="phone-scroller">
+
+        <!-- VIEW 1: LANDING & 6-FRAME STORYBOARD -->
+        <div id="view-landing" class="mock-view">
+          <!-- Frame 1: Hero First Screen -->
+          <section class="hero-sec" id="sec-hero">
+            <div class="hero-status-pill">
+              <span class="hero-status-dot"></span>
+              <span>All 416 conformance tests passing</span>
+            </div>
+
+            <h1 class="hero-h1">
+              Pluggable rate limiting. <br><span class="accent">Zero drift.</span>
+            </h1>
+
+            <p class="hero-subhead">
+              The distributed rate limiter for Node.js with mathematical conformance between in-memory simulation and Redis Lua.
+            </p>
+
+            <!-- 48px Thumb Zone Primary CTA -->
+            <a href="#playground" class="hero-cta-pill" onclick="showView('playground'); return false;">
+              Try in playground
+            </a>
+
+            <!-- Horizontally scrolling command chip with 44px tap copy button -->
+            <div class="hero-cmd-chip">
+              <code>pnpm add @reqnx/core</code>
+              <button aria-label="Copy install command" onclick="alert('Copied: pnpm add @reqnx/core')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              </button>
+            </div>
+
+            <!-- Simplified Mobile Console Stage -->
+            <div class="mobile-console-stage">
+              <div class="console-mini-timeline">
+                <svg class="timeline-wave" viewBox="0 0 300 60" preserveAspectRatio="none">
+                  <path d="M0,30 Q30,10 60,30 T120,30 T180,10 T240,40 T300,20" fill="none" stroke="#14ddfd" stroke-width="2.5" />
+                  <line x1="180" y1="0" x2="180" y2="60" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4" />
+                </svg>
+              </div>
+
+              <div class="console-readout-grid">
+                <div class="readout-cell">
+                  <div class="readout-label">Remaining</div>
+                  <div class="readout-val emerald" id="mock-rem">98 / 100</div>
+                </div>
+                <div class="readout-cell">
+                  <div class="readout-label">Decision</div>
+                  <div class="readout-val emerald" id="mock-dec">ALLOWED</div>
+                </div>
+              </div>
+
+              <div class="console-actions-row">
+                <button class="console-btn primary" onclick="sendReq(1)">Send request</button>
+                <button class="console-btn secondary" onclick="sendReq(10)">Send burst</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Frame 2: Architecture Platform -->
+          <section class="arch-sec" id="sec-arch">
+            <h2 class="sec-title">Dual-Executor Architecture</h2>
+            <p class="sec-sub">Identical integer math executed across pure TypeScript in-memory or Redis 5.1 Lua.</p>
+
+            <div class="store-toggle-full">
+              <button class="store-toggle-btn active">MemoryStore</button>
+              <button class="store-toggle-btn">RedisStore</button>
+            </div>
+
+            <div class="vertical-flow-card">
+              <div class="flow-node">
+                <span>Incoming HTTP Request</span>
+                <span style="color: #94a3b8;">cost: 1</span>
+              </div>
+              <div class="flow-arrow">↓ limiter.check()</div>
+              <div class="flow-node" style="border-color: #14ddfd;">
+                <span style="color: #14ddfd; font-weight: 600;">Pure step() Math</span>
+                <span style="color: #10b981;">0.43μs</span>
+              </div>
+              <div class="flow-arrow">↓ atomic store write</div>
+              <div class="flow-node">
+                <span>Decision & Headers</span>
+                <span style="color: #10b981;">X-RateLimit-*</span>
+              </div>
+            </div>
+
+            <div class="stat-cell-stack">
+              <div class="stat-cell">
+                <div class="stat-numeral">0.43μs</div>
+                <div class="stat-label">In-memory check latency (p99)</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-numeral">0 B</div>
+                <div class="stat-label">Zero external runtime dependencies in @reqnx/core</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Frame 3: Proof Scrolling Rail -->
+          <section class="rail-sec" id="sec-proof">
+            <div class="rail-sec-header">
+              <h2 class="sec-title">Proven Conformance</h2>
+              <p class="sec-sub">User-controlled chip rail without battery-draining autoplay.</p>
+            </div>
+
+            <div class="chip-rail">
+              <div class="proof-chip">🛡️ 416 Vitest Contract Tests</div>
+              <div class="proof-chip">⚡ 1,000 Concurrent Calls Atomicity</div>
+              <div class="proof-chip">⏱️ Monotonic Clock Invariant</div>
+              <div class="proof-chip">🧮 2^53 Safe Integer Proofs</div>
+              <div class="proof-chip">📜 Zero-Write on Rejection</div>
+            </div>
+          </section>
+
+          <!-- Frame 4: Tiers Rail (Peek + Dots) -->
+          <section class="rail-sec" id="sec-tiers">
+            <div class="rail-sec-header">
+              <h2 class="sec-title">Algorithms Suite</h2>
+              <p class="sec-sub">Scroll-snap card rail with peek of next card and tap buttons.</p>
+            </div>
+
+            <div class="tier-cards-rail" id="tier-rail">
+              <div class="tier-card">
+                <div class="tier-name">Token Bucket</div>
+                <div class="tier-desc">Smooth continuous refill. Handles natural bursts while guaranteeing average rate adherence.</div>
+                <div class="readout-label">State: (tokens, lastRefillMs)</div>
+              </div>
+              <div class="tier-card">
+                <div class="tier-name">Sliding Window Counter</div>
+                <div class="tier-desc">Weighted approximation using previous and current windows. O(1) memory and low CPU.</div>
+                <div class="readout-label">State: (prevCount, currCount)</div>
+              </div>
+              <div class="tier-card">
+                <div class="tier-name">Sliding Window Log</div>
+                <div class="tier-desc">Exact sliding window timestamp log. 100% precision with bounded sorted set storage.</div>
+                <div class="readout-label">State: Sorted timestamp set</div>
+              </div>
+            </div>
+
+            <div class="tier-rail-nav">
+              <button class="rail-nav-btn" onclick="scrollTier(-1)" aria-label="Previous algorithm">←</button>
+              <div class="rail-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <button class="rail-nav-btn" onclick="scrollTier(1)" aria-label="Next algorithm">→</button>
+            </div>
+          </section>
+
+          <!-- Frame 5: Closing Band -->
+          <section class="hero-sec" style="border-top: 1px solid var(--color-hairline); text-align: center;">
+            <h2 class="sec-title">Ready to protect your API?</h2>
+            <p class="sec-sub">Free, MIT licensed, zero account required.</p>
+            <a href="#docs" class="hero-cta-pill" onclick="showView('docs'); return false;">Read the documentation</a>
+          </section>
+        </div>
+
+        <!-- VIEW 2: DOCK STATES (Demonstrating landing vs docs docks) -->
+        <div id="view-dock" class="mock-view" style="display: none; padding: 2rem var(--gutter);">
+          <h2 class="sec-title">Bottom Thumb Dock System</h2>
+          <p class="sec-sub">4 slots, 56px height + safe-area, 48px touch centers, 2px sliding accent bar.</p>
+
+          <div style="background: var(--color-surface-card); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="font-family: var(--rx-font-mono); font-size: 0.85rem; color: var(--color-cyan); margin-bottom: 0.5rem;">Landing Page Dock:</div>
+            <div style="font-size: 0.9rem; color: var(--color-text-sub);">[ Docs ] [ Playground ] [ Search ] [ Menu ]</div>
+          </div>
+
+          <div style="background: var(--color-surface-card); padding: 1.5rem; border-radius: 12px;">
+            <div style="font-family: var(--rx-font-mono); font-size: 0.85rem; color: var(--color-cyan); margin-bottom: 0.5rem;">Docs Reading Page Dock:</div>
+            <div style="font-size: 0.9rem; color: var(--color-text-sub);">[ Docs ] [ Contents ] [ Search ] [ Menu ]</div>
+            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">"Contents" slot opens the table-of-contents bottom sheet directly under the thumb.</p>
+          </div>
+        </div>
+
+        <!-- VIEW 3: MENU SHEET (Bottom Sheet Modal) -->
+        <div id="view-menu" class="mock-view" style="display: none;">
+          <div class="rx-sheet-scrim" onclick="showView('landing')"></div>
+          <div class="rx-bottom-sheet">
+            <div class="rx-sheet-handle-bar">
+              <div class="rx-sheet-handle"></div>
+            </div>
+            <div class="rx-sheet-header">
+              <h3 class="rx-sheet-title">Menu & Settings</h3>
+              <button class="rx-sheet-close-btn" onclick="showView('landing')" aria-label="Close menu">✕</button>
+            </div>
+            <div class="rx-sheet-content">
+              <a href="#docs" class="sheet-nav-row" onclick="showView('docs'); return false;">
+                <span>Documentation</span>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </a>
+              <a href="#playground" class="sheet-nav-row" onclick="showView('playground'); return false;">
+                <span>Interactive Playground</span>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </a>
+              <a href="https://github.com/zynorex/reqnx" class="sheet-nav-row" target="_blank">
+                <span>GitHub Repository</span>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+              </a>
+
+              <div class="pref-group">
+                <div class="pref-title">Theme Preference</div>
+                <div class="segmented-ctrl">
+                  <button class="segmented-btn active">System</button>
+                  <button class="segmented-btn">Dark</button>
+                  <button class="segmented-btn">Light</button>
+                </div>
+              </div>
+
+              <div class="pref-group">
+                <div class="pref-title">Motion & Haptics</div>
+                <div class="segmented-ctrl">
+                  <button class="segmented-btn active">Full</button>
+                  <button class="segmented-btn">Reduced</button>
+                  <button class="segmented-btn">Lite</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 4: SEARCH SHEET (Full Screen) -->
+        <div id="view-search" class="mock-view" style="display: none;">
+          <div class="rx-search-sheet">
+            <div class="search-input-bar">
+              <div class="search-input-wrap">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="search" class="search-field" placeholder="Search docs, algorithms, ADRs..." value="redis lua" autofocus />
+              </div>
+              <button class="search-cancel-btn" onclick="showView('landing')">Cancel</button>
+            </div>
+
+            <div class="search-results-list">
+              <a href="#docs" class="search-result-row" onclick="showView('docs'); return false;">
+                <span class="search-crumb">Algorithms / Redis Ports</span>
+                <span class="search-row-title">RedisStore & Lua Execution Architecture</span>
+                <span class="search-row-snippet">Lua 5.1 safe integer math, atomic EVALSHA execution, and clock monotonic handling...</span>
+              </a>
+              <a href="#docs" class="search-result-row" onclick="showView('docs'); return false;">
+                <span class="search-crumb">ADRs / 0025</span>
+                <span class="search-row-title">ADR-0025: Lua Integer Numerics & Precision Proofs</span>
+                <span class="search-row-snippet">Proving capacity bounds within 2^53 - 1 safe double precision integers in Redis...</span>
+              </a>
+              <a href="#docs" class="search-result-row" onclick="showView('docs'); return false;">
+                <span class="search-crumb">Getting Started</span>
+                <span class="search-row-title">Connecting to Distributed Redis Clusters</span>
+                <span class="search-row-snippet">Setup ioredis and node-redis adapters with fail-open fallback policies...</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 5: DOCS READING PAGE WITH CONTENTS SHEET -->
+        <div id="view-docs" class="mock-view" style="display: none;">
+          <article class="docs-prose">
+            <div style="font-family: var(--rx-font-mono); font-size: 0.75rem; color: var(--color-cyan); margin-bottom: 0.5rem;">GETTING STARTED</div>
+            <h1 class="hero-h1" style="font-size: 1.85rem;">Token Bucket Algorithm</h1>
+            <p>The token bucket algorithm maintains a bucket filled with tokens at a steady rational rate. When a request arrives, tokens corresponding to the cost are deducted.</p>
+
+            <div class="docs-code-bleed">
+              <div class="docs-code-header">
+                <span>TypeScript</span>
+                <button class="docs-copy-btn" onclick="alert('Copied code snippet')">Copy</button>
+              </div>
+              <div class="docs-code-scroller">
+<pre><code>import { createLimiter, tokenBucket } from '@reqnx/core';
+
+const limiter = createLimiter({
+  algorithm: tokenBucket({
+    capacity: 100,
+    refillRate: { tokens: 10, perMs: 1000 }
+  })
+});</code></pre>
+              </div>
+            </div>
+
+            <h2 class="sec-title" style="font-size: 1.4rem;">Configuration Reference</h2>
+            <p>Below 600px width, data tables automatically reflow into stacked cards to avoid broken horizontal scrolling.</p>
+
+            <div class="mobile-stacked-table">
+              <div class="stacked-table-card">
+                <div class="stacked-card-title">capacity</div>
+                <div class="stacked-card-meta">number · required</div>
+                <div class="stacked-card-desc">Maximum burst capacity allowed. Must be an exact integer bounded below 2^51.</div>
+              </div>
+              <div class="stacked-table-card">
+                <div class="stacked-card-title">refillRate</div>
+                <div class="stacked-card-meta">{ tokens: number, perMs: number }</div>
+                <div class="stacked-card-desc">Rational coprime rate definition guaranteeing zero floating-point accumulation drift.</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Contents Bottom Sheet (Open state demonstration) -->
+          <div id="toc-sheet" style="display: none;">
+            <div class="rx-sheet-scrim" onclick="toggleToc(false)"></div>
+            <div class="rx-bottom-sheet">
+              <div class="rx-sheet-handle-bar"><div class="rx-sheet-handle"></div></div>
+              <div class="rx-sheet-header">
+                <h3 class="rx-sheet-title">On this page</h3>
+                <button class="rx-sheet-close-btn" onclick="toggleToc(false)">✕</button>
+              </div>
+              <div class="rx-sheet-content">
+                <a href="#h-intro" class="sheet-nav-row" onclick="toggleToc(false)"><span>Introduction</span></a>
+                <a href="#h-formula" class="sheet-nav-row" onclick="toggleToc(false)"><span>Refill Formula</span></a>
+                <a href="#h-config" class="sheet-nav-row" onclick="toggleToc(false)"><span>Configuration Options</span></a>
+                <a href="#h-lua" class="sheet-nav-row" onclick="toggleToc(false)"><span>Redis Lua Equivalent</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 6: PLAYGROUND ON MOBILE -->
+        <div id="view-playground" class="mock-view" style="display: none; padding: 1rem var(--gutter);">
+          <h2 class="sec-title">Interactive Simulator</h2>
+          <p class="sec-sub">Full-bleed canvas timeline with thumb-zone trigger pills.</p>
+
+          <div class="mobile-console-stage" style="margin-bottom: 1.5rem;">
+            <div class="console-mini-timeline" style="height: 180px;">
+              <svg class="timeline-wave" viewBox="0 0 300 80" preserveAspectRatio="none">
+                <path d="M0,40 Q25,10 50,40 T100,40 T150,15 T200,60 T250,25 T300,40" fill="none" stroke="#14ddfd" stroke-width="2.5" />
+              </svg>
+            </div>
+
+            <div class="console-readout-grid">
+              <div class="readout-cell">
+                <div class="readout-label">Available Tokens</div>
+                <div class="readout-val emerald">82.00</div>
+              </div>
+              <div class="readout-cell">
+                <div class="readout-label">Next Refill In</div>
+                <div class="readout-val">120ms</div>
+              </div>
+            </div>
+
+            <div class="console-actions-row">
+              <button class="console-btn primary" onclick="alert('Sent 1 request!')">Send One</button>
+              <button class="console-btn secondary" onclick="alert('Sent burst of 10!')">Send Burst (10)</button>
+            </div>
+          </div>
+
+          <button class="hero-cta-pill" style="background: var(--color-surface-raised); border: 1px solid var(--color-border); color: var(--color-text-main);" onclick="alert('Opened Controls Sheet')">
+            ⚙️ Adjust Simulator Parameters
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Dock (M) - 56px + safe-bottom -->
+      <nav class="rx-dock" id="mock-dock">
+        <a href="#landing" class="rx-dock-item active" id="dock-item-landing" onclick="showView('landing'); return false;">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+          <span>Home</span>
+        </a>
+        <a href="#docs" class="rx-dock-item" id="dock-item-docs" onclick="showView('docs'); return false;">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+          <span id="dock-label-slot2">Docs</span>
+        </a>
+        <a href="#search" class="rx-dock-item" id="dock-item-search" onclick="showView('search'); return false;">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <span>Search</span>
+        </a>
+        <a href="#menu" class="rx-dock-item" id="dock-item-menu" onclick="showView('menu'); return false;">
+          <svg fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+          <span>Menu</span>
+        </a>
+      </nav>
+
+    </div>
+
+  </main>
+
+  <script>
+    let currentTheme = 'dark';
+    let currentView = 'landing';
+    let remaining = 98;
+
+    function setDevice(type) {
+      const frame = document.getElementById('phone-frame');
+      const bIphone = document.getElementById('btn-dev-iphone');
+      const bAndroid = document.getElementById('btn-dev-android');
+      if (type === 'android') {
+        frame.classList.add('android');
+        bIphone.classList.remove('active');
+        bAndroid.classList.add('active');
+      } else {
+        frame.classList.remove('android');
+        bAndroid.classList.remove('active');
+        bIphone.classList.add('active');
+      }
+    }
+
+    function toggleTheme() {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      document.getElementById('btn-theme-toggle').textContent = `Theme: ${currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)}`;
+    }
+
+    function showView(viewId) {
+      currentView = viewId;
+      document.querySelectorAll('.mock-view').forEach(el => el.style.display = 'none');
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) target.style.display = 'block';
+
+      // Update dock active states
+      document.querySelectorAll('.rx-dock-item').forEach(el => el.classList.remove('active'));
+      const dockSlot2 = document.getElementById('dock-label-slot2');
+
+      if (viewId === 'landing') {
+        document.getElementById('dock-item-landing').classList.add('active');
+        dockSlot2.textContent = 'Docs';
+      } else if (viewId === 'docs') {
+        document.getElementById('dock-item-docs').classList.add('active');
+        dockSlot2.textContent = 'Contents';
+      } else if (viewId === 'search') {
+        document.getElementById('dock-item-search').classList.add('active');
+      } else if (viewId === 'menu') {
+        document.getElementById('dock-item-menu').classList.add('active');
+      }
+    }
+
+    function toggleToc(show) {
+      document.getElementById('toc-sheet').style.display = show ? 'block' : 'none';
+    }
+
+    function sendReq(cost) {
+      remaining = Math.max(0, remaining - cost);
+      document.getElementById('mock-rem').textContent = `${remaining} / 100`;
+      const dec = document.getElementById('mock-dec');
+      if (remaining === 0) {
+        dec.textContent = 'DENIED';
+        dec.className = 'readout-val';
+        dec.style.color = '#f43f5e';
+      } else {
+        dec.textContent = 'ALLOWED';
+        dec.className = 'readout-val emerald';
+        dec.style.color = '#10b981';
+      }
+    }
+
+    function scrollTier(dir) {
+      const rail = document.getElementById('tier-rail');
+      rail.scrollBy({ left: dir * 300, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

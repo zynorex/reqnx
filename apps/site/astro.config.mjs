@@ -28,6 +28,22 @@ export default defineConfig({
           attrs: { name: 'robots', content: 'noindex, nofollow' },
         },
         {
+          tag: 'meta',
+          attrs: { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+        },
+        {
+          tag: 'meta',
+          attrs: { name: 'format-detection', content: 'telephone=no' },
+        },
+        {
+          tag: 'meta',
+          attrs: { name: 'theme-color', media: '(prefers-color-scheme: light)', content: '#f8fafc' },
+        },
+        {
+          tag: 'meta',
+          attrs: { name: 'theme-color', media: '(prefers-color-scheme: dark)', content: '#0b0d13' },
+        },
+        {
           tag: 'link',
           attrs: {
             rel: 'preconnect',

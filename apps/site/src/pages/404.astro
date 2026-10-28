@@ -22,7 +22,7 @@ const knownRoutes = siteRoutes
       @layer reset, tokens, base, layout, components, utilities;
     </style>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Page not found | {siteConfig.name}</title>
     <meta name="robots" content="noindex, nofollow" />
 
@@ -36,7 +36,7 @@ const knownRoutes = siteRoutes
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
     />
 
-    <!-- Early Theme & Motion Script to prevent flash -->
+    <!-- Early Theme, Motion & Lite Mode Script to prevent flash -->
     <script is:inline>
       (function () {
         try {
@@ -48,7 +48,14 @@ const knownRoutes = siteRoutes
           const storedMotion = localStorage.getItem('rx-motion');
           const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           const isSaveData = Boolean(navigator.connection && navigator.connection.saveData);
-          if (storedMotion === 'reduced' || prefersReduced || isSaveData) {
+          const isLowEnd = Boolean(
+            (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+            (navigator.deviceMemory && navigator.deviceMemory < 4)
+          );
+          if (isSaveData || isLowEnd) {
+            document.documentElement.dataset.liteMode = 'true';
+          }
+          if (storedMotion === 'reduced' || prefersReduced || isSaveData || isLowEnd) {
             document.documentElement.dataset.motion = 'reduced';
           } else {
             document.documentElement.dataset.motion = 'full';
@@ -185,7 +192,7 @@ const knownRoutes = siteRoutes
 
 <style>
   .rx-404-page {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     background-color: var(--rx-surface-1);
