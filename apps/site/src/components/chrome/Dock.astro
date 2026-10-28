@@ -1,0 +1,296 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/chrome/Dock.astro
+//
+// Persistent 56px Bottom Thumb Dock:
+// - Keeps primary navigation in the lower 40% thumb zone
+// - Solid surface token (var(--rx-surface-1)) for iOS 26 Safari tint stability
+// - 4 slots with >= 44x44px touch targets
+// - Dynamic 2px sliding accent line indicator
+// - Context-aware slot 2: "Docs" on landing/playground, "Contents" on doc pages
+// - Automatically hidden when keyboard is open, on desktop (>=768px), or in short landscape
+// ──────────────────────────────────────────────────────────────────────────────
+
+import { withBase } from '../../site.config';
+
+interface Props {
+  currentPath?: string;
+  isDocs?: boolean;
+}
+
+const { currentPath = '/', isDocs = false } = Astro.props;
+
+const isLanding = currentPath === withBase('/') || currentPath === '/';
+const isPlayground = currentPath.startsWith(withBase('/playground/'));
+const isDocsSection = isDocs || currentPath.startsWith(withBase('/getting-started/')) || currentPath.startsWith(withBase('/algorithms/'));
+
+// Determine initial active slot index: 0 = Home, 1 = Docs/Contents, 2 = Search, 3 = Menu
+let initialActiveIndex = 0;
+if (isLanding) {
+  initialActiveIndex = 0;
+} else if (isDocsSection) {
+  initialActiveIndex = 1;
+}
+---
+
+<nav class="rx-dock" aria-label="Mobile Bottom Dock" id="rx-bottom-dock">
+  <!-- 2px Sliding Accent Line Indicator -->
+  <div
+    class="rx-dock-indicator"
+    id="rx-dock-indicator"
+    style={`--active-index: ${initialActiveIndex};`}
+    aria-hidden="true"
+  ></div>
+
+  <div class="rx-dock-grid">
+    <!-- Slot 1: Home -->
+    <a
+      href={withBase('/')}
+      class:list={['rx-dock-item', { 'is-active': isLanding }]}
+      aria-label="Home page"
+      data-dock-slot="0"
+      data-pressable
+    >
+      <div class="rx-dock-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </div>
+      <span class="rx-dock-label">Home</span>
+    </a>
+
+    <!-- Slot 2: Docs OR Contents TOC (on doc pages) -->
+    {
+      isDocs ? (
+        <button
+          type="button"
+          class="rx-dock-item rx-dock-item--btn"
+          id="rx-dock-contents-btn"
+          aria-label="Open document table of contents"
+          data-dock-slot="1"
+          data-pressable
+        >
+          <div class="rx-dock-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+          </div>
+          <span class="rx-dock-label">Contents</span>
+        </button>
+      ) : (
+        <a
+          href={withBase('/getting-started/')}
+          class:list={['rx-dock-item', { 'is-active': isDocsSection }]}
+          aria-label="Documentation"
+          data-dock-slot="1"
+          data-pressable
+        >
+          <div class="rx-dock-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+          <span class="rx-dock-label">Docs</span>
+        </a>
+      )
+    }
+
+    <!-- Slot 3: Search -->
+    <button
+      type="button"
+      class="rx-dock-item rx-dock-item--btn"
+      id="rx-dock-search-btn"
+      aria-label="Search documentation and algorithms"
+      data-dock-slot="2"
+      data-pressable
+    >
+      <div class="rx-dock-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <span class="rx-dock-label">Search</span>
+    </button>
+
+    <!-- Slot 4: Menu -->
+    <button
+      type="button"
+      class="rx-dock-item rx-dock-item--btn"
+      id="rx-dock-menu-btn"
+      aria-label="Open navigation menu"
+      aria-haspopup="dialog"
+      data-dock-slot="3"
+      data-pressable
+    >
+      <div class="rx-dock-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </div>
+      <span class="rx-dock-label">Menu</span>
+    </button>
+  </div>
+</nav>
+
+<style>
+  .rx-dock {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: var(--rx-dock-height, 56px);
+    padding-bottom: var(--safe-bottom, 0px);
+    background-color: var(--rx-surface-1); /* Solid token: protects iOS 26 Safari tint */
+    border-top: 1px solid var(--rx-border-subtle);
+    z-index: var(--z-flyout, 50);
+    box-sizing: content-box;
+    display: block;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Desktop hiding: dock is phones/small tablets only (< 768px) */
+  @media (min-width: 768px) {
+    .rx-dock {
+      display: none !important;
+    }
+  }
+
+  /* Keyboard open hiding */
+  :global(body.has-keyboard) .rx-dock {
+    display: none !important;
+  }
+
+  /* Short landscape hiding */
+  @media (max-height: 480px) and (orientation: landscape) {
+    .rx-dock {
+      display: none !important;
+    }
+  }
+
+  /* 2px Sliding Top Accent Indicator */
+  .rx-dock-indicator {
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 25%;
+    height: 2px;
+    background: var(--rx-accent-cyan);
+    box-shadow: 0 0 8px var(--rx-accent-cyan-glow, rgba(20, 221, 253, 0.4));
+    transform: translateX(calc(var(--active-index, 0) * 100%));
+    transition: transform var(--rx-dur-fast, 140ms) var(--rx-ease-out);
+    pointer-events: none;
+  }
+
+  .rx-dock-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .rx-dock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 100%;
+    min-height: 56px;
+    min-width: 44px;
+    color: var(--rx-text-3);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    padding: 6px 0;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      color var(--rx-dur-fast) var(--rx-ease-out),
+      transform var(--rx-dur-instant) var(--rx-ease-out);
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .rx-dock-item:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--rx-accent-indigo);
+  }
+
+  .rx-dock-item.is-active {
+    color: var(--rx-accent-cyan);
+  }
+
+  .rx-dock-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+
+  .rx-dock-label {
+    font-family: var(--rx-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 550;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+  }
+</style>
+
+<script>
+  import { triggerHaptic } from '../../motion/mobile';
+
+  function initDock() {
+    const dock = document.getElementById('rx-bottom-dock');
+    if (!dock) return;
+
+    const indicator = document.getElementById('rx-dock-indicator');
+    const items = dock.querySelectorAll<HTMLElement>('.rx-dock-item');
+    const searchBtn = document.getElementById('rx-dock-search-btn');
+    const menuBtn = document.getElementById('rx-dock-menu-btn');
+    const contentsBtn = document.getElementById('rx-dock-contents-btn');
+
+    items.forEach((item) => {
+      item.addEventListener('click', () => {
+        const slot = item.dataset.dockSlot;
+        if (slot && indicator) {
+          indicator.style.setProperty('--active-index', slot);
+        }
+        triggerHaptic('tap');
+      });
+    });
+
+    searchBtn?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('rx-open-search'));
+    });
+
+    menuBtn?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('rx-open-mobile-sheet'));
+    });
+
+    contentsBtn?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('rx-open-contents-sheet'));
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDock);
+  } else {
+    initDock();
+  }
+</script>

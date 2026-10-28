@@ -9,3 +9,4 @@ export * from './kill-switch.js';
 export * from './observer.js';
 export * from './pointer.js';
 export * from './odometer.js';
+export * from './mobile.js';

@@ -23,7 +23,7 @@ import '../styles/landing.css';
       @layer reset, tokens, base, layout, components, utilities;
     </style>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{siteConfig.name} — Rate limiting you can reason about</title>
     <meta name="description" content={siteConfig.description} />
     <meta name="robots" content="noindex, nofollow" />
@@ -38,7 +38,7 @@ import '../styles/landing.css';
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
     />
 
-    <!-- Theme & Motion Initialization Script (prevents flash and layout shifts) -->
+    <!-- Theme, Motion & Lite Mode Initialization Script (prevents flash and layout shifts) -->
     <script is:inline>
       (function () {
         try {
@@ -50,7 +50,14 @@ import '../styles/landing.css';
           const storedMotion = localStorage.getItem('rx-motion');
           const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           const isSaveData = Boolean(navigator.connection && navigator.connection.saveData);
-          if (storedMotion === 'reduced' || prefersReduced || isSaveData) {
+          const isLowEnd = Boolean(
+            (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+            (navigator.deviceMemory && navigator.deviceMemory < 4)
+          );
+          if (isSaveData || isLowEnd) {
+            document.documentElement.dataset.liteMode = 'true';
+          }
+          if (storedMotion === 'reduced' || prefersReduced || isSaveData || isLowEnd) {
             document.documentElement.dataset.motion = 'reduced';
           } else {
             document.documentElement.dataset.motion = 'full';

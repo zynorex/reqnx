@@ -243,8 +243,18 @@
     --rx-focus-ring: 0 0 0 2px var(--rx-surface-1), 0 0 0 4px var(--rx-accent-indigo);
 
     /* ─── Chrome Geometry & Z-Index Tokens ───────────────────────────────── */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+
     --rx-header-height: 56px;
     --rx-header-height-mobile: 52px;
+    --rx-dock-height: 56px;
+    --rx-dock-total-height: calc(var(--rx-dock-height) + var(--safe-bottom));
+    --rx-touch-target-min: 44px;
+    --rx-touch-gap-min: 8px;
+
     --rx-header-bg: transparent;
     --rx-header-bg-solid: color-mix(in srgb, var(--rx-surface-1) 92%, transparent);
     --rx-header-border: var(--rx-border-subtle);
@@ -255,6 +265,7 @@
     --header-height-mobile: var(--rx-header-height-mobile);
 
     --z-header: 40;
+    --z-dock: 45;
     --z-flyout: 50;
     --z-sheet: 60;
     --z-palette: 70;
@@ -378,6 +389,9 @@
     scroll-padding-top: 5rem;
     font-size: 16px;
     color-scheme: dark light;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -389,6 +403,22 @@
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Reserve bottom clearance on phones for fixed thumb dock */
+  @media (max-width: 767px) {
+    body:not(.no-dock) {
+      padding-bottom: var(--rx-dock-total-height, 56px);
+    }
+  }
+
+  /* When virtual keyboard is open or on short landscape, release dock padding */
+  body.has-keyboard,
+  @media (max-height: 480px) and (orientation: landscape) {
+    body:not(.no-dock) {
+      padding-bottom: 0 !important;
+    }
   }
 
   h1,
@@ -412,6 +442,8 @@
     color: var(--rx-accent-cyan);
     text-decoration: none;
     transition: color var(--rx-transition-fast);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   a:not(.btn):hover {
@@ -420,9 +452,35 @@
 
   a:not(.btn):focus-visible,
   input:focus-visible,
-  select:focus-visible {
+  select:focus-visible,
+  textarea:focus-visible {
     outline: none;
     box-shadow: var(--rx-focus-ring);
+  }
+
+  /* Form inputs: enforce 16px on mobile to prevent iOS Safari auto-zooming */
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+    font-size: 16px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 768px) {
+    input,
+    select,
+    textarea {
+      font-size: inherit;
+    }
+  }
+
+  [role='tab'],
+  summary {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Tabular figures across all numbers in technical contexts */
@@ -502,6 +560,15 @@
 }
 
 @layer components {
+  /* ─── Instant Tactile Feedback (< 90ms) ───────────────────────────────── */
+  @media (prefers-reduced-motion: no-preference) {
+    html:not([data-motion='reduced']) [data-pressable][data-pressed='true'],
+    html:not([data-motion='reduced']) .rx-dock-item[data-pressed='true'] {
+      transform: scale(0.98);
+      transition: transform var(--rx-dur-instant, 90ms) var(--rx-ease-out);
+    }
+  }
+
   /* ─── Window-Tick Motif Background ─────────────────────────────────────── */
   .rx-window-tick-bg {
     position: relative;

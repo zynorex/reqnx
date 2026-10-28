@@ -26,6 +26,9 @@ const ALLOWED_COMPONENTS = new Set([
   'Header.astro',
   'MobileSheet.astro',
   'NavFlyout.astro',
+  'Dock.astro',
+  'Rail.astro',
+  'Sheet.astro',
 ]);
 
 export interface SourceLintResult {

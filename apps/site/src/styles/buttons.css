@@ -11,6 +11,8 @@
     /* Reset & Semantics */
     appearance: none;
     -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     box-sizing: border-box;
     display: inline-flex;
     align-items: center;
@@ -71,8 +73,9 @@
 
   /* ─── Active Press Motion (Gated by Reduced Motion) ─────────────────────── */
   @media (prefers-reduced-motion: no-preference) {
-    html:not([data-motion='reduced']) .btn:active:not(:disabled):not([aria-disabled='true']):not([data-loading='true']) {
-      transform: translateY(1px) scale(0.99);
+    html:not([data-motion='reduced']) :is(.btn:active, .btn[data-pressed='true']):not(:disabled):not([aria-disabled='true']):not([data-loading='true']) {
+      transform: translateY(1px) scale(0.98);
+      transition-duration: var(--rx-dur-instant, 90ms);
     }
 
     /* Trailing Arrow Micro-nudge */

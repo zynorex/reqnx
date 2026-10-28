@@ -1,0 +1,86 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/common/StickyAction.astro
+//
+// Sticky Bottom Action Container:
+// - Pins primary mobile actions in the thumb zone above the dock
+// - Automatically offsets above the 56px bottom thumb dock on phones
+// - Elevated surface token with border and backdrop blur for scrolling content
+// - Responsive layout: hides or converts into inline container on desktop
+// ──────────────────────────────────────────────────────────────────────────────
+
+interface Props {
+  class?: string;
+  offsetAboveDock?: boolean;
+}
+
+const {
+  class: className = '',
+  offsetAboveDock = true,
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'rx-sticky-action',
+    { 'offset-above-dock': offsetAboveDock },
+    className,
+  ]}
+>
+  <div class="rx-sticky-action-inner">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .rx-sticky-action {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: calc(var(--z-dock, 45) - 1);
+    background: var(--rx-surface-1);
+    border-top: 1px solid var(--rx-border-subtle);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
+    padding: 0.75rem 1rem;
+    box-sizing: border-box;
+    transition: bottom var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  /* When dock is present on mobile, offset sticky action bar above it */
+  @media (max-width: 767px) {
+    .rx-sticky-action.offset-above-dock {
+      bottom: var(--rx-dock-total-height, 56px);
+    }
+  }
+
+  /* When virtual keyboard opens or in landscape, pin directly to screen bottom */
+  :global(body.has-keyboard) .rx-sticky-action,
+  @media (max-height: 480px) and (orientation: landscape) {
+    .rx-sticky-action.offset-above-dock {
+      bottom: 0 !important;
+    }
+  }
+
+  .rx-sticky-action-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    max-width: 640px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* On desktop, sticky action becomes a natural inline bar if desired */
+  @media (min-width: 768px) {
+    .rx-sticky-action {
+      position: static;
+      box-shadow: none;
+      background: transparent;
+      border-top: none;
+      padding: 0.5rem 0;
+    }
+  }
+</style>

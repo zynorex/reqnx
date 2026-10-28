@@ -1,0 +1,347 @@
+---
+// ──────────────────────────────────────────────────────────────────────────────
+// apps/site/src/components/common/Sheet.astro
+//
+// Native <dialog> Modal Bottom Sheet Primitive:
+// - Accessible modal dialog with focus management and backdrop inerting
+// - 44px Drag handle header for touch gesture feedback
+// - Explicit 44px Close button
+// - Sizing options: 'auto' | 'half' (50dvh) | 'full' (88dvh)
+// - Native hardware Back button / gesture Back support (popstate integration)
+// - Smooth spring exit/entry animation
+// ──────────────────────────────────────────────────────────────────────────────
+
+interface Props {
+  id: string;
+  title: string;
+  size?: 'auto' | 'half' | 'full';
+  showHandle?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  title,
+  size = 'auto',
+  showHandle = true,
+  class: className = '',
+} = Astro.props;
+---
+
+<!-- Scrim Backdrop -->
+<div class="rx-sheet-backdrop" id={`${id}-backdrop`} aria-hidden="true"></div>
+
+<!-- Native Bottom Sheet Dialog -->
+<dialog
+  class:list={['rx-bottom-sheet', `is-${size}`, className]}
+  id={id}
+  aria-labelledby={`${id}-title`}
+>
+  <div class="rx-sheet-container">
+    {showHandle && (
+      <div class="rx-sheet-handle-zone" id={`${id}-handle-zone`} aria-hidden="true">
+        <span class="rx-sheet-handle-bar"></span>
+      </div>
+    )}
+
+    <div class="rx-sheet-header">
+      <h2 class="rx-sheet-title" id={`${id}-title`}>
+        {title}
+      </h2>
+      <button
+        type="button"
+        class="rx-sheet-close-btn"
+        id={`${id}-close`}
+        aria-label={`Close ${title} sheet`}
+        data-pressable
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="rx-sheet-body">
+      <slot />
+    </div>
+  </div>
+</dialog>
+
+<style>
+  /* ─── Scrim Backdrop ──────────────────────────────────────────────────── */
+  .rx-sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 13, 19, 0.72);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: calc(var(--z-sheet, 60) - 1);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--rx-dur-panel, 260ms) var(--rx-ease-out);
+  }
+
+  .rx-sheet-backdrop.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ─── Bottom Sheet Dialog ─────────────────────────────────────────────── */
+  .rx-bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    margin: 0;
+    width: 100%;
+    max-width: 640px;
+    margin-inline: auto;
+    border: none;
+    padding: 0;
+    background: transparent;
+    z-index: var(--z-sheet, 60);
+    overflow: visible;
+    transform: translateY(100%);
+    transition: transform var(--rx-dur-panel, 260ms) var(--rx-ease-spring);
+  }
+
+  .rx-bottom-sheet::backdrop {
+    display: none;
+  }
+
+  .rx-bottom-sheet.is-open {
+    transform: translateY(0);
+  }
+
+  .rx-sheet-container {
+    background: var(--rx-surface-1);
+    border-top: 1px solid var(--rx-hairline-strong, var(--rx-border-subtle));
+    border-top-left-radius: var(--rx-radius-lg, 16px);
+    border-top-right-radius: var(--rx-radius-lg, 16px);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.45);
+    padding-bottom: calc(var(--safe-bottom, 0px) + 1rem);
+    max-height: 88dvh;
+    box-sizing: border-box;
+  }
+
+  .rx-bottom-sheet.is-half .rx-sheet-container {
+    height: 52dvh;
+  }
+
+  .rx-bottom-sheet.is-full .rx-sheet-container {
+    height: 88dvh;
+  }
+
+  /* ─── Drag Handle Zone ────────────────────────────────────────────────── */
+  .rx-sheet-handle-zone {
+    width: 100%;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    touch-action: none;
+    flex-shrink: 0;
+  }
+
+  .rx-sheet-handle-bar {
+    width: 36px;
+    height: 4px;
+    border-radius: var(--rx-radius-full);
+    background: var(--rx-border-subtle);
+    transition: background-color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-sheet-handle-zone:hover .rx-sheet-handle-bar {
+    background: var(--rx-text-3);
+  }
+
+  /* ─── Header Row ──────────────────────────────────────────────────────── */
+  .rx-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.25rem 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--rx-border-subtle);
+    flex-shrink: 0;
+  }
+
+  .rx-sheet-title {
+    font-family: var(--rx-font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--rx-text-1);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .rx-sheet-close-btn {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: var(--rx-radius-sm);
+    color: var(--rx-text-2);
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--rx-dur-fast) var(--rx-ease-out), color var(--rx-dur-fast) var(--rx-ease-out);
+  }
+
+  .rx-sheet-close-btn:hover {
+    background: var(--rx-surface-2);
+    color: var(--rx-text-1);
+  }
+
+  .rx-sheet-close-btn:focus-visible {
+    box-shadow: var(--rx-focus-ring);
+    outline: none;
+  }
+
+  /* ─── Body Area ───────────────────────────────────────────────────────── */
+  .rx-sheet-body {
+    padding: 1.25rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    flex: 1 1 auto;
+  }
+</style>
+
+<script>
+  import { pushSheetHistory, popSheetHistory, triggerHaptic } from '../../motion/mobile';
+
+  function initSheet(sheetId: string) {
+    const sheet = document.getElementById(sheetId) as HTMLDialogElement | null;
+    const backdrop = document.getElementById(`${sheetId}-backdrop`);
+    const closeBtn = document.getElementById(`${sheetId}-close`);
+    const handleZone = document.getElementById(`${sheetId}-handle-zone`);
+
+    if (!sheet) return;
+
+    let lastActiveElement: HTMLElement | null = null;
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    function openSheet() {
+      if (!sheet) return;
+      lastActiveElement = document.activeElement as HTMLElement;
+
+      backdrop?.classList.add('is-visible');
+      sheet.classList.add('is-open');
+
+      if (typeof sheet.showModal === 'function') {
+        try {
+          sheet.showModal();
+        } catch {}
+      }
+
+      document.body.style.overflow = 'hidden';
+      pushSheetHistory(sheetId, closeSheet);
+      triggerHaptic('tap');
+      closeBtn?.focus();
+
+      window.dispatchEvent(new CustomEvent('rx-sheet-opened', { detail: { sheetId } }));
+    }
+
+    function closeSheet() {
+      if (!sheet) return;
+
+      sheet.classList.remove('is-open');
+      backdrop?.classList.remove('is-visible');
+
+      setTimeout(() => {
+        if (typeof sheet.close === 'function') {
+          try {
+            sheet.close();
+          } catch {}
+        }
+        document.body.style.overflow = '';
+        popSheetHistory(sheetId);
+        lastActiveElement?.focus();
+
+        window.dispatchEvent(new CustomEvent('rx-sheet-closed', { detail: { sheetId } }));
+      }, 260);
+    }
+
+    // Wiring
+    closeBtn?.addEventListener('click', closeSheet);
+    backdrop?.addEventListener('click', closeSheet);
+
+    sheet.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeSheet();
+      }
+    });
+
+    // Custom Event Listener
+    window.addEventListener(`rx-open-sheet-${sheetId}`, openSheet);
+
+    // Touch drag-to-dismiss gesture on handle zone
+    if (handleZone) {
+      handleZone.addEventListener(
+        'touchstart',
+        (e) => {
+          startY = e.touches[0]?.clientY || 0;
+          currentY = startY;
+          isDragging = true;
+          sheet.style.transition = 'none';
+        },
+        { passive: true }
+      );
+
+      handleZone.addEventListener(
+        'touchmove',
+        (e) => {
+          if (!isDragging) return;
+          currentY = e.touches[0]?.clientY || 0;
+          const deltaY = Math.max(0, currentY - startY);
+          sheet.style.transform = `translateY(${deltaY}px)`;
+        },
+        { passive: true }
+      );
+
+      handleZone.addEventListener(
+        'touchend',
+        () => {
+          if (!isDragging) return;
+          isDragging = false;
+          sheet.style.transition = '';
+          const deltaY = currentY - startY;
+          if (deltaY > 90) {
+            closeSheet();
+          } else {
+            sheet.style.transform = '';
+          }
+        },
+        { passive: true }
+      );
+    }
+  }
+
+  // Auto-init all Sheet instances on page
+  document.querySelectorAll<HTMLDialogElement>('.rx-bottom-sheet').forEach((dialog) => {
+    if (dialog.id) {
+      initSheet(dialog.id);
+    }
+  });
+</script>

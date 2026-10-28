@@ -28,7 +28,8 @@
     "buttons:a11y": "tsx scripts/run-buttons-a11y.ts",
     "mobile:shots:before": "tsx scripts/take-mobile-before-shots.ts",
     "mobile:shots:mocks": "tsx scripts/take-mobile-mock-shots.ts",
-    "mobile:baseline": "tsx scripts/measure-mobile-baselines.ts"
+    "mobile:baseline": "tsx scripts/measure-mobile-baselines.ts",
+    "verify:mobile:foundations": "tsx scripts/verify-mobile-foundations.ts"
   },
   "dependencies": {
     "@astrojs/preact": "^4.0.0",
