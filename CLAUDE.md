@@ -9,7 +9,7 @@
 
 REQNX is a pluggable, distributed-ready rate limiter for Node.js, written in TypeScript.
 
-**v0.1.0 scope:** Five algorithms × two stores × two framework adapters + composite limits + observability.
+**v0.1.0 scope:** Five algorithms × two stores × two framework adapters + composite limits + o  bservability.
 
 ## The Six Principles
 
