@@ -30,7 +30,7 @@ function loadSharedLua(): string {
     if (!existsSync(fullPath)) {
       throw new Error(`Missing required shared Lua module: ${fullPath}`);
     }
-    return readFileSync(fullPath, 'utf8').trim();
+    return readFileSync(fullPath, 'utf8').replace(/\r\n/g, '\n').trim();
   }).join('\n\n');
 }
 
@@ -59,7 +59,7 @@ function build(): string {
   const bundles: ScriptBundle[] = [];
 
   for (const file of luaFiles) {
-    const body = readFileSync(join(LUA_DIR, file), 'utf8').trim();
+    const body = readFileSync(join(LUA_DIR, file), 'utf8').replace(/\r\n/g, '\n').trim();
     const varPrefix = toConstantPrefix(file);
 
     const consumeScript = `local IS_PEEK = false\n\n${shared}\n\n${body}\n`;
@@ -106,8 +106,8 @@ if (isCheck) {
     console.error(`Missing generated file: ${OUT_FILE}`);
     process.exit(1);
   }
-  const current = readFileSync(OUT_FILE, 'utf8');
-  if (current !== output) {
+  const current = readFileSync(OUT_FILE, 'utf8').replace(/\r\n/g, '\n');
+  if (current !== output.replace(/\r\n/g, '\n')) {
     console.error(
       `Generated Lua scripts are out of date! Run 'pnpm --filter @reqnx/redis build:lua' to regenerate.`,
     );
