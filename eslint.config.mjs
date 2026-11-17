@@ -19,6 +19,7 @@ export default [
             'packages/*/vitest.config.ts',
             'scripts/*.ts',
             'packages/*/scripts/*.ts',
+            'packages/redis/test/support/*.ts',
           ],
         },
       },

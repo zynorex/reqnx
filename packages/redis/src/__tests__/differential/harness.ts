@@ -17,6 +17,14 @@ import { type RedisClientAdapter, type RedisStore } from '../../types.js';
 
 export const REDIS_URL = process.env['REDIS_URL'] || 'redis://127.0.0.1:6379';
 
+/**
+ * Base virtual timestamp for differential tests (May 2033).
+ *
+ * Using a timestamp strictly in the future prevents real Redis servers from
+ * immediately evicting keys via PEXPIREAT during virtual time simulations.
+ */
+export const DIFF_BASE_TIME_MS = 2_000_000_000_000;
+
 let cachedAvailability: boolean | null = null;
 
 /**
@@ -62,7 +70,7 @@ export interface DifferentialContext {
  */
 export async function setupDifferentialStore(
   adapterType: 'node-redis' | 'ioredis',
-  initialTimeMs: number = 1_000_000,
+  initialTimeMs: number = DIFF_BASE_TIME_MS,
 ): Promise<DifferentialContext> {
   const clock = new FakeClock(initialTimeMs);
 

@@ -12,6 +12,7 @@ export const MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER; // 9007199254740991 (2^
 export const MIN_SAFE_INTEGER = Number.MIN_SAFE_INTEGER;
 
 export type RedisErrorCode =
+  // Day 6 canonical codes
   | 'REQNX_CONNECTION_ERROR'
   | 'REQNX_COMMAND_TIMEOUT'
   | 'REQNX_WRONGTYPE'
@@ -23,7 +24,17 @@ export type RedisErrorCode =
   | 'REQNX_CLIENT_CLOSED'
   | 'REQNX_UNSUPPORTED_OPERATION'
   | 'REQNX_UNSUPPORTED_ALGORITHM'
-  | 'REQNX_MISSING_PEER_DEPENDENCY';
+  | 'REQNX_MISSING_PEER_DEPENDENCY'
+  | 'REQNX_OVERLOADED'
+  | 'REQNX_CIRCUIT_OPEN'
+  // Day 7 standard resilience taxonomy codes
+  | 'timeout'
+  | 'overloaded'
+  | 'circuit-open'
+  | 'readonly'
+  | 'connection'
+  | 'script'
+  | 'corrupt-state';
 
 /**
  * Specialized StoreError subclass carrying structured machine-readable error codes.
@@ -149,11 +160,16 @@ export function mapRedisError(err: unknown): RedisStoreError {
   // 1. Connection / Network errors
   if (
     lowerMsg.includes('econnrefused') ||
+    lowerMsg.includes('econnreset') ||
     lowerMsg.includes('connection is closed') ||
+    lowerMsg.includes('connection reset') ||
     lowerMsg.includes('client is closed') ||
     lowerMsg.includes('not connected') ||
     lowerMsg.includes('nr_closed') ||
-    lowerMsg.includes('enotfound')
+    lowerMsg.includes('enotfound') ||
+    lowerMsg.includes("stream isn't writeable") ||
+    lowerMsg.includes('enableofflinequeue') ||
+    lowerMsg.includes('socket closed')
   ) {
     return new RedisStoreError(`Redis connection error: ${rawMsg}`, {
       code: 'REQNX_CONNECTION_ERROR',

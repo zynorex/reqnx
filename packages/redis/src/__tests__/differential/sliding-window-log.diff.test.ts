@@ -13,6 +13,7 @@ import {
   runDifferentialSequence,
   assertDecisionMatch,
   neutraliseTtl,
+  DIFF_BASE_TIME_MS,
   type DifferentialContext,
 } from './harness.js';
 import { RedisStoreError } from '../../adapters/base.js';
@@ -103,16 +104,16 @@ describe('slidingWindowLog Differential Suite (TypeScript vs Redis Lua)', () => 
         const key = `test:swl:backwards:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
         const wrappedAlgo = neutraliseTtl(slidingWindowLog);
 
-        ctx.clock.set(1_000_000);
+        ctx.clock.set(DIFF_BASE_TIME_MS);
         await ctx.store.consume(wrappedAlgo, key, config, 2);
 
         // Clock moves backwards by 500ms
-        ctx.clock.set(999_500);
+        ctx.clock.set(DIFF_BASE_TIME_MS - 500);
 
         const expected = slidingWindowLog.step(
-          { logs: [{ timestamp: 1_000_000, cost: 2 }] },
+          { logs: [{ timestamp: DIFF_BASE_TIME_MS, cost: 2 }] },
           config,
-          999_500,
+          DIFF_BASE_TIME_MS - 500,
           1,
         );
         const actual = await ctx.store.consume(wrappedAlgo, key, config, 1);
@@ -128,11 +129,11 @@ describe('slidingWindowLog Differential Suite (TypeScript vs Redis Lua)', () => 
         const config = slidingWindowLog.parseConfig({ limit: 10, window: '10s' });
         const key = `test:swl:corrupt:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
 
-        // Write corrupt unparseable member into ZSET
+        // Write corrupt unparseable member into ZSET within the active window
         await ctx.adapter.eval(
-          "redis.call('ZADD', KEYS[1], 1000, 'CORRUPT_MEMBER_STRING')",
+          "redis.call('ZADD', KEYS[1], ARGV[1], 'CORRUPT_MEMBER_STRING')",
           [key],
-          [],
+          [ctx.clock.nowMs()],
         );
 
         await expect(ctx.store.consume(slidingWindowLog, key, config, 1)).rejects.toThrowError(

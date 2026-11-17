@@ -5,6 +5,7 @@
 // ──────────────────────────────────────────────────────────────────────────────
 
 import { type AlgorithmId, type Clock, type Decision, type Store } from '@reqnx/core';
+import { type RedisErrorCode } from './adapters/base.js';
 
 /**
  * Minimal structural client adapter interface.
@@ -71,6 +72,11 @@ export interface RedisClientAdapter {
    * Used by `timeMode: 'pre-call'` for restrictive proxy environments.
    */
   time?(): Promise<[seconds: number, microseconds: number]>;
+
+  /**
+   * Send a PING command to Redis to verify connectivity.
+   */
+  ping?(): Promise<string>;
 
   /**
    * Check whether the underlying client connection has been closed.
@@ -142,6 +148,38 @@ export interface RedisStoreOptions {
    * Custom algorithm Redis port definitions to register on this store instance.
    */
   readonly customPorts?: readonly AlgorithmRedisPort<unknown, unknown>[];
+
+  /**
+   * Per-call timeout in milliseconds for store operations (consume, peek, reset, ping).
+   *
+   * Rejects with StoreError (code 'timeout') on expiry.
+   *
+   * @default 250
+   */
+  readonly timeoutMs?: number;
+
+  /**
+   * Bulkhead cap: maximum number of concurrent in-flight calls to Redis.
+   * Calls beyond this cap immediately reject with code 'overloaded'.
+   * 0 disables the cap.
+   *
+   * @default 0
+   */
+  readonly maxPending?: number;
+
+  /**
+   * Optional Circuit Breaker configuration or pre-instantiated instance.
+   *
+   * If true, enables circuit breaker with default options:
+   * (threshold: 5, window: 10s, cooldown: 5s, halfOpenProbes: 1).
+   */
+  readonly circuitBreaker?: boolean | {
+    readonly failureThreshold?: number;
+    readonly windowMs?: number;
+    readonly cooldownMs?: number;
+    readonly halfOpenProbes?: number;
+    readonly clock?: Clock;
+  };
 }
 
 /**
@@ -152,6 +190,18 @@ export interface RedisStoreStats {
   readonly evalshaCalls: number;
   /** Number of `NOSCRIPT` occurrences that triggered fallback to `EVAL`. */
   readonly evalFallbacks: number;
+  /** Number of calls rejected due to timeoutMs deadline expiry. */
+  readonly timeouts: number;
+  /** Current number of concurrent calls in-flight against Redis. */
+  readonly inFlight: number;
+  /** Peak concurrent calls observed during the store's lifecycle. */
+  readonly pendingPeak: number;
+  /** Current state of the circuit breaker ('closed', 'open', 'half-open', or null if disabled). */
+  readonly circuitState: 'closed' | 'open' | 'half-open' | null;
+  /** Stable error code of the most recent error, or null. */
+  readonly lastErrorCode: string | null;
+  /** Timestamp in epoch ms of the most recent error, or null. */
+  readonly lastErrorTimeMs: number | null;
   /** Count of errors grouped by error classification. */
   readonly errors: {
     readonly connection: number;
@@ -160,6 +210,9 @@ export interface RedisStoreStats {
     readonly wrongType: number;
     readonly corruptState: number;
     readonly timeRejected: number;
+    readonly overloaded: number;
+    readonly circuitOpen: number;
+    readonly readonly: number;
     readonly other: number;
   };
 }
@@ -232,4 +285,9 @@ export interface RedisStore extends Store {
    * Register a custom Lua port definition for an algorithm ID.
    */
   registerPort<C = unknown, S = unknown>(port: AlgorithmRedisPort<C, S>): void;
+
+  /**
+   * Health check probe sending PING to Redis bounded by timeoutMs.
+   */
+  ping(): Promise<{ ok: boolean; latencyMs: number; code?: RedisErrorCode }>;
 }

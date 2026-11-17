@@ -13,6 +13,7 @@ import {
   runDifferentialSequence,
   assertDecisionMatch,
   neutraliseTtl,
+  DIFF_BASE_TIME_MS,
   type DifferentialContext,
 } from './harness.js';
 import { RedisStoreError } from '../../adapters/base.js';
@@ -125,17 +126,17 @@ describe('fixedWindow Differential Suite (TypeScript vs Redis Lua)', () => {
         const key = `test:fw:backwards:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
         const wrappedAlgo = neutraliseTtl(fixedWindow);
 
-        // Current time: 1_000_000 (window: 1_000_000 to 1_010_000)
-        ctx.clock.set(1_000_000);
+        // Current time: DIFF_BASE_TIME_MS (window: DIFF_BASE_TIME_MS to DIFF_BASE_TIME_MS + 10s)
+        ctx.clock.set(DIFF_BASE_TIME_MS);
         const d1 = await ctx.store.consume(wrappedAlgo, key, config, 2);
         expect(d1.allowed).toBe(true);
         expect(d1.remaining).toBe(2);
 
         // Clock moves backwards by 500ms
-        ctx.clock.set(999_500);
+        ctx.clock.set(DIFF_BASE_TIME_MS - 500);
 
         // Step through TS algorithm to get expected outcome
-        const expected = fixedWindow.step({ windowStart: 1_000_000, count: 2 }, config, 999_500, 1);
+        const expected = fixedWindow.step({ windowStart: DIFF_BASE_TIME_MS, count: 2 }, config, DIFF_BASE_TIME_MS - 500, 1);
         const actual = await ctx.store.consume(wrappedAlgo, key, config, 1);
 
         assertDecisionMatch(actual, expected.decision, 'Backwards clock check');

@@ -6,7 +6,7 @@
 // ──────────────────────────────────────────────────────────────────────────────
 
 import { createHash } from 'node:crypto';
-import { type RedisClientAdapter, type RedisStoreStats } from './types.js';
+import { type RedisClientAdapter } from './types.js';
 import { isNoScriptError, mapRedisError, RedisStoreError } from './adapters/base.js';
 
 /**
@@ -130,13 +130,12 @@ export class ScriptRunner {
   }
 
   /**
-   * Read execution counters and error statistics.
+   * Read execution counters and statistics.
    */
-  getStats(): RedisStoreStats {
+  getStats(): { evalshaCalls: number; evalFallbacks: number } {
     return {
       evalshaCalls: this._evalshaCalls,
       evalFallbacks: this._evalFallbacks,
-      errors: { ...this._errors },
     };
   }
 

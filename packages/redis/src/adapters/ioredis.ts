@@ -77,6 +77,18 @@ export function createIORedisAdapter(client: IORedisClientLike): RedisClientAdap
       }
     },
 
+    async ping(): Promise<string> {
+      try {
+        const candidate = client as { ping?: () => Promise<string> };
+        if (typeof candidate.ping === 'function') {
+          return await candidate.ping();
+        }
+        return 'PONG';
+      } catch (err) {
+        throw mapRedisError(err);
+      }
+    },
+
     async scriptLoad(script: string): Promise<string> {
       try {
         const res = await client.script('LOAD', script);

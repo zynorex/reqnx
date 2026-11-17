@@ -41,7 +41,8 @@ describe('NOSCRIPT & SCRIPT FLUSH Resilience', () => {
     const config = fixedWindow.parseConfig({ limit: 10, window: '10s' });
     const key = `test:noscript:${Math.random().toString(36).slice(2, 8)}`;
 
-    // 1. Initial consume loads script into Redis cache
+    // 1. Warm up store so scripts are loaded into Redis cache
+    await store.warmup();
     const d1 = await store.consume(fixedWindow, key, config, 1);
     expect(d1.allowed).toBe(true);
 

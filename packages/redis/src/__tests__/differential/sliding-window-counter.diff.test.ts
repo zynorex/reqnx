@@ -13,6 +13,7 @@ import {
   runDifferentialSequence,
   assertDecisionMatch,
   neutraliseTtl,
+  DIFF_BASE_TIME_MS,
   type DifferentialContext,
 } from './harness.js';
 import { RedisStoreError } from '../../adapters/base.js';
@@ -101,16 +102,16 @@ describe('slidingWindowCounter Differential Suite (TypeScript vs Redis Lua)', ()
         const key = `test:swc:backwards:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
         const wrappedAlgo = neutraliseTtl(slidingWindowCounter);
 
-        ctx.clock.set(1_000_000);
+        ctx.clock.set(DIFF_BASE_TIME_MS);
         await ctx.store.consume(wrappedAlgo, key, config, 4);
 
         // Clock moves backwards by 500ms
-        ctx.clock.set(999_500);
+        ctx.clock.set(DIFF_BASE_TIME_MS - 500);
 
         const expected = slidingWindowCounter.step(
-          { currentWindowStart: 1_000_000, currentCount: 4, previousCount: 0 },
+          { currentWindowStart: DIFF_BASE_TIME_MS, currentCount: 4, previousCount: 0 },
           config,
-          999_500,
+          DIFF_BASE_TIME_MS - 500,
           2,
         );
         const actual = await ctx.store.consume(wrappedAlgo, key, config, 2);

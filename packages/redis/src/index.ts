@@ -18,3 +18,11 @@ export {
   type RedisClientAdapter,
   type AlgorithmRedisPort,
 } from './types.js';
+export {
+  CircuitBreaker,
+  type CircuitBreakerOptions,
+  type CircuitBreakerState,
+} from './resilience/circuit-breaker.js';
+export { Bulkhead, type BulkheadOptions } from './resilience/bulkhead.js';
+export { withTimeout, type TimeoutOptions } from './resilience/timeout.js';
+

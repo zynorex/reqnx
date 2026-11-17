@@ -13,6 +13,7 @@ import {
   runDifferentialSequence,
   assertDecisionMatch,
   neutraliseTtl,
+  DIFF_BASE_TIME_MS,
   type DifferentialContext,
 } from './harness.js';
 import { RedisStoreError } from '../../adapters/base.js';
@@ -137,18 +138,18 @@ describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
         const key = `test:tb:backwards:${adapterType}:${Math.random().toString(36).slice(2, 8)}`;
         const wrappedAlgo = neutraliseTtl(tokenBucket);
 
-        ctx.clock.set(1_000_000);
+        ctx.clock.set(DIFF_BASE_TIME_MS);
         const d1 = await ctx.store.consume(wrappedAlgo, key, config, 5);
         expect(d1.allowed).toBe(true);
         expect(d1.remaining).toBe(5);
 
         // Clock moves backwards by 2000ms
-        ctx.clock.set(998_000);
+        ctx.clock.set(DIFF_BASE_TIME_MS - 2_000);
 
         const expected = tokenBucket.step(
-          { level: 5 * config.b, at: 1_000_000, a: config.a, b: config.b },
+          { level: 5 * config.b, at: DIFF_BASE_TIME_MS, a: config.a, b: config.b },
           config,
-          998_000,
+          DIFF_BASE_TIME_MS - 2_000,
           1,
         );
         const actual = await ctx.store.consume(wrappedAlgo, key, config, 1);
@@ -174,7 +175,7 @@ describe('tokenBucket Differential Suite (TypeScript vs Redis Lua)', () => {
           refillInterval: '1s',
         });
 
-        ctx.clock.set(1_000_000);
+        ctx.clock.set(DIFF_BASE_TIME_MS);
         const d1 = await ctx.store.consume(neutraliseTtl(tokenBucket), key, configA, 4);
         expect(d1.remaining).toBe(6);
 
