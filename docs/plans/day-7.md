@@ -75,7 +75,7 @@ Day 7 completes the algorithm suite with the fifth algorithm—**leaky bucket (a
 
 ## 4. Part-by-Part Status
 
-- [ ] **Part 1: Leaky Bucket (Meter)**
+- [x] **Part 1: Leaky Bucket (Meter)** (Completed: pure algorithm, 100% coverage, water oracle, cross-algorithm fast-check, curve-1, Redis Lua port sharing token-bucket scripts, differential tests across node-redis and ioredis, comparison harness extension, ADRs 0027 & 0028, documentation).
 - [ ] **Part 2: Failure Engineering for RedisStore**
 - [ ] **Part 3: Concurrency at Scale**
 - [ ] **Part 4: Replica, Cluster, Sentinel, Ops Guide, Benchmarks & ADRs**

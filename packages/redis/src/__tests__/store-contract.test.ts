@@ -7,7 +7,7 @@
 import { beforeAll, describe } from 'vitest';
 import { createClient } from 'redis';
 import Redis from 'ioredis';
-import { fixedWindow } from '@reqnx/core';
+import { fixedWindow, type Clock } from '@reqnx/core';
 import { runStoreContractSuite, type StoreHarness } from '@reqnx/testkit';
 import { createRedisStore } from '../store.js';
 import { createNodeRedisAdapter } from '../adapters/node-redis.js';
@@ -26,6 +26,17 @@ describe('RedisStore Store Contract', () => {
     }
   });
 
+  function createSynchronizedClock(clock?: Clock): Clock | undefined {
+    if (!clock) return undefined;
+    // Offset virtual clock by current real server epoch so PEXPIREAT values are in the future
+    const baseOffset = Date.now();
+    return {
+      nowMs() {
+        return baseOffset + clock.nowMs();
+      },
+    };
+  }
+
   const nodeRedisHarness: StoreHarness = {
     name: 'RedisStore (node-redis)',
     capabilities: { simulatedTtl: false },
@@ -36,7 +47,8 @@ describe('RedisStore Store Contract', () => {
       const rawClient = createClient({ url: REDIS_URL, socket: { reconnectStrategy: false } });
       await rawClient.connect();
       const adapter = createNodeRedisAdapter(rawClient);
-      return createRedisStore({ client: adapter, ...(options?.clock ? { clock: options.clock } : {}) });
+      const syncedClock = createSynchronizedClock(options?.clock);
+      return createRedisStore({ client: adapter, ...(syncedClock ? { clock: syncedClock } : {}) });
     },
     async cleanup(store) {
       await store.close();
@@ -56,7 +68,8 @@ describe('RedisStore Store Contract', () => {
         }
       )(REDIS_URL, { maxRetriesPerRequest: 1, retryStrategy: () => null });
       const adapter = createIORedisAdapter(rawClient);
-      return createRedisStore({ client: adapter, ...(options?.clock ? { clock: options.clock } : {}) });
+      const syncedClock = createSynchronizedClock(options?.clock);
+      return createRedisStore({ client: adapter, ...(syncedClock ? { clock: syncedClock } : {}) });
     },
     async cleanup(store) {
       await store.close();

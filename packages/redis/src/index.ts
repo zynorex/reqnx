@@ -5,6 +5,7 @@
 export { createRedisStore } from './store.js';
 export { fixedWindowRedisPort } from './ports/fixed-window.js';
 export { tokenBucketRedisPort } from './ports/token-bucket.js';
+export { leakyBucketRedisPort } from './ports/leaky-bucket.js';
 export { slidingWindowLogRedisPort } from './ports/sliding-window-log.js';
 export { slidingWindowCounterRedisPort } from './ports/sliding-window-counter.js';
 export { ScriptRunner, computeSha1 } from './script-runner.js';

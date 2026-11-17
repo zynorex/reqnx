@@ -31,11 +31,11 @@ if (!decision.allowed) {
 
 | Algorithm                  | Status         | In-Memory   | Redis (Lua) | Docs                                             |
 | -------------------------- | -------------- | ----------- | ----------- | ------------------------------------------------ |
-| **Fixed Window Counter**   | ✅ Implemented | ✅ Complete | ⏳ Day 6    | [Documentation](docs/algorithms/fixed-window.md) |
-| **Token Bucket**           | ✅ Implemented | ✅ Complete | ⏳ Day 6    | [Documentation](docs/algorithms/token-bucket.md) |
-| **Sliding Window Log**     | ⏳ Planned     | ⏳ Day 5    | ⏳ Day 6    | —                                                |
-| **Sliding Window Counter** | ⏳ Planned     | ⏳ Day 5    | ⏳ Day 6    | —                                                |
-| **Leaky Bucket**           | ⏳ Planned     | ⏳ Day 6    | ⏳ Day 6    | —                                                |
+| **Fixed Window Counter**   | ✅ Implemented | ✅ Complete | ✅ Complete | [Documentation](docs/algorithms/fixed-window.md) |
+| **Token Bucket**           | ✅ Implemented | ✅ Complete | ✅ Complete | [Documentation](docs/algorithms/token-bucket.md) |
+| **Sliding Window Log**     | ✅ Implemented | ✅ Complete | ✅ Complete | [Documentation](docs/algorithms/sliding-window-log.redis-port.md) |
+| **Sliding Window Counter** | ✅ Implemented | ✅ Complete | ✅ Complete | [Documentation](docs/algorithms/sliding-window-counter.redis-port.md) |
+| **Leaky Bucket**           | ✅ Implemented | ✅ Complete | ✅ Complete | [Documentation](docs/algorithms/leaky-bucket.md) |
 
 ## Features
 

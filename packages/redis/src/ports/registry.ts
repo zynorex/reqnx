@@ -10,6 +10,7 @@ import { fixedWindowRedisPort } from './fixed-window.js';
 import { tokenBucketRedisPort } from './token-bucket.js';
 import { slidingWindowLogRedisPort } from './sliding-window-log.js';
 import { slidingWindowCounterRedisPort } from './sliding-window-counter.js';
+import { leakyBucketRedisPort } from './leaky-bucket.js';
 import { RedisStoreError } from '../adapters/base.js';
 
 export class PortRegistry {
@@ -19,6 +20,7 @@ export class PortRegistry {
     // Register built-in ports
     this.register(fixedWindowRedisPort as unknown as AlgorithmRedisPort<never, never>);
     this.register(tokenBucketRedisPort as unknown as AlgorithmRedisPort<never, never>);
+    this.register(leakyBucketRedisPort as unknown as AlgorithmRedisPort<never, never>);
     this.register(slidingWindowLogRedisPort as unknown as AlgorithmRedisPort<never, never>);
     this.register(slidingWindowCounterRedisPort as unknown as AlgorithmRedisPort<never, never>);
 

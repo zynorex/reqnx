@@ -39,7 +39,8 @@ local rawCount = raw[3]
 local windowStart = currentWindowStart
 local count = 0
 
-if version == "1" then
+local expectedVersion = (ARGV[5] and ARGV[5] ~= "" and ARGV[5] ~= "0") and tostring(ARGV[5]) or "1"
+if version == expectedVersion then
   local storedWs = tonumber(rawWs)
   local storedCount = tonumber(rawCount)
 
@@ -84,7 +85,7 @@ else
   -- 6. Persist updated state ONLY if allowed
   -- Denied requests never write state and never touch TTL.
   if allowed then
-    redis.call('HSET', key, 'v', 1, 'ws', windowStart, 'c', nextCount)
+    redis.call('HSET', key, 'v', tonumber(expectedVersion) or 1, 'ws', windowStart, 'c', nextCount)
     redis.call('PEXPIREAT', key, windowEnd)
   end
 

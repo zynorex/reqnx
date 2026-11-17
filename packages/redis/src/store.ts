@@ -139,7 +139,7 @@ export function createRedisStore(options: RedisStoreOptions): RedisStore {
       const adapter = await getAdapter();
       const port = registry.get(algorithm.id);
       const nowMs = await resolveNowMs(timeMode, clock, adapter);
-      const args = port.buildConsumeArgs(config, cost, nowMs);
+      const args = [...port.buildConsumeArgs(config, cost, nowMs), algorithm.stateVersion ?? 1];
 
       const rawReply = await scriptRunner.runScript(
         adapter,
@@ -156,7 +156,7 @@ export function createRedisStore(options: RedisStoreOptions): RedisStore {
       const adapter = await getAdapter();
       const port = registry.get(algorithm.id);
       const nowMs = await resolveNowMs(timeMode, clock, adapter);
-      const args = port.buildPeekArgs(config, nowMs);
+      const args = [...port.buildPeekArgs(config, nowMs), algorithm.stateVersion ?? 1];
 
       const rawReply = await scriptRunner.runReadOnlyScript(
         adapter,

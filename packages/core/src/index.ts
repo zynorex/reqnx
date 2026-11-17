@@ -75,3 +75,10 @@ export type {
   SlidingWindowCounterState,
 } from './algorithms/sliding-window-counter.js';
 export { slidingWindowCounter } from './algorithms/sliding-window-counter.js';
+
+export type {
+  LeakyBucketInput,
+  LeakyBucketConfig,
+  LeakyBucketState,
+} from './algorithms/leaky-bucket.js';
+export { leakyBucket } from './algorithms/leaky-bucket.js';
